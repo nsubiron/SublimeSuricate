@@ -19,7 +19,7 @@
 
 import sublime
 
-from suricate import GlobalSettings
+from suricate import Settings
 
 Engines = {
   'DuckDuckGo': 'https://duckduckgo.com/?q='
@@ -27,7 +27,7 @@ Engines = {
 
 def show(caption=None, engine=None, default='DuckDuckGo'):
     if engine is None:
-      engine = GlobalSettings.get('default_search_engine', default)
+      engine = Settings.get('default_search_engine', default)
     if engine not in Engines:
       print('Search engine "%s" not implemented.' % engine)
       engine = default

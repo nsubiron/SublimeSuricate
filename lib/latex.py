@@ -18,9 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import os
-import process
 import sublime
-import sublime_wrapper
+
+raise Exception('Not implemented for this platform')
 
 temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
                    '.glo', '.bbl', '.ilg', '.toc', '.ind', '.out',

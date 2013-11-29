@@ -18,13 +18,15 @@
 import os
 import sublime
 
-from . import flags
-from . import process
-from . import sublime_wrapper
-from . import util
-from . import vcs_parser
+from suricate import Settings
+from suricate import build_variables
+from suricate import flags
+from suricate import reload_module
+from suricate import util
 
-from suricate import GlobalSettings
+process = reload_module('lib.process')
+sublime_wrapper = reload_module('lib.sublime_wrapper')
+vcs_parser = reload_module('lib.vcs_parser')
 
 SourceControlFileBaseName = 'SourceControlCommands.json'
 
@@ -91,8 +93,8 @@ class _CmdiProxy(list):
 def _get_list(path):
     if path is None:
       repos = {'Current File': '${file}'}
-      repos.update(GlobalSettings.get('vcs_working_dirs', {}))
-      repos = sublime_wrapper.expand_build_variables(repos)
+      repos.update(Settings.get('vcs_working_dirs', {}))
+      repos = build_variables.expand(repos)
       def parse_settings(repositories):
           for name, path in repositories.items():
             path = os.path.abspath(path)

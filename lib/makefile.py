@@ -16,10 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import os
-import sublime_wrapper
+
+from suricate import reload_module
+
+sublime_wrapper =reload_module('lib.sublime_wrapper')
 
 def make(makefile, target=None):
-    makefile = sublime_wrapper.expand_build_variables(makefile)
     folder = os.path.dirname(makefile)
     on_done = lambda target: sublime_wrapper.execute(cmd=['make', target], working_dir=folder)
     if target is None:

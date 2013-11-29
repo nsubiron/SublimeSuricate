@@ -15,22 +15,62 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-"""Retrieve the current file project."""
+"""Sublime Text build variables:
+  * ``${file}`` The full path to the current file, e. g., C:\Files\Chapter1.txt.
+  * ``${file_base_name}`` The name only portion of the current file, e. g., Document.
+  * ``${file_extension}`` The extension portion of the current file, e. g., txt.
+  * ``${file_name}`` The name portion of the current file, e. g., Chapter1.txt.
+  * ``${file_path}`` The directory of the current file, e. g., C:\Files.
+  * ``${packages}`` The full path to the Packages folder.
+  * ``${project}`` The full path to the current project file.
+  * ``${project_base_name}`` The name only portion of the current project file.
+  * ``${project_extension}`` The extension portion of the current project file.
+  * ``${project_name}`` The name portion of the current project file.
+  * ``${project_path}`` The directory of the current project file."""
 
+import os
 import sublime
+
+from . import util
+
+def get(view=None):
+    """Get a dictionary with the available build variables."""
+    vmap = {}
+    try:
+      vmap['packages'] = sublime.packages_path()
+      def _add_file(key, path):
+          if path:
+            folder, file_name = os.path.split(path)
+            base_name, extension = os.path.splitext(file_name)
+            vmap[key] = path
+            vmap['%s_path' % key] = folder
+            vmap['%s_name' % key] = file_name
+            vmap['%s_extension' % key] = extension
+            vmap['%s_base_name' % key] = base_name
+      if view is None:
+        view = sublime.active_window().active_view()
+      if view is not None:
+        _add_file('file', view.file_name())
+      _add_file('project', project_file())
+    finally:
+      return vmap
+
+def expand(obj, view=None):
+    """Expand available build variables in object."""
+    return util.replacekeys(obj, get(view))
 
 if sublime.version() > '3000':
 
-  def get_project_file():
+  def project_file():
       """Return the current project file."""
       return sublime.active_window().project_file_name()
 
 else:
 
-  # Workaround to retrieve the project file from sublime session files.
+  # Workaround for Sublime Text 2 to retrieve the project file from sublime
+  # session files.
 
   import json
-  import os
   import re
 
   _abs = lambda p: os.path.abspath(p)
@@ -72,7 +112,7 @@ else:
 
   _parser = _ProjectParser()
 
-  def get_project_file():
+  def project_file():
       """Return the current project file."""
       if _parser.iscurrent():
         return _parser.current

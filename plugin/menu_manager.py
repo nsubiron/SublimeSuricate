@@ -19,25 +19,25 @@ import json
 import os
 import sublime
 
-from ..lib import util
+from suricate import util
 
-from .defs import *
+from suricate.defs import *
 
-def print_menus(commands, force=False):
+def print_menus(commands, settings, force=False):
     with util.pushd(SuricateFolder):
       update = force
-      manager = MenuManager()
+      manager = MenuManager(settings)
       generated_files = manager.getfilenames()
       if not force:
         mtime = 0
         gettime = lambda filename: os.stat(filename).st_mtime
         for commands_file in util.fwalk('..', CommandsFileBaseName):
-          log('File \'%s\', mtime: %s' % (commands_file, gettime(commands_file)))
+          # log('File \'%s\', mtime: %s' % (commands_file, gettime(commands_file)))
           mtime = max(mtime, gettime(commands_file))
         outdated = lambda f: not os.path.isfile(f) or gettime(f) < mtime
-        if Debug:
-          for f in generated_files:
-            log('%s, up-to-date: %s' % (f, not outdated(f)))
+        # if Debug:
+        #   for f in generated_files:
+        #     log('%s, up-to-date: %s' % (f, not outdated(f)))
         update = any(map(outdated, generated_files))
       if update:
         for key in sorted(commands.keys(), key=lambda k: commands[k][Caption]):
@@ -74,7 +74,8 @@ class SublimeFile(object):
           f.write(json.dumps(self.asdata(), indent=2))
 
 class MenuManager(object):
-    def __init__(self):
+    def __init__(self, settings):
+        self.settings = settings
         self.smain = SublimeFile(None)
         self.pmain = SublimeFile(None)
         self.commands = SublimeFile('Suricate.sublime-commands')
@@ -90,10 +91,10 @@ class MenuManager(object):
     def add(self, key, command):
         group = command[Group] if command[Group] is not None else ''
         if group.endswith('.dev'):
-          if not GlobalSettings.get('dev_mode', False):
+          if not self.settings.get('dev_mode', False):
             return False
           group = group[:-4]
-        log('Adding command \'%s\': %s' % (key, command))
+        # log('Adding command \'%s\': %s' % (key, command))
         sublimecmd = command[Func].startswith('sublime.')
         if sublimecmd:
           _, cmd = command[Func].rsplit('.', 1)
@@ -134,8 +135,11 @@ class MenuManager(object):
         package_settings = {"id": "package-settings", "children": [suricate_settings]}
         preferences_menu = {"id": "preferences", "children": [package_settings]}
         self.main.add(preferences_menu)
-        if GlobalSettings.get('dev_mode', False) and \
-           GlobalSettings.get("show_suricate_menu", False):
+        print('dev_mode: %s' % self.settings.get('dev_mode', False))
+        print('show_suricate_menu: %s' % self.settings.get('show_suricate_menu', False))
+        if self.settings.get('dev_mode', False) and \
+           self.settings.get("show_suricate_menu", False):
+          print('Adding suricate menu.')
           suricate_menu = {
               'caption': 'Suricate',
               'mnemonic': 'u',

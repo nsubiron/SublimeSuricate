@@ -16,16 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import os
-import sublime
 
 CommandsFileBaseName = 'SuricateCommands.json'
-SettingsFileBaseName = 'Suricate.sublime-settings'
-__CoreFolder = os.path.dirname(os.path.abspath(__file__))
-SuricateFolder = os.path.abspath(os.path.join(__CoreFolder, '..'))
-LibName = 'lib'
-LibFolder = os.path.join(SuricateFolder, LibName)
 
-GlobalSettings = sublime.load_settings(SettingsFileBaseName)
+SettingsFileBaseName = 'Suricate.sublime-settings'
+
+__this_folder__ = os.path.dirname(os.path.abspath(__file__))
+
+SuricateFolder = os.path.abspath(os.path.join(__this_folder__, '..'))
+
+LibName = 'lib'
+
+LibFolder = os.path.join(SuricateFolder, LibName)
 
 DefaultDefaults = {'group': None, 'args': {}, 'flags': None, 'keys': [], 'context': False}
 
@@ -39,10 +41,3 @@ Args     = 4
 Flags    = 5
 Keys     = 6
 Context  = 7
-
-Debug = GlobalSettings.get('debug', False)
-
-if Debug:
-  def log(x): print(x)
-else:
-  def log(x): pass

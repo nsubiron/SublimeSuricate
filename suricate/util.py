@@ -22,22 +22,10 @@ import re
 import shutil
 import sublime
 
+from . import pybase
+
 from datetime import datetime
 from contextlib import contextmanager
-
-# Python 2 and 3 compatibility.
-import sys
-PY2 = sys.version_info[0] == 2
-if not PY2:
-  text_type = str
-  string_types = (str,)
-  ignore_replace_types = (bool, int, float, complex)
-  unichr = chr
-else:
-  text_type = unicode
-  string_types = (str, unicode)
-  ignore_replace_types = (bool, int, float, long, complex)
-  unichr = unichr
 
 @contextmanager
 def pushd(directory):
@@ -68,9 +56,7 @@ def which(name, flags=os.X_OK, pathext=DefaultPathExt):
           return pnameext
     return None
 
-def toggle_read_only(path='${file}'):
-    import sublime_wrapper
-    path = sublime_wrapper.expand_build_variables(path)
+def toggle_read_only(path):
     if os.access(path, os.W_OK):
       os.chmod(path, stat.S_IREAD)
     else:
@@ -134,15 +120,15 @@ def replacekeys(obj, dictionary):
     """Replace any ${key} occurrence in obj by its value in dictionary."""
     if obj is None:
       return None
-    elif isinstance(obj, string_types):
+    elif isinstance(obj, pybase.string_types):
       for key, value in dictionary.items():
         obj = obj.replace('${%s}' % key, value)
       return obj
     elif isinstance(obj, dict):
       return dict((k, replacekeys(i, dictionary)) for k, i in obj.items())
-    elif isinstance(obj, (tuple, list, set)):
+    elif isinstance(obj, pybase.sequence_types) or isinstance(obj, pybase.set_types):
       return type(obj)(replacekeys(i, dictionary) for i in obj)
-    elif isinstance(obj, ignore_replace_types):
+    elif isinstance(obj, bool) or isinstance(obj, pybase.numeric_types):
       return obj
     else:
       raise Exception('Type object \'%s\' not implemented.' % type(obj))

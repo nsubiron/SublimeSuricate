@@ -15,20 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-from suricate import reload_module
+"""Python 2 and 3 compatibility."""
 
-sublime_wrapper = reload_module('lib.sublime_wrapper')
+import sys
 
-def complete_line(line, char=None, n=80):
-    """Returns a string of ``char`` that together with ``line`` sums ``n``
-    characters. If ``char`` is ``None`` use ``line``'s last character."""
-    if (line or char) and len(line) < n:
-      return (line[-1] if char is None else char)*(n-len(line))
-    return line
+PY2 = sys.version_info[0] == 2
 
-def fill_current_line(view, *args, **kwargs):
-    """See text.fill_line.
-    @todo It doesn't work as expected, rewrite."""
-    getline = lambda region: view.substr(view.line(region.end()))
-    func = lambda region: complete_line(getline(region), *args, **kwargs)
-    sublime_wrapper.foreach_region(func, view, clear=True)
+if not PY2:
+  unichr = chr
+  text_type = str
+  string_types = (str,)
+  numeric_types = (int, float, complex)
+  sequence_types = (list, tuple, range)
+  binary_sequence_types = (bytes, bytearray, memoryview)
+  set_types = (set, frozenset)
+  mapping_types = (dict,)
+else:
+  unichr = unichr
+  text_type = unicode
+  string_types = (str, unicode)
+  numeric_types = (int, float, long, complex)
+  sequence_types = (list, tuple, xrange)
+  binary_sequence_types = (bytearray, buffer)
+  set_types = (set, frozenset)
+  mapping_types = (dict,)

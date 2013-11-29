@@ -56,6 +56,18 @@
       "func":     "settings.toggle_boolean",
       "args":     { "key": "dev_mode" }
     },
+    "reload": {
+      "caption":  "Reload",
+      "mnemonic": "R",
+      "group":    "main.b.dev",
+      "func":     "process.touch",
+      "args":     {
+        "paths": [
+          "${packages}/SublimeSuricate/suricate_plugin.py",
+          "${packages}/SublimeSuricate/SuricateCommands.json"
+        ]
+      }
+    },
 
     // Version control.
     "vcs_checkout": {
@@ -113,6 +125,7 @@
       "group":    "attrib",
       "flags":    "Windows|Linux|IsFile",
       "func":     "util.toggle_read_only",
+      "args":     {"path": "${file}"},
       "context":  true
     },
 

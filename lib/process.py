@@ -21,11 +21,16 @@ import subprocess
 
 from threading import Thread
 
-from . import sublime_wrapper
+from suricate import build_variables
 
+def touch(paths, times=None):
+    for path in paths:
+      with open(path, 'a'):
+        os.utime(path, times)
 
 def _filter(obj):
-    return sublime_wrapper.expand_build_variables(obj)
+    # @todo Needed?
+    return build_variables.expand(obj)
 
 def system(command):
     command = _filter(command)

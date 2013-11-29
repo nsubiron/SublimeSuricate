@@ -17,8 +17,12 @@
 
 """Basic tools to parse python files and generate documentation."""
 
-import os, imp, inspect
+import os
+import inspect
+
 from collections import namedtuple
+from suricate import reload_module
+from suricate import pybase
 
 ModuleInfo = namedtuple('ModuleInfo', ['name', 'doc', 'functions'])
 RoutineInfo = namedtuple('RoutineInfo', ['signature', 'doc'])
@@ -28,7 +32,7 @@ def routine(funcobj):
     argspec = inspect.getargspec(funcobj)
     sign = []
     dsize = 0 if not argspec.defaults else len(argspec.defaults)
-    getd = lambda x: "'%s'" % x if isinstance(x, str) or isinstance(x, unicode) else x
+    getd = lambda x: "'%s'" % x if isinstance(x, pybase.string_types) else x
     for i, arg in enumerate(argspec.args, dsize - len(argspec.args)):
       sign.append(arg + ('' if i<0 else '=%s' % getd(argspec.defaults[i])))
     if argspec.varargs:
@@ -43,8 +47,7 @@ def module(module_name, path, metaname=None):
     if metaname is None:
       metaname = module_name
     try:
-      module_info = imp.find_module(module_name, [path])
-      module = imp.load_module(module_name, *module_info)
+      module = reload_module(module_name)
       info = ModuleInfo(metaname, module.__doc__, [])
       for obj_name in [x for x in dir(module) if not x.startswith('_')]:
         obj = getattr(module, obj_name)
@@ -82,7 +85,7 @@ def markdown(generator, level=1, indent=0, indentstr='  '):
         raise Exception('Invalid info type!')
 
 def to_buffer(title, root):
-    import sublime_wrapper
+    from . import sublime_wrapper
     text = '%s\n%s\n\n' % (title, '='*len(title))
     text += '## modules\n\n'
     text += '\n'.join(line for line in markdown(lambda: folder(root), 3))

@@ -16,15 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import sublime
+
 from datetime import datetime
-from suricate import GlobalSettings
-import sublime_wrapper
+from suricate import Settings
+from suricate import reload_module
+
+sublime_wrapper =reload_module('lib.sublime_wrapper')
 
 def _datetime_formats():
     defaults = ['%Y:%m:%d', '%Y/%m/%d', '%d/%m/%Y', '%d %B %Y', '%A, %B %d, %Y',
                 '%Y%m%d', '%Y%m%d%H%M%S', '%a %d', '%c', 'Week %W, day %j',
                 '%H:%M:%S', '%H:%M', '%Y']
-    return GlobalSettings.get('time_formats', defaults)
+    return Settings.get('time_formats', defaults)
 
 def get_times(tstring=None, quiet=False):
     """Return a list of the different formats available for tstring, see

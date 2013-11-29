@@ -16,12 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import os
-import process
 import sublime
-import sublime_wrapper
-import util
 
-from suricate import GlobalSettings
+from suricate import Settings
+from suricate import build_variables
+from suricate import reload_module
+from suricate import util
+
+process = reload_module('lib.process')
+sublime_wrapper =reload_module('lib.sublime_wrapper')
 
 OpenMode = 'open'
 LaunchMode = 'launch'
@@ -44,7 +47,7 @@ def launch(mode=OpenMode, view=None):
       raise Exception('Unknown mode!')
     window = sublime.active_window()
     settingskey = 'quick_%s_path_list' % mode
-    paths = sublime_wrapper.expand_build_variables(GlobalSettings.get(settingskey))
+    paths = build_variables.expand(Settings.get(settingskey))
     factory = _ItemFactory(mode, window)
     items = []
     if view is not None:

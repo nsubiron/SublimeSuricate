@@ -17,10 +17,12 @@
 
 import os
 import sublime
-import sublime_wrapper
 import subprocess
 
 from threading import Thread
+
+from . import sublime_wrapper
+
 
 def _filter(obj):
     return sublime_wrapper.expand_build_variables(obj)

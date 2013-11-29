@@ -19,8 +19,9 @@
 
 import os
 import sublime
-import sublime_project
-import util
+
+from . import sublime_project
+from . import util
 
 def execute(**kwargs):
     """Runs an external process asynchronously. On Windows, GUIs are suppressed.

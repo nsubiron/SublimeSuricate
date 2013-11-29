@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-import flags
 import os
-import process
 import sublime
-import sublime_wrapper
-import util
-import vcs_parser
+
+from . import flags
+from . import process
+from . import sublime_wrapper
+from . import util
+from . import vcs_parser
 
 from suricate import GlobalSettings
 

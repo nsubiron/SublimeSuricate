@@ -25,6 +25,20 @@ import sublime
 from datetime import datetime
 from contextlib import contextmanager
 
+# Python 2 and 3 compatibility.
+import sys
+PY2 = sys.version_info[0] == 2
+if not PY2:
+  text_type = str
+  string_types = (str,)
+  ignore_replace_types = (bool, int, float, complex)
+  unichr = chr
+else:
+  text_type = unicode
+  string_types = (str, unicode)
+  ignore_replace_types = (bool, int, float, long, complex)
+  unichr = unichr
+
 @contextmanager
 def pushd(directory):
     """Context manager to temporally change working directory."""
@@ -33,11 +47,11 @@ def pushd(directory):
     yield
     os.chdir(cwd)
 
-DEFAULT_PATHEXT = ['']
+DefaultPathExt = ['']
 if sublime.platform().lower() == 'windows':
-  DEFAULT_PATHEXT += ['.com', '.exe', '.bat', '.cmd']
+  DefaultPathExt += ['.com', '.exe', '.bat', '.cmd']
 
-def which(name, flags=os.X_OK, pathext=DEFAULT_PATHEXT):
+def which(name, flags=os.X_OK, pathext=DefaultPathExt):
     """Return the full path to the first executable found in the environmental
     variable PATH matching the given name."""
     envpath = os.environ.get('PATH', None)
@@ -120,15 +134,15 @@ def replacekeys(obj, dictionary):
     """Replace any ${key} occurrence in obj by its value in dictionary."""
     if obj is None:
       return None
-    elif isinstance(obj, str) or isinstance(obj, unicode):
+    elif isinstance(obj, string_types):
       for key, value in dictionary.items():
         obj = obj.replace('${%s}' % key, value)
       return obj
     elif isinstance(obj, dict):
       return dict((k, replacekeys(i, dictionary)) for k, i in obj.items())
-    elif any(isinstance(obj, x) for x in [tuple, list, set]):
-      return map(lambda i: replacekeys(i, dictionary), obj)
-    elif any(isinstance(obj, x) for x in [bool, int, float, long, complex]):
+    elif isinstance(obj, (tuple, list, set)):
+      return type(obj)(replacekeys(i, dictionary) for i in obj)
+    elif isinstance(obj, ignore_replace_types):
       return obj
     else:
       raise Exception('Type object \'%s\' not implemented.' % type(obj))

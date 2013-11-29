@@ -20,6 +20,8 @@
 import os, re, fnmatch
 import sublime
 
+from functools import reduce
+
 class Flags(object):
     EMPTY       = 0x0000
     # Platforms.

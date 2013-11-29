@@ -25,7 +25,7 @@ def complete_line(line, char=None, n=80):
     return line
 
 def fill_current_line(view, *args, **kwargs):
-    """See text.complete_line.
+    """See text.fill_line.
     @todo It doesn't work as expected, rewrite."""
     getline = lambda region: view.substr(view.line(region.end()))
     func = lambda region: complete_line(getline(region), *args, **kwargs)

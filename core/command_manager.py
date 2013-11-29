@@ -15,15 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-import imp
+import importlib
 import inspect
 import sublime
+import sys
 
-from lib import flags, util
+from ..lib import flags, util
+from ..lib import sublime_wrapper
 
-from suricate import *
-
-import menu_manager
+from .menu_manager import print_menus
+from .defs import *
 
 def rupdate(lhs, rhs):
     for key, irhs in rhs.items():
@@ -50,20 +51,20 @@ def parse_commands(settings):
     return flagmap, commands
 
 class CommandManager(object):
-    def __init__(self, settings):
+    def __init__(self):
         self.flags = 0x0000
         self.view = None
-        self.settings = settings
         self.flagmap = {}
         self.commands = {}
 
-    def load(self):
+    def load(self, settings):
+        self.settings = settings
         self.flagmap, self.commands = parse_commands(self.settings)
-        menu_manager.print_menus(self.commands)
+        print_menus(self.commands, force=False)
 
     def reload_settings(self):
         self.flagmap, self.commands = parse_commands(self.settings)
-        menu_manager.print_menus(self.commands, force=True)
+        print_menus(self.commands, force=True)
 
     def update(self, view):
         self.view = view
@@ -73,17 +74,14 @@ class CommandManager(object):
         return flags.special_check(self.flags, self.flagmap.get(key, flags.Flags.Never))
 
     def run(self, key):
+        func = self.commands[key][Func]
+        args = self.commands[key][Args]
+        module_name, function = func.rsplit('.', 1)
+        module = importlib.import_module('..lib.' + module_name, __package__)
+        metargs = {'active_flags': int(self.flags), 'view': self.view}
+        funcobj = getattr(module, function)
+        argspec = inspect.getargspec(funcobj).args
+        kwargs = dict((k,i) for k,i in metargs.items() if k in argspec)
+        kwargs.update(sublime_wrapper.expand_build_variables(args))
         with util.pushd(LibFolder):
-          func = self.commands[key][Func]
-          args = self.commands[key][Args]
-          module_name, function = func.rsplit('.', 1)
-          module_info = imp.find_module(module_name, [LibFolder])
-          # This do a reload if already imported.
-          module = imp.load_module(module_name, *module_info)
-          metargs = {'active_flags': int(self.flags), 'view': self.view}
-          funcobj = getattr(module, function)
-          argspec = inspect.getargspec(funcobj).args
-          kwargs = dict((k,i) for k,i in metargs.items() if k in argspec)
-          import sublime_wrapper as sw
-          kwargs.update(sw.expand_build_variables(args))
           return funcobj(**kwargs)

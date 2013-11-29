@@ -19,9 +19,9 @@ import json
 import os
 import sublime
 
-from lib import util
+from ..lib import util
 
-from suricate import *
+from .defs import *
 
 def print_menus(commands, force=False):
     with util.pushd(SuricateFolder):

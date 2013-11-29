@@ -1,0 +1,260 @@
+{
+  // Use to override the commands in "commands" key, set on your user folder.
+  "user_commands": {},
+
+  "commands": {
+    // Usage:
+    //
+    //   "command_id": {
+    //     "caption":  String: caption displayed on the GUI,
+    //     "mnemonic": String or null: key character for menus,
+    //     "group":    String or null: group commands according to this tag,
+    //     "func":     String: module.function (sublime.command to send to app),
+    //     "args":     {String: String}: arguments to be passed to func,
+    //     "flags":    String or null: see flags defined in lib/flags.py,
+    //     "keys":     [String]: key binding,
+    //     "context":  Bool: whether should be included in the context menu
+    //   }
+    //
+    // Special groups:
+    //
+    //   - main.preferences Goes to menu Preferences->Package Settings->Suricate,
+    //   - main.*           Goes to menu Suricate,
+    //   - .*               Won't appear in menus, only key binding added if any
+    //   - *.dev            Only added when dev_mode is on
+    //
+    // Overriding commands:
+    //
+    //   A copy of this file on your user folder will override this one just
+    //   like a regular sublime settings file. To override a specific command,
+    //   add a command with same id to "user_commands". Commands can be
+    //   partially overrode.
+
+    // Default value for non defined tags, if no default is specified for a
+    // given tag, commands must contain that tag or in order to be added.
+    "defaults": {
+      "caption":  "",
+      "mnemonic": null,
+      "group":    null,
+      "args":     {},
+      "flags":    null,
+      "keys":     [],
+      "context":  false
+    },
+
+    // Remap prompt open file key binding. Most of the key bindings here start
+    // with ctrl+o.
+    "remap.open": {
+      "group":    ".remap",
+      "func":     "sublime.prompt_open_file",
+      "keys":     ["shift+alt+o"]
+    },
+
+    // Dev.
+    "toggle_dev": {
+      "caption":  "Toggle Dev Mode",
+      "func":     "settings.toggle_boolean",
+      "args":     { "key": "dev_mode" }
+    },
+
+    // Version control.
+    "vcs_checkout": {
+      "caption":  "Checkout",
+      "group":    "vcs",
+      "flags":    "Surround",
+      "func":     "vcs.call",
+      "args":     { "cmd": "checkout" },
+      "keys":     [ "ctrl+o", "ctrl+c" ],
+      "context":  true
+    },
+    "vcs_diff": {
+      "caption":  "Differences",
+      "group":    "vcs",
+      "flags":    "Git|Svn|Surround",
+      "func":     "vcs.call",
+      "args":     { "cmd": "diff" },
+      "keys":     [ "ctrl+o", "ctrl+d" ],
+      "context":  true
+    },
+    "vcs_quickpanel": {
+      "caption":  "Version Control Quick Panel ...",
+      "group":    "vcs",
+      "func":     "vcs.show_quick_panel",
+      "keys":     [ "ctrl+o", "ctrl+v" ]
+    },
+
+    // Quick open/launch.
+    "quick_open": {
+      "caption":  "Open File Quick Panel ...",
+      "group":    "quickpanel",
+      "func":     "navigator.launch",
+      "args":     { "mode": "open" },
+      "keys":     [ "ctrl+shift+o" ]
+    },
+    "quick_launch": {
+      "caption":  "Launch File Quick Panel ...",
+      "group":    "quickpanel",
+      "func":     "navigator.launch",
+      "args":     { "mode": "launch" },
+      "keys":     [ "ctrl+shift+;" ]
+    },
+
+    // File attributes.
+    "chmodx": {
+      "caption":  "Set Executable (chmod +x)",
+      "group":    "attrib",
+      "flags":    "Linux|IsFile",
+      "func":     "sublime_wrapper.execute",
+      "args":     { "cmd": ["chmod", "+x", "${file}"] },
+      "context":  true
+    },
+    "toggle_read_only": {
+      "caption":  "Toggle Read-Only",
+      "group":    "attrib",
+      "flags":    "Windows|Linux|IsFile",
+      "func":     "util.toggle_read_only",
+      "context":  true
+    },
+
+    // Open terminal.
+    "wterminal": {
+      "caption":  "Open Terminal Here",
+      "group":    "launch",
+      "flags":    "Windows|IsFile",
+      "func":     "process.new_thread",
+      "args":     { "cmd": ["start", "cmd.exe"], "working_dir": "${file_path}" },
+      "keys":     ["alt+shift+c"],
+      "context":  true
+    },
+
+    // Build variables.
+    "copy_build_variable": {
+      "caption":  "Copy Build Variable To Clipboard ...",
+      "group":    "bvars",
+      "func":     "sublime_wrapper.copy_build_variable_to_clipboard"
+    },
+    "paste_basename": {
+      "caption":  "Insert File Base Name",
+      "flags":    "IsFile",
+      "group":    "bvars",
+      "func":     "sublime_wrapper.paste_build_variable",
+      "args":     { "key": "file_base_name" },
+      "keys":     ["alt+c"]
+    },
+
+    // Date-time.
+    "time_to_clipboard": {
+      "caption":  "Time To Clipboard ...",
+      "group":    "datetime",
+      "func":     "datetimeutil.time_to_clipboard"
+    },
+    "time_serie": {
+      "caption":  "Continue Time Serie",
+      "group":    "datetime",
+      "func":     "datetimeutil.continue_serie",
+      "keys":     ["ctrl+shift+3"]
+    },
+
+    // TeX.
+    "paragraph_to_tex": {
+      "caption":  "Convert Paragraph To TeX",
+      "group":    "tex",
+      "func":     "latex.paragraph_to_tex"
+    },
+    "open_pdf": {
+      "caption":  "Open PDF",
+      "group":    "tex",
+      "flags":    "IsFile",
+      "func":     "latex.launchpdf",
+      "keys":     ["f2"]
+    },
+
+    // Makefile.
+    "make_makefile": {
+      "caption":  "Make Makefile",
+      "flags":    "Makefile",
+      "group":    "make",
+      "func":     "makefile.make",
+      "args":     {"makefile": "${file}"}
+    },
+
+    // Text.
+    "fill_current_line": {
+      "caption":  "Expand Current Line",
+      "func":     "text.fill_current_line",
+      "keys":     ["ctrl+o", "ctrl+e"]
+    },
+
+    // url.
+    "searchbar": {
+      "caption":  "Search bar",
+      "func":     "searchbar.show",
+      "keys":     ["ctrl+o", "ctrl+s"]
+    },
+
+    // Suricate menu.
+    "doc": {
+      "caption":  "Documentation",
+      "mnemonic": "D",
+      "group":    "main.a.dev",
+      "func":     "doc.to_buffer",
+      "args": {
+        "title": "Sublime Suricate Documentation",
+        "root": "${packages}/SublimeSuricate/lib"
+      }
+    },
+    "see_on_github": {
+      "caption":  "Open Repository",
+      "mnemonic": "O",
+      "group":    "main.a.dev",
+      "func":     "sublime.open_url",
+      "args":     { "url": "https://github.com/nsubiron/SublimeSuricate" }
+    },
+    "suricate_on_overlay": {
+      "caption":  "Suricate Commands",
+      "mnemonic": "C",
+      "group":    "main.commands",
+      "func":     "sublime.show_overlay",
+      "args":     {"overlay": "command_palette", "text": "Suricate: "},
+      "keys":     ["ctrl+shift+'"]
+    },
+
+    // Preferences menu.
+    "pref_settings_default": {
+      "caption":  "Settings – Default",
+      "group":    "main.preferences",
+      "func":     "sublime.open_file",
+      "args":     { "file": "${packages}/SublimeSuricate/Suricate.sublime-settings" }
+    },
+    "pref_settings_user": {
+      "caption":  "Settings – User",
+      "group":    "main.preferences",
+      "func":     "sublime.open_file",
+      "args":     { "file": "${packages}/User/Suricate.sublime-settings" }
+    },
+    "pref_commands_default": {
+      "caption":  "Commands – Default",
+      "group":    "main.preferences.commands",
+      "func":     "sublime.open_file",
+      "args":     { "file": "${packages}/SublimeSuricate/SuricateCommands.json" }
+    },
+    "pref_commands_user": {
+      "caption":  "Commands – User",
+      "group":    "main.preferences.commands",
+      "func":     "sublime.open_file",
+      "args":     { "file": "${packages}/User/SuricateCommands.json" }
+    },
+    "pref_source_control_default": {
+      "caption":  "Source Control – Default",
+      "group":    "main.preferences.vcs",
+      "func":     "sublime.open_file",
+      "args":     { "file": "${packages}/SublimeSuricate/SourceControlCommands.json" }
+    },
+    "pref_source_control_user": {
+      "caption":  "Source Control – User",
+      "group":    "main.preferences.vcs",
+      "func":     "sublime.open_file",
+      "args":     { "file": "${packages}/User/SourceControlCommands.json" }
+    }
+  }
+}

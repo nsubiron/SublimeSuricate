@@ -1,0 +1,133 @@
+{
+  "user_source_control": [],
+
+  // ${path} will be replaced by file or folder. The rest of build variables
+  // are expanded after it.
+  "source_control": [
+    {
+      "name":  "Tortoise SVN",
+      "exes":  ["TortoiseProc.exe"],
+      "flags": "Svn",
+      "commands": {
+        "diff": {
+          "caption": "Compare with Base ...",
+          "cmd": ["TortoiseProc.exe", "/command:diff", "/path:${path}"],
+          "out": "gui"
+        },
+        "commit": {
+          "caption": "Commit ...",
+          "cmd": ["TortoiseProc.exe", "/command:commit", "/path:${path}"],
+          "out": "gui"
+        }
+      }
+    },
+    {
+      "name":  "Tortoise Git",
+      "exes":  ["TortoiseGitProc.exe"],
+      "flags": "Git",
+      "commands": {
+        "diff": {
+          "caption": "Compare with HEAD ...",
+          "cmd": ["TortoiseGitProc.exe", "/command:diff", "/path:${path}"],
+          "out": "gui"
+        },
+        "commit": {
+          "caption": "Commit ...",
+          "cmd": ["TortoiseGitProc.exe", "/command:commit", "/path:${path}"],
+          "out": "gui"
+        }
+      }
+    },
+    {
+      "name":  "RabbitVCS",
+      "exes":  ["rabbitvcs"],
+      "flags": "Svn|Git",
+      "commands": {
+        "diff": {
+          "caption": "Compare ...",
+          "cmd": ["rabbitvcs", "diff", "${path}", "-s"],
+          "out": "gui"
+        }
+      }
+    },
+    {
+      "name":  "git",
+      "exes":  ["git"],
+      "flags": "Git",
+      "commands": {
+        "diff": {
+          "caption": "git diff",
+          "cmd": ["git", "diff", "${path}"],
+          "out": "buffer"
+        },
+        "status": {
+          "caption": "git status",
+          "cmd": ["git", "status", "${path}"],
+          "out": "buffer"
+        },
+        "status_list": {
+          "caption": "List modified files ...",
+          "cmd": ["git", "status", "${path}"],
+          "out": "status_list"
+        }
+      }
+    },
+    {
+      "name":  "svn",
+      "exes":  ["svn"],
+      "flags": "Svn",
+      "commands": {
+        "diff": {
+          "caption": "svn diff",
+          "cmd": ["svn", "diff"],
+          "out": "buffer"
+        },
+        "status": {
+          "caption": "svn status",
+          "cmd": ["svn", "status", "${path}"],
+          "out": "buffer"
+        }
+      }
+    },
+    {
+      "name":  "Surround SCM + WinMerge",
+      "exes":  ["sscm", "winmergeu"],
+      "flags": "Surround|IsFile",
+      "commands": {
+        "diff": {
+          "caption": "Differences",
+          "cmd": ["sscm", "diff", "${path}", "-c", "-i-", "-u\"winmergeu %1 %2\""],
+          "out": "gui"
+        }
+      }
+    },
+    {
+      "name":  "Surround SCM",
+      "exes":  ["sscm"],
+      "flags": "Surround|IsFile",
+      "commands": {
+        "checkout": {
+          "caption": "Checkout",
+          "cmd": ["sscm", "checkout", "${path}", "-c-"]
+        },
+        "diff": {
+          "caption": "Differences",
+          "cmd": ["sscm", "diff", "${path}", "-c", "-i"],
+          "out": "buffer"
+        }
+      }
+    },
+    {
+      "name":  "Surround SCM",
+      "exes":  ["sscm"],
+      "flags": "Surround",
+      "commands": {
+        "status": {
+          "caption": "List checked out files ...",
+          "cmd": ["sscm", "ls", "-f\"Checked Out Files\"", "-r"],
+          "out": "status_list"
+        }
+      }
+    }
+  ]
+}

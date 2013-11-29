@@ -1,0 +1,21 @@
+{
+  "dev_mode": false,
+
+  // Requires dev_mode on.
+  "show_suricate_menu": false,
+
+  // Known local repositories to show on the vcs quick panel.
+  // { "display name": "path" }
+  "vcs_working_dirs": {},
+
+  // List of paths to initialize the open file quick panel. Non existent paths
+  // are ignored.
+  "quick_open_path_list": [],
+
+  // List of paths to initialize the launch file quick panel. Non existent paths
+  // are ignored.
+  "quick_launch_path_list": [],
+
+  // Default search engine for the search bar.
+  "default_search_engine": "DuckDuckGo"
+}

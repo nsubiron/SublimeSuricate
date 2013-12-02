@@ -47,15 +47,16 @@ def module(module_name, path, metaname=None):
     if metaname is None:
       metaname = module_name
     try:
-      module = reload_module(module_name)
+      module = reload_module('lib.' + module_name)
       info = ModuleInfo(metaname, module.__doc__, [])
       for obj_name in [x for x in dir(module) if not x.startswith('_')]:
         obj = getattr(module, obj_name)
         if inspect.isfunction(obj):
           info.functions.append(routine(obj))
       return info
-    except ImportError:
-      return ModuleInfo(metaname, 'ImportError loading module.', [])
+    except Exception as e:
+      info = '%s: %s' % (type(e).__name__, ', '.join(e.args))
+      return ModuleInfo(metaname, info, [])
 
 def folder(path, parents=[]):
     path = os.path.abspath(path)

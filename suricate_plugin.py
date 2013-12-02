@@ -37,17 +37,31 @@ try:
 
 except ImportError:
 
-  def reload_module(modulename):
-      if Verbose: print('-- reloading ' + modulename)
-      root, modulename = modulename.rsplit('.', 1)
-      path = os.path.abspath(os.path.join(SuricateFolder, root.replace('.', os.sep)))
-      fp, pathname, description = imp.find_module(modulename, [path])
+  # Workaround for Sublime Text 2.
+
+  def _import_from_path(name, path):
+      fp, pathname, description = imp.find_module(name, path)
       try:
         # This do a reload if already imported.
-        return imp.load_module(modulename, fp, pathname, description)
+        return imp.load_module(name, fp, pathname, description)
       finally:
         if fp:
           fp.close()
+
+  def _import_from_module(module, name):
+      module = __import__(module, fromlist=[str(name)])
+      return getattr(module, name)
+
+  def reload_module(modulename):
+      if Verbose: print('-- reloading ' + modulename)
+      parent = modulename.split('.')[0]
+      m = None
+      for name in modulename.split('.')[1:]:
+        m = _import_from_module(parent, name)
+        parent = name
+      if m is None:
+        return _import_from_path(parent, [SuricateFolder])
+      return reload(m)
 
 class DummyManager(object):
     def update(self, view):
@@ -71,16 +85,18 @@ Holder = ManagerHolder(DummyManager())
 def plugin_loaded():
     print('reloading %s dependencies' % __name__)
     # Reload suricate package.
+    suricate = reload_module('suricate')
     reload_module('suricate.pybase')
     defs = reload_module('suricate.defs')
     reload_module('suricate.flags')
     reload_module('suricate.util')
     reload_module('suricate.build_variables')
-    suricate = reload_module('suricate')
     suricate.reload_module = reload_module
     suricate.Settings = sublime.load_settings(defs.SettingsFileBaseName)
+    suricate.Verbose = Verbose
     sys.modules['suricate'] = suricate
     # Reload plugin package.
+    reload_module('plugin')
     reload_module('plugin.menu_manager')
     command_manager = reload_module('plugin.command_manager')
     commands = sublime.load_settings(defs.CommandsFileBaseName)
@@ -94,6 +110,7 @@ def plugin_loaded():
     Holder.set(manager)
 
 if sublime.version() < '3000':
+  reload_module('lib')
   sublime.set_timeout(plugin_loaded, 2000)
 
 class SuricateCommand(sublime_plugin.TextCommand):

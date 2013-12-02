@@ -20,7 +20,8 @@
 import os
 import sublime
 
-raise Exception('Not implemented for this platform')
+if sublime.version() >= '3000':
+  raise Exception('Not implemented for this platform.')
 
 temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
                    '.glo', '.bbl', '.ilg', '.toc', '.ind', '.out',

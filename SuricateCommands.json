@@ -29,9 +29,15 @@
     //   like a regular sublime settings file. To override a specific command,
     //   add a command with same id to "user_commands". Commands can be
     //   partially overrode.
+    //
+    // Key bindings:
+    //
+    //   By default most of the key bindings here start with ctrl+o, which
+    //   interferes with sublime text's open file action. To override this
+    //   behaviour tweak "override_ctrl_o" setting.
 
     // Default value for non defined tags, if no default is specified for a
-    // given tag, commands must contain that tag or in order to be added.
+    // given tag, commands must contain that tag in order to be added.
     "defaults": {
       "caption":  "",
       "mnemonic": null,
@@ -40,14 +46,6 @@
       "flags":    null,
       "keys":     [],
       "context":  false
-    },
-
-    // Remap prompt open file key binding. Most of the key bindings here start
-    // with ctrl+o.
-    "remap.open": {
-      "group":    ".remap",
-      "func":     "sublime.prompt_open_file",
-      "keys":     ["shift+alt+o"]
     },
 
     // Dev.

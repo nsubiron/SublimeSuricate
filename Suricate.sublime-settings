@@ -4,6 +4,9 @@
   // Requires dev_mode on.
   "show_suricate_menu": false,
 
+  // Replace starting ctrl+o in key bindings by the string given here.
+  "override_ctrl_o": false,
+
   // Known local repositories to show on the vcs quick panel.
   // { "display name": "path" }
   "vcs_working_dirs": {},

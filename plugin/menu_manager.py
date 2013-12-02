@@ -32,12 +32,8 @@ def print_menus(commands, settings, force=False):
         mtime = 0
         gettime = lambda filename: os.stat(filename).st_mtime
         for commands_file in util.fwalk('..', CommandsFileBaseName):
-          # log('File \'%s\', mtime: %s' % (commands_file, gettime(commands_file)))
           mtime = max(mtime, gettime(commands_file))
         outdated = lambda f: not os.path.isfile(f) or gettime(f) < mtime
-        # if Debug:
-        #   for f in generated_files:
-        #     log('%s, up-to-date: %s' % (f, not outdated(f)))
         update = any(map(outdated, generated_files))
       if update:
         for key in sorted(commands.keys(), key=lambda k: commands[k][Caption]):
@@ -75,7 +71,6 @@ class SublimeFile(object):
 
 class MenuManager(object):
     def __init__(self, settings):
-        self.settings = settings
         self.smain = SublimeFile(None)
         self.pmain = SublimeFile(None)
         self.commands = SublimeFile('Suricate.sublime-commands')
@@ -83,6 +78,10 @@ class MenuManager(object):
         self.context = SublimeFile('Context.sublime-menu')
         platform = sublime.platform().title()
         self.keymap = SublimeFile('Default (%s).sublime-keymap' % platform)
+        # Settings.
+        self.dev_mode = settings.get('dev_mode', False)
+        self.override_ctrl_o = settings.get('override_ctrl_o', False)
+        self.show_suricate_menu = settings.get('show_suricate_menu', False)
 
     def getfilenames(self):
         files = [self.commands, self.main, self.context, self.keymap]
@@ -91,10 +90,9 @@ class MenuManager(object):
     def add(self, key, command):
         group = command[Group] if command[Group] is not None else ''
         if group.endswith('.dev'):
-          if not self.settings.get('dev_mode', False):
+          if not self.dev_mode:
             return False
           group = group[:-4]
-        # log('Adding command \'%s\': %s' % (key, command))
         sublimecmd = command[Func].startswith('sublime.')
         if sublimecmd:
           _, cmd = command[Func].rsplit('.', 1)
@@ -119,7 +117,7 @@ class MenuManager(object):
               self.smain.add(menus, group)
         if command[Keys]:
           keybinding = dict(basic)
-          keybinding['keys'] = command[Keys]
+          keybinding['keys'] = self._override_keys(command[Keys])
           self.keymap.add(keybinding)
         return not sublimecmd
 
@@ -130,16 +128,17 @@ class MenuManager(object):
         self._fill_main_menu()
         self.main.writeout()
 
+    def _override_keys(self, keys):
+        if self.override_ctrl_o and keys[0].lower() == 'ctrl+o':
+          keys = [self.override_ctrl_o] + keys[1:]
+        return keys
+
     def _fill_main_menu(self):
         suricate_settings = {"caption": "Suricate", "children": self.pmain.asdata()}
         package_settings = {"id": "package-settings", "children": [suricate_settings]}
         preferences_menu = {"id": "preferences", "children": [package_settings]}
         self.main.add(preferences_menu)
-        print('dev_mode: %s' % self.settings.get('dev_mode', False))
-        print('show_suricate_menu: %s' % self.settings.get('show_suricate_menu', False))
-        if self.settings.get('dev_mode', False) and \
-           self.settings.get("show_suricate_menu", False):
-          print('Adding suricate menu.')
+        if self.dev_mode and self.show_suricate_menu:
           suricate_menu = {
               'caption': 'Suricate',
               'mnemonic': 'u',

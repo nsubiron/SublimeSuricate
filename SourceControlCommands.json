@@ -120,7 +120,7 @@
     {
       "name":  "Surround SCM",
       "exes":  ["sscm"],
-      "flags": "Surround",
+      "flags": "Surround|IsDir",
       "commands": {
         "status": {
           "caption": "List checked out files ...",

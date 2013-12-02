@@ -36,6 +36,8 @@ class Flags(object):
     IsFile      = 0x0040
     TeX         = 0x0080
     Makefile    = 0x0100
+    # Folder types.
+    IsDir       = 0x0200
     # Never active.
     Never       = 0x8000
 
@@ -91,7 +93,7 @@ def parse(path):
       folder, name = os.path.split(path)
       return PLATFORM|Flags.IsFile|_filetype(name)|_vcs(folder)
     elif os.path.isdir(path):
-      return PLATFORM|_vcs(path)
+      return PLATFORM|Flags.IsDir|_vcs(path)
 
 def get_vcs(path):
     if os.path.isfile(path):

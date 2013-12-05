@@ -20,6 +20,7 @@
 import os
 import sublime
 
+from suricate import build_variables
 from suricate import import_module
 
 sublime_wrapper = import_module('lib.sublime_wrapper')
@@ -33,7 +34,7 @@ temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
 
 def clean(view=None):
     """Remove LaTeX temporary files."""
-    bvars = sublime_wrapper.get_build_variables(view)
+    bvars = build_variables.get(view)
     prefix = os.path.abspath(os.path.join(bvars['file_path'], bvars['file_base_name']))
     counter = 0
     for path in map(lambda ext: prefix + ext, temp_extensions):
@@ -44,7 +45,7 @@ def clean(view=None):
 
 def launchpdf(view=None):
     """Launch pdf associated with view."""
-    bvars = sublime_wrapper.get_build_variables(view)
+    bvars = build_variables.get(view)
     prefix = os.path.abspath(os.path.join(bvars['file_path'], bvars['file_base_name']))
     process.start_file(prefix + '.pdf')
 

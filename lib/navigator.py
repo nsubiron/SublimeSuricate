@@ -56,7 +56,8 @@ def launch(mode=OpenMode, view=None):
         if mode == LaunchMode:
           items.append(factory.create(current_file, 'Current file'))
         items.append(factory.create(os.path.dirname(current_file), 'Current folder'))
-    items += sorted(factory.create(path, os.path.basename(path)) for path in paths)
+    pathitems = [factory.create(path, os.path.basename(path)) for path in paths]
+    items += sorted(x for x in pathitems if x is not None)
     _show_quick_panel(items)
 
 def _show_quick_panel(items):

@@ -51,7 +51,7 @@ def module(module_name, path, metaname=None):
       info = ModuleInfo(metaname, module.__doc__, [])
       for obj_name in [x for x in dir(module) if not x.startswith('_')]:
         obj = getattr(module, obj_name)
-        if inspect.isfunction(obj):
+        if inspect.isfunction(obj) and obj.__module__ == module.__name__:
           info.functions.append(routine(obj))
       return info
     except Exception as e:

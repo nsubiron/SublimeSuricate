@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import imp
-import os
 import sys
 
 import sublime
@@ -24,20 +23,24 @@ import sublime_plugin
 
 Verbose = True
 
-SuricateFolder = os.path.dirname(os.path.abspath(__file__))
+ForceReloadModules = True
 
 try:
 
   import importlib
 
-  def reload_module(modulename):
-      if Verbose: print('-- reloading ' + modulename)
-      m = importlib.import_module('.' + modulename, __package__)
-      return imp.reload(m)
+  def import_module(name, force_reload=ForceReloadModules):
+      if Verbose: print('  import ' + name)
+      m = importlib.import_module('.' + name, __package__)
+      return imp.reload(m) if force_reload else m
 
 except ImportError:
 
   # Workaround for Sublime Text 2.
+
+  import os
+
+  __ThisFolder__ = os.path.dirname(os.path.abspath(__file__))
 
   def _import_from_path(name, path):
       fp, pathname, description = imp.find_module(name, path)
@@ -48,20 +51,19 @@ except ImportError:
         if fp:
           fp.close()
 
-  def _import_from_module(module, name):
+  def _import_from_module(name, module):
       module = __import__(module, fromlist=[str(name)])
       return getattr(module, name)
 
-  def reload_module(modulename):
-      if Verbose: print('-- reloading ' + modulename)
-      parent = modulename.split('.')[0]
-      m = None
-      for name in modulename.split('.')[1:]:
-        m = _import_from_module(parent, name)
+  def import_module(name, force_reload=ForceReloadModules):
+      if Verbose: print('  import ' + name)
+      if '.' not in name:
+        return _import_from_path(name, [__ThisFolder__])
+      parent = name.split('.')[0]
+      for name in name.split('.')[1:]:
+        m = _import_from_module(name, parent)
         parent = name
-      if m is None:
-        return _import_from_path(parent, [SuricateFolder])
-      return reload(m)
+      return imp.reload(m) if force_reload else m
 
 class DummyManager(object):
     def update(self, view):
@@ -85,20 +87,20 @@ Holder = ManagerHolder(DummyManager())
 def plugin_loaded():
     print('reloading %s dependencies' % __name__)
     # Reload suricate package.
-    suricate = reload_module('suricate')
-    reload_module('suricate.pybase')
-    defs = reload_module('suricate.defs')
-    reload_module('suricate.flags')
-    reload_module('suricate.util')
-    reload_module('suricate.build_variables')
-    suricate.reload_module = reload_module
+    suricate = import_module('suricate', True)
+    import_module('suricate.pybase', True)
+    defs = import_module('suricate.defs', True)
+    import_module('suricate.flags', True)
+    import_module('suricate.util', True)
+    import_module('suricate.build_variables', True)
+    suricate.import_module = import_module
     suricate.Settings = sublime.load_settings(defs.SettingsFileBaseName)
     suricate.Verbose = Verbose
     sys.modules['suricate'] = suricate
     # Reload plugin package.
-    reload_module('plugin')
-    reload_module('plugin.menu_manager')
-    command_manager = reload_module('plugin.command_manager')
+    import_module('plugin', True)
+    import_module('plugin.menu_manager', True)
+    command_manager = import_module('plugin.command_manager', True)
     commands = sublime.load_settings(defs.CommandsFileBaseName)
     # Starting up manager.
     manager = command_manager.CommandManager()
@@ -110,7 +112,7 @@ def plugin_loaded():
     Holder.set(manager)
 
 if sublime.version() < '3000':
-  reload_module('lib')
+  import_module('lib', True)
   sublime.set_timeout(plugin_loaded, 2000)
 
 class SuricateCommand(sublime_plugin.TextCommand):

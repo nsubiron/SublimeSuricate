@@ -21,7 +21,7 @@ import os
 import inspect
 
 from collections import namedtuple
-from suricate import reload_module
+from suricate import import_module
 from suricate import pybase
 
 ModuleInfo = namedtuple('ModuleInfo', ['name', 'doc', 'functions'])
@@ -47,7 +47,7 @@ def module(module_name, path, metaname=None):
     if metaname is None:
       metaname = module_name
     try:
-      module = reload_module('lib.' + module_name)
+      module = import_module('lib.' + module_name)
       info = ModuleInfo(metaname, module.__doc__, [])
       for obj_name in [x for x in dir(module) if not x.startswith('_')]:
         obj = getattr(module, obj_name)

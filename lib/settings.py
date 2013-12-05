@@ -17,9 +17,9 @@
 
 import sublime
 
-from suricate import SettingsFileBaseName
+from suricate import defs
 
-def toggle_boolean(key, base_name=SettingsFileBaseName):
+def toggle_boolean(key, base_name=defs.SettingsFileBaseName):
     settings = sublime.load_settings(base_name)
     value = settings.get(key)
     if isinstance(value, bool):

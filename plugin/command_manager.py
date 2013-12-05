@@ -19,10 +19,9 @@ import inspect
 import sublime
 import sys
 
-import suricate
-
 from suricate import build_variables
 from suricate import flags
+from suricate import import_module
 from suricate import util
 
 from suricate.defs import *
@@ -78,7 +77,7 @@ class CommandManager(object):
         func = self.commands[key][Func]
         args = self.commands[key][Args]
         module_name, function = func.rsplit('.', 1)
-        module = suricate.reload_module('lib.' + module_name)
+        module = import_module('lib.' + module_name)
         funcobj = getattr(module, function)
         argspec = inspect.getargspec(funcobj).args
         kwargs = dict((k,i) for k,i in metargs.items() if k in argspec)

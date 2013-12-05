@@ -20,11 +20,11 @@ import sublime
 
 from suricate import Settings
 from suricate import build_variables
-from suricate import reload_module
+from suricate import import_module
 from suricate import util
 
-process = reload_module('lib.process')
-sublime_wrapper =reload_module('lib.sublime_wrapper')
+process = import_module('lib.process')
+sublime_wrapper = import_module('lib.sublime_wrapper')
 
 OpenMode = 'open'
 LaunchMode = 'launch'

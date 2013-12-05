@@ -21,12 +21,12 @@ import sublime
 from suricate import Settings
 from suricate import build_variables
 from suricate import flags
-from suricate import reload_module
+from suricate import import_module
 from suricate import util
 
-process = reload_module('lib.process')
-sublime_wrapper = reload_module('lib.sublime_wrapper')
-vcs_parser = reload_module('lib.vcs_parser')
+process = import_module('lib.process')
+sublime_wrapper = import_module('lib.sublime_wrapper')
+vcs_parser = import_module('lib.vcs_parser')
 
 SourceControlFileBaseName = 'SourceControlCommands.json'
 

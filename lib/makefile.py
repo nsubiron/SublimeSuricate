@@ -17,9 +17,9 @@
 
 import os
 
-from suricate import reload_module
+from suricate import import_module
 
-sublime_wrapper =reload_module('lib.sublime_wrapper')
+sublime_wrapper = import_module('lib.sublime_wrapper')
 
 def make(makefile, target=None):
     folder = os.path.dirname(makefile)

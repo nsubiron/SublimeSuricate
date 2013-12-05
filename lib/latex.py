@@ -20,6 +20,10 @@
 import os
 import sublime
 
+from suricate import import_module
+
+sublime_wrapper = import_module('lib.sublime_wrapper')
+
 if sublime.version() >= '3000':
   raise Exception('Not implemented for this platform.')
 
@@ -50,11 +54,11 @@ def convert_to_tex(string):
       string = string.replace(char, tex)
     return string
 
-def paragraph_to_tex(view):
+def paragraph_to_tex(edit, view):
     """Convert special characters in paragraph to TeX symbols."""
     view.run_command('expand_selection_to_paragraph')
     func = lambda region: convert_to_tex(view.substr(region))
-    sublime_wrapper.foreach_region(func, view, clear=True)
+    sublime_wrapper.foreach_region(func, edit, view, clear=True)
 
 _P = lambda char, tex: (unicode(char, 'utf-8'), tex)
 

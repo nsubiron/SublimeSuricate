@@ -26,9 +26,9 @@ def complete_line(line, char=None, n=80):
       return (line[-1] if char is None else char)*(n-len(line))
     return line
 
-def fill_current_line(view, *args, **kwargs):
-    """See text.fill_line.
+def fill_current_line(edit, view, *args, **kwargs):
+    """See text.complete_line.
     @todo It doesn't work as expected, rewrite."""
     getline = lambda region: view.substr(view.line(region.end()))
     func = lambda region: complete_line(getline(region), *args, **kwargs)
-    sublime_wrapper.foreach_region(func, view, clear=True)
+    sublime_wrapper.foreach_region(func, edit, view, clear=True)

@@ -53,9 +53,11 @@ def flush_to_buffer(text, name=None, scratch=False, syntax=None, syntax_file=Non
       view.set_syntax_file('Packages/{0}/{0}.tmLanguage'.format(syntax))
     elif syntax_file is not None:
       view.set_syntax_file(syntax_file)
-    edit = view.begin_edit()
-    view.insert(edit, 0, text)
-    view.end_edit(edit)
+    auto_indent = view.settings().get("auto_indent")
+    view.settings().set("auto_indent", False)
+    view.run_command('insert', {'characters': text})
+    view.settings().set("auto_indent", auto_indent)
+    view.run_command("move_to", {"to": "bof"})
 
 def show_quick_panel(display_list, on_done, window=None):
     """Show a quick panel fed with display_list on window. on_done must be a
@@ -68,10 +70,13 @@ def show_quick_panel(display_list, on_done, window=None):
       window = sublime.active_window()
     def _on_done(index):
         if index != -1:
-          return on_done(display_list[index])
+          on_done(display_list[index])
         sublime.status_message('Cancelled')
-    window.run_command('hide_overlay')
-    window.show_quick_panel(display_list, _on_done)
+    # This allows nested quick panels on Sublime Text 3.
+    def _on_show_quick_panel():
+        window.run_command('hide_overlay')
+        window.show_quick_panel(display_list, _on_done)
+    sublime.set_timeout(_on_show_quick_panel, 0)
 
 def copy_build_variable_to_clipboard(key=None):
     """If key is None, show a quick panel with the currently available build
@@ -99,26 +104,19 @@ def get_selection(view=None):
       view = sublime.active_window().active_view()
     return [view.substr(region) for region in view.sel()]
 
-def insert(string, view=None, clear=False):
+def insert(string, edit, view, clear=False):
     """Insert string replacing view's current selection. If clear, move the
     cursor to the end of each region."""
-    if view is None:
-      view = sublime.active_window().active_view()
-    edit = view.begin_edit()
     for region in view.sel():
       if clear:
         view.replace(edit, region, '')
         view.insert(edit, region.begin(), string)
       else:
         view.replace(edit, region, string)
-    view.end_edit(edit)
 
-def foreach_region(func, view=None, clear=False):
+def foreach_region(func, edit, view, clear=False):
     """Replace each selected region by the result of applying func on that
     region. If clear, move the cursor to the end of each region."""
-    if view is None:
-      view = sublime.active_window().active_view()
-    edit = view.begin_edit()
     for region in view.sel():
       string = func(region)
       if clear:
@@ -126,4 +124,3 @@ def foreach_region(func, view=None, clear=False):
         view.insert(edit, region.begin(), string)
       else:
         view.replace(edit, region, string)
-    view.end_edit(edit)

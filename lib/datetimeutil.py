@@ -65,7 +65,7 @@ def time_to_clipboard(view=None):
     on_done = lambda picked: sublime.set_clipboard(picked)
     sublime_wrapper.show_quick_panel(times, on_done)
 
-def continue_serie(string=None, view=None):
+def continue_serie(edit, view):
     # @todo Improve. Fails for one year increments on leap-years.
     selection = sublime_wrapper.get_selection(view)[0]
     # Use just last two lines.
@@ -88,4 +88,4 @@ def continue_serie(string=None, view=None):
     if selection[-1] != '\n':
       selection += '\n'
     selection += ' ' * indentation + next.strftime(format) + '\n'
-    sublime_wrapper.insert(selection, view)
+    sublime_wrapper.insert(selection, edit, view)

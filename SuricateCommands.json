@@ -54,18 +54,6 @@
       "func":     "settings.toggle_boolean",
       "args":     { "key": "dev_mode" }
     },
-    "reload": {
-      "caption":  "Reload",
-      "mnemonic": "R",
-      "group":    "main.b.dev",
-      "func":     "process.touch",
-      "args":     {
-        "paths": [
-          "${packages}/SublimeSuricate/suricate_plugin.py",
-          "${packages}/SublimeSuricate/SuricateCommands.json"
-        ]
-      }
-    },
 
     // Version control.
     "vcs_checkout": {
@@ -211,7 +199,7 @@
       "func":     "doc.to_buffer",
       "args": {
         "title": "Sublime Suricate Documentation",
-        "root": "${packages}/SublimeSuricate/lib"
+        "root": "${suricate_path}/lib"
       }
     },
     "see_on_github": {
@@ -235,7 +223,7 @@
       "caption":  "Settings – Default",
       "group":    "main.preferences",
       "func":     "sublime.open_file",
-      "args":     { "file": "${packages}/SublimeSuricate/Suricate.sublime-settings" }
+      "args":     { "file": "${suricate_path}/Suricate.sublime-settings" }
     },
     "pref_settings_user": {
       "caption":  "Settings – User",
@@ -247,7 +235,7 @@
       "caption":  "Commands – Default",
       "group":    "main.preferences.commands",
       "func":     "sublime.open_file",
-      "args":     { "file": "${packages}/SublimeSuricate/SuricateCommands.json" }
+      "args":     { "file": "${suricate_path}/SuricateCommands.json" }
     },
     "pref_commands_user": {
       "caption":  "Commands – User",
@@ -259,7 +247,7 @@
       "caption":  "Source Control – Default",
       "group":    "main.preferences.vcs",
       "func":     "sublime.open_file",
-      "args":     { "file": "${packages}/SublimeSuricate/SourceControlCommands.json" }
+      "args":     { "file": "${suricate_path}/SourceControlCommands.json" }
     },
     "pref_source_control_user": {
       "caption":  "Source Control – User",

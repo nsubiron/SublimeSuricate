@@ -24,7 +24,7 @@ from suricate import util
 from suricate.defs import *
 
 def print_menus(commands, settings, force=False):
-    with util.pushd(SuricateFolder):
+    with util.pushd(SuricatePath):
       update = force
       manager = MenuManager(settings)
       generated_files = manager.getfilenames()

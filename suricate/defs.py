@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import os
+import sublime
 
 CommandsFileBaseName = 'SuricateCommands.json'
 
@@ -23,11 +24,15 @@ SettingsFileBaseName = 'Suricate.sublime-settings'
 
 __this_folder__ = os.path.dirname(os.path.abspath(__file__))
 
-SuricateFolder = os.path.abspath(os.path.join(__this_folder__, '..'))
+SuricatePackagePath = os.path.abspath(os.path.join(__this_folder__, '..'))
+
+SuricateBaseName = os.path.basename(SuricatePackagePath)
+
+SuricatePath = os.path.abspath(os.path.join(sublime.packages_path(), SuricateBaseName))
 
 LibName = 'lib'
 
-LibFolder = os.path.join(SuricateFolder, LibName)
+LibFolder = os.path.join(SuricatePackagePath, LibName)
 
 DefaultDefaults = {'group': None, 'args': {}, 'flags': None, 'keys': [], 'context': False}
 
@@ -41,3 +46,12 @@ Args     = 4
 Flags    = 5
 Keys     = 6
 Context  = 7
+
+SuricateVariables = {
+  'suricate_base_name': SuricateBaseName,
+  'suricate_package_path': SuricatePackagePath,
+  'suricate_path': SuricatePath
+}
+
+_clean = lambda p: '/' + p.replace(os.sep, '/').replace(':', '')
+SuricateMenuVariables = dict((k, _clean(v)) for k, v in SuricateVariables.items())

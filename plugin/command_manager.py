@@ -50,7 +50,7 @@ def parse_commands(command_settings):
           commands[key] = list_format
       except KeyError:
         pass
-    return flagmap, commands
+    return flagmap, util.replacekeys(commands, SuricateMenuVariables)
 
 class CommandManager(object):
     def __init__(self):

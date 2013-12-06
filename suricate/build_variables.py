@@ -26,16 +26,21 @@
   * ``${project_base_name}`` The name only portion of the current project file.
   * ``${project_extension}`` The extension portion of the current project file.
   * ``${project_name}`` The name portion of the current project file.
-  * ``${project_path}`` The directory of the current project file."""
+  * ``${project_path}`` The directory of the current project file.
+Suricate variables:
+  * ``suricate_base_name`` The base name of the suricate package.
+  * ``suricate_path`` The full path to the suricate folder under Packages folder.
+  * ``suricate_package_path`` The full installation path of the suricate package."""
 
 import os
 import sublime
 
+from . import defs
 from . import util
 
 def get(view=None):
     """Get a dictionary with the available build variables."""
-    vmap = {}
+    vmap = defs.SuricateVariables
     try:
       vmap['packages'] = sublime.packages_path()
       def _add_file(key, path):

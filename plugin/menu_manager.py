@@ -19,32 +19,31 @@ import json
 import os
 import sublime
 
+from suricate import defs
 from suricate import util
 
-from suricate.defs import *
+Folder = defs.SuricatePath
 
-def print_menus(commands, settings, force=False):
-    with util.pushd(SuricatePath):
-      update = force
-      manager = MenuManager(settings)
-      generated_files = manager.getfilenames()
-      if not force:
-        mtime = 0
-        gettime = lambda filename: os.stat(filename).st_mtime
-        for commands_file in util.fwalk('..', CommandsFileBaseName):
-          mtime = max(mtime, gettime(commands_file))
-        outdated = lambda f: not os.path.isfile(f) or gettime(f) < mtime
-        update = any(map(outdated, generated_files))
-      if update:
-        for key in sorted(commands.keys(), key=lambda k: commands[k][Caption]):
-          if not manager.add(key, commands[key]):
-            del commands[key]
-        manager.writeout()
-        sublime.status_message('Suricate commands and menus updated.')
+CommandsFileBaseName =    'Suricate.sublime-commands'
+MainMenuFileBaseName =    'Main.sublime-menu'
+ContextMenuFileBaseName = 'Context.sublime-menu'
+KeymapFileBaseName =      'Default (%s).sublime-keymap' % sublime.platform().title()
 
-class SublimeFile(object):
-    def __init__(self, filename):
-        self.filename = filename
+def print_menus(commands, folder, settings):
+    """Generate sublime files based on commands. Return the commands dictionary
+    filtering out the commands not added."""
+    if not os.path.exists(folder):
+      os.mkdir(folder)
+    manager = MenuManager(folder, settings)
+    for key in sorted(commands.keys(), key=lambda k: commands[k].caption):
+      if not manager.add(key, commands[key]):
+        del commands[key]
+    manager.writeout()
+    sublime.status_message('Suricate commands and menus updated.')
+    return commands
+
+class SublimeData(object):
+    def __init__(self):
         self.base = []
         self.groups = {}
 
@@ -65,59 +64,68 @@ class SublimeFile(object):
             data += sub
         return data
 
+class SublimeFile(SublimeData):
+    def __init__(self, path, basename):
+        SublimeData.__init__(self)
+        self.filename = os.path.join(path, basename)
+
     def writeout(self):
         with open(self.filename, 'w+') as f:
-          f.write(json.dumps(self.asdata(), indent=2))
+          data = util.replacekeys(self.asdata(), defs.SuricateMenuVariables)
+          f.write(json.dumps(data, indent=2))
 
 class MenuManager(object):
-    def __init__(self, settings):
-        self.smain = SublimeFile(None)
-        self.pmain = SublimeFile(None)
-        self.commands = SublimeFile('Suricate.sublime-commands')
-        self.main = SublimeFile('Main.sublime-menu')
-        self.context = SublimeFile('Context.sublime-menu')
-        platform = sublime.platform().title()
-        self.keymap = SublimeFile('Default (%s).sublime-keymap' % platform)
+    def __init__(self, folder, settings):
+        self.smain = SublimeData()
+        self.pmain = SublimeData()
+        self.commands = SublimeFile(folder, CommandsFileBaseName)
+        self.main = SublimeFile(folder, MainMenuFileBaseName)
+        self.context = SublimeFile(folder, ContextMenuFileBaseName)
+        self.keymap = SublimeFile(folder, KeymapFileBaseName)
         # Settings.
         self.dev_mode = settings.get('dev_mode', False)
         self.override_ctrl_o = settings.get('override_ctrl_o', False)
         self.show_suricate_menu = settings.get('show_suricate_menu', False)
+        ignore_list = settings.get('ignore_groups', [])
+        if not ignore_list:
+          ignore_list = None
+        self.ignore_groups = util.regex_callable(ignore_list)
 
     def getfilenames(self):
         files = [self.commands, self.main, self.context, self.keymap]
         return map(lambda sf: sf.filename, files)
 
     def add(self, key, command):
-        group = command[Group] if command[Group] is not None else ''
+        group = command.group if command.group is not None else ''
+        if not self._group_is_valid(group):
+          return False
         if group.endswith('.dev'):
-          if not self.dev_mode:
-            return False
           group = group[:-4]
-        sublimecmd = command[Func].startswith('sublime.')
+        sublimecmd = command.func.startswith('sublime.')
         if sublimecmd:
-          _, cmd = command[Func].rsplit('.', 1)
-          basic = {'command': cmd, 'args': command[Args]}
+          _, cmd = command.func.rsplit('.', 1)
+          basic = {'command': cmd, 'args': command.args}
         else:
           basic = {'command': 'suricate', 'args': {'key': key}}
         if not group.startswith('.'):
-          caption = command[Caption]
+          caption = command.caption
           quickpanel = dict(basic)
           quickpanel['caption'] = 'Suricate: %s' % caption
           menus = dict(basic)
           menus['caption'] = caption
-          if command[Mnemonic]:
-            menus['mnemonic'] = command[Mnemonic]
+          if command.mnemonic:
+            menus['mnemonic'] = command.mnemonic
           self.commands.add(quickpanel)
-          if command[Context]:
+          if command.context:
             self.context.add(menus, group)
           if group is not None and group.startswith('main.'):
             if group.startswith('main.preferences'):
               self.pmain.add(menus, group)
             else:
               self.smain.add(menus, group)
-        if command[Keys]:
+        if command.keys:
           keybinding = dict(basic)
-          keybinding['keys'] = self._override_keys(command[Keys])
+          keybinding['keys'] = self._override_keys(command.keys)
           self.keymap.add(keybinding)
         return not sublimecmd
 
@@ -127,6 +135,11 @@ class MenuManager(object):
         self.keymap.writeout()
         self._fill_main_menu()
         self.main.writeout()
+
+    def _group_is_valid(self, group):
+        if group.endswith('.dev') and not self.dev_mode:
+          return False
+        return not self.ignore_groups(group)
 
     def _override_keys(self, keys):
         if self.override_ctrl_o and keys[0].lower() == 'ctrl+o':

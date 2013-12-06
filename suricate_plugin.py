@@ -21,7 +21,7 @@ import sys
 import sublime
 import sublime_plugin
 
-Verbose = True
+Verbose = False
 
 ForceReloadModules = True
 
@@ -93,27 +93,24 @@ def plugin_loaded():
     import_module('suricate.flags', True)
     import_module('suricate.util', True)
     import_module('suricate.build_variables', True)
+    import_module('suricate.commands', True)
     suricate.import_module = import_module
     suricate.Settings = sublime.load_settings(defs.SettingsFileBaseName)
-    suricate.Verbose = Verbose
     sys.modules['suricate'] = suricate
     # Reload plugin package.
     import_module('plugin', True)
     import_module('plugin.menu_manager', True)
     command_manager = import_module('plugin.command_manager', True)
-    commands = sublime.load_settings(defs.CommandsFileBaseName)
     # Starting up manager.
     manager = command_manager.CommandManager()
-    manager.load(commands, suricate.Settings)
-    commands.clear_on_change('Suricate')
-    commands.add_on_change('Suricate', manager.reload_settings)
+    manager.load(suricate.Settings)
     suricate.Settings.clear_on_change('Suricate')
     suricate.Settings.add_on_change('Suricate', manager.reload_settings)
     Holder.set(manager)
 
 if sublime.version() < '3000':
   import_module('lib', True)
-  sublime.set_timeout(plugin_loaded, 2000)
+  sublime.set_timeout(plugin_loaded, 500)
 
 class SuricateCommand(sublime_plugin.TextCommand):
     def __init__(self, *args, **kwargs):
@@ -125,7 +122,7 @@ class SuricateCommand(sublime_plugin.TextCommand):
         self.filename = self.view.file_name()
         self.flags = Holder.manager.update(self.filename)
 
-    def is_visible(self, key):
+    def is_visible(self, key=None):
         if self.filename != self.view.file_name():
           self._update()
         return Holder.manager.is_enabled(key, self.flags)

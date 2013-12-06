@@ -18,8 +18,6 @@
 import os
 import sublime
 
-CommandsFileBaseName = 'SuricateCommands.json'
-
 SettingsFileBaseName = 'Suricate.sublime-settings'
 
 __this_folder__ = os.path.dirname(os.path.abspath(__file__))
@@ -33,19 +31,6 @@ SuricatePath = os.path.abspath(os.path.join(sublime.packages_path(), SuricateBas
 LibName = 'lib'
 
 LibFolder = os.path.join(SuricatePackagePath, LibName)
-
-DefaultDefaults = {'group': None, 'args': {}, 'flags': None, 'keys': [], 'context': False}
-
-TagList = ["caption", "mnemonic", "group", "func", "args", "flags", "keys", "context"]
-
-Caption  = 0
-Mnemonic = 1
-Group    = 2
-Func     = 3
-Args     = 4
-Flags    = 5
-Keys     = 6
-Context  = 7
 
 SuricateVariables = {
   'suricate_base_name': SuricateBaseName,

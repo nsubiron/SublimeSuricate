@@ -4,6 +4,12 @@
   // Requires dev_mode on.
   "show_suricate_menu": false,
 
+  // Profiles are added in the order provided here.
+  "profiles": ["Default"],
+
+  // Command groups matching any of this patterns are ignored.
+  "ignore_groups": [],
+
   // Replace starting ctrl+o in key bindings by the string given here.
   "override_ctrl_o": false,
 

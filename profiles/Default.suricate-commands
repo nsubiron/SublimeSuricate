@@ -235,13 +235,13 @@
       "caption":  "Commands – Default",
       "group":    "main.preferences.commands",
       "func":     "sublime.open_file",
-      "args":     { "file": "${suricate_path}/SuricateCommands.json" }
+      "args":     { "file": "${suricate_path}/profiles/Default.suricate-commands" }
     },
     "pref_commands_user": {
       "caption":  "Commands – User",
       "group":    "main.preferences.commands",
       "func":     "sublime.open_file",
-      "args":     { "file": "${packages}/User/SuricateCommands.json" }
+      "args":     { "file": "${packages}/User/Default.suricate-commands" }
     },
     "pref_source_control_default": {
       "caption":  "Source Control – Default",

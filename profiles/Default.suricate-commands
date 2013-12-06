@@ -55,6 +55,22 @@
       "args":     { "key": "dev_mode" }
     },
 
+    "add_profile": {
+      "caption":  "Add profile ...",
+      "group":    "profiles",
+      "func":     "profiles.add"
+    },
+    "remove_profile": {
+      "caption":  "Remove profile ...",
+      "group":    "profiles",
+      "func":     "profiles.remove"
+    },
+    "show_profiles": {
+      "caption":  "Profiles",
+      "group":    "main.a",
+      "func":     "profiles.to_buffer"
+    },
+
     // Version control.
     "vcs_checkout": {
       "caption":  "Checkout",

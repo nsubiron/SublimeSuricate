@@ -22,9 +22,12 @@ SettingsFileBaseName = 'Suricate.sublime-settings'
 
 __this_folder__ = os.path.dirname(os.path.abspath(__file__))
 
-SuricatePackagePath = os.path.abspath(os.path.join(__this_folder__, '..'))
+if __this_folder__.endswith('.sublime-package'):
+  SuricatePackagePath = __this_folder__
+else:
+  SuricatePackagePath = os.path.abspath(os.path.join(__this_folder__, '..'))
 
-SuricateBaseName = os.path.basename(SuricatePackagePath)
+SuricateBaseName, _ = os.path.splitext(os.path.basename(SuricatePackagePath))
 
 SuricatePath = os.path.abspath(os.path.join(sublime.packages_path(), SuricateBaseName))
 
@@ -39,4 +42,9 @@ SuricateVariables = {
 }
 
 _clean = lambda p: '/' + p.replace(os.sep, '/').replace(':', '')
-SuricateMenuVariables = dict((k, _clean(v)) for k, v in SuricateVariables.items())
+
+SuricateMenuVariables = {
+  'suricate_base_name': SuricateBaseName,
+  'suricate_package_path': '${packages}/' + SuricateBaseName,
+  'suricate_path': '${packages}/' + SuricateBaseName
+}

@@ -17,6 +17,8 @@
 
 import inspect
 
+import sublime
+
 from suricate import build_variables
 from suricate import commands as command_parser
 from suricate import defs
@@ -28,14 +30,28 @@ from . import menu_manager
 class CommandManager(object):
     def __init__(self):
         self.commands = {}
+        self.profiles = []
 
     def load(self, settings):
         self.settings = settings
         self.reload_settings()
 
+    def _clear_on_change(self):
+        for profile in self.profiles:
+          settings = sublime.load_settings(profile + command_parser.ProfileExtension)
+          settings.clear_on_change('CommandManager')
+
+    def _add_on_change(self):
+        for profile in self.profiles:
+          settings = sublime.load_settings(profile + command_parser.ProfileExtension)
+          settings.add_on_change('CommandManager', self.reload_settings)
+
     def reload_settings(self):
-        commands = command_parser.get(self.settings.get('profiles', []))
+        self._clear_on_change()
+        self.profiles = self.settings.get('profiles', [])
+        commands = command_parser.get(self.profiles)
         self.commands = menu_manager.print_menus(commands, defs.SuricatePath, self.settings)
+        self._add_on_change()
 
     def update(self, filename):
         return flags.parse(filename)

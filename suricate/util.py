@@ -72,13 +72,13 @@ def regex_callable(patterns):
     r = re.compile(r'|'.join(fnmatch.translate(p) for p in patterns))
     return lambda x: r.match(x) is not None
 
-def walk(root, file_includes=['*'], file_excludes=None, dir_excludes=['.git', '.svn']):
+def walk(root, file_includes=['*'], file_excludes=None, dir_excludes=['.git', '.svn'], followlinks=False):
     """Convenient wrap around os.walk. Patterns are checked on base names, not
     on full path names."""
     fincl = regex_callable(file_includes)
     fexcl = regex_callable(file_excludes)
     dexcl = regex_callable(dir_excludes)
-    for path, dirs, files in os.walk(os.path.abspath(root)):
+    for path, dirs, files in os.walk(os.path.abspath(root), followlinks=followlinks):
       dirs[:] = [d for d in dirs if not dexcl(d)]
       files[:] = [f for f in files if fincl(f) and not fexcl(f)]
       yield path, dirs, files

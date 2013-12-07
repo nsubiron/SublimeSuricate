@@ -34,7 +34,7 @@ if sublime.version() < '3000':
   from suricate import util
 
   def find_profiles():
-      lst = list(util.fwalk(sublime.packages_path(), ['*' + Extension]))
+      lst = list(util.fwalk(sublime.packages_path(), ['*' + Extension], followlinks=True))
       return set(os.path.splitext(os.path.basename(x))[0] for x in lst)
 
 else:

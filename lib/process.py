@@ -22,6 +22,7 @@ import subprocess
 from threading import Thread
 
 from suricate import build_variables
+from suricate import Verbose
 
 def touch(paths, times=None):
     for path in paths:
@@ -34,7 +35,7 @@ def _filter(obj):
 
 def system(command):
     command = _filter(command)
-    print('Executing: ' + command)
+    if Verbose: print('Executing: ' + command)
     return os.system(command)
 
 def system_quiet(command):
@@ -65,7 +66,7 @@ def new_thread(*args, **kwargs):
 
 __is_windows = sublime.platform().lower() == 'windows'
 def _popen_internal(cmd=[], working_dir=None, shell=__is_windows):
-    print('popen: %s' % ' '.join(cmd))
+    if Verbose: print('popen: %s' % ' '.join(cmd))
     kwargs = {'cwd': working_dir, 'stdout': subprocess.PIPE, 'shell': shell}
     process = subprocess.Popen(cmd, **kwargs)
     return process

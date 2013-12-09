@@ -92,7 +92,6 @@ def to_buffer():
     text = '%s\n%s\n\n' % (title, '='*len(title))
     current = suricate.Settings.get(SettingsKey, [])
     profiles = [['Your profile', current]] + [[x,[x]] for x in find_profiles()]
-    print(profiles)
     for name, profile in profiles:
       text += '### %s\n\n' % name
       text += print_commands(command_parser.get(profile)) + '\n\n'

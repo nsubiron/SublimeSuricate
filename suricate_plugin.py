@@ -96,6 +96,7 @@ def plugin_loaded():
     import_module('suricate.commands', True)
     suricate.import_module = import_module
     suricate.Settings = sublime.load_settings(defs.SettingsFileBaseName)
+    suricate.Verbose = Verbose
     sys.modules['suricate'] = suricate
     # Reload plugin package.
     import_module('plugin', True)

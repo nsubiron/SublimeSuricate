@@ -19,6 +19,7 @@ import os
 import sublime
 
 from suricate import Settings
+from suricate import Verbose
 from suricate import build_variables
 from suricate import flags
 from suricate import import_module
@@ -33,7 +34,7 @@ SourceControlFileBaseName = 'SourceControlCommands.json'
 def _do(cmd, path, out=None, **kwargs):
     working_dir, base_name = os.path.split(path) if os.path.isfile(path) else (path, '.')
     cmd = util.replacekeys(cmd, {'path': base_name})
-    print(' '.join(cmd))
+    if Verbose: print(' '.join(cmd))
     if out == 'gui':
       process.new_thread(cmd, working_dir)
     elif out == 'buffer':
@@ -62,7 +63,7 @@ def call(cmd, active_flags, view):
       if cmdi is not None and \
          flags.special_check(active_flags, flags.from_string(item['flags'])) and \
          all(util.which(exe) is not None for exe in item['exes']):
-        print('%s: %s' % (item['name'], cmdi['caption']))
+        if Verbose: print('%s: %s' % (item['name'], cmdi['caption']))
         cmdi['path'] = view.file_name()
         return _do(**cmdi)
     print('Source control command \'%s\' is not available.' % cmd)

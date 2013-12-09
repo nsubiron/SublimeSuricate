@@ -106,7 +106,6 @@ else:
       def parse(self, projects):
           for project in [p for p in projects if p]:
             project = _absre(project)
-            print('Parsing project file "%s"' % project)
             project_json = _load_json_file(project)
             project_folders = sorted(_absre(f['path']) for f in project_json.get('folders', []))
             if self._check_folders(project_folders, init=False):

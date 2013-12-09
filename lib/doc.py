@@ -91,8 +91,3 @@ def to_buffer(title, root):
     text += '## modules\n\n'
     text += '\n'.join(line for line in markdown(lambda: folder(root), 3))
     sublime_wrapper.flush_to_buffer(text, name=title, scratch=True, syntax='Markdown')
-
-if __name__ == '__main__':
-   root = os.getcwd()
-   for line in markdown(lambda: folder(root)):
-     print(line)

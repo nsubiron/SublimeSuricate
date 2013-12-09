@@ -50,8 +50,8 @@ def _create_commands(settings):
         command = Command(**args)
         if flags.check_platform(command.flags):
           commands[key] = command
-      except KeyError as e:
-        print('%s: Command "%s" not added.' (e, key))
+      except TypeError as e:
+        print('Command "%s" not added: mandatory field missing.' % key)
     return commands
 
 def get(profiles):

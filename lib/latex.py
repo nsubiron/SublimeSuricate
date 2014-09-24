@@ -13,17 +13,14 @@ import sublime
 from suricate import build_variables
 from suricate import import_module
 
+process = import_module('lib.process')
 sublime_wrapper = import_module('lib.sublime_wrapper')
-
-if sublime.version() >= '3000':
-  raise Exception('Not implemented for this platform.')
-
-temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
-                   '.glo', '.bbl', '.ilg', '.toc', '.ind', '.out',
-                   '.synctex.gz', '.blg']
 
 def clean(view=None):
     """Remove LaTeX temporary files."""
+    temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
+                       '.glo', '.bbl', '.ilg', '.toc', '.ind', '.out',
+                       '.synctex.gz', '.blg']
     bvars = build_variables.get(view)
     prefix = os.path.abspath(os.path.join(bvars['file_path'], bvars['file_base_name']))
     counter = 0
@@ -51,7 +48,10 @@ def paragraph_to_tex(edit, view):
     func = lambda region: convert_to_tex(view.substr(region))
     sublime_wrapper.foreach_region(func, edit, view, clear=True)
 
-_P = lambda char, tex: (unicode(char, 'utf-8'), tex)
+if sublime.version() >= '3000':
+  _P = lambda char, tex: (char, tex)
+else:
+  _P = lambda char, tex: (unicode(char, 'utf-8'), tex)
 
 Map = [
     _P('#', r'\#'),

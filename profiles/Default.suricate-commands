@@ -170,20 +170,6 @@
       "keys":     ["ctrl+shift+3"]
     },
 
-    // TeX.
-    "paragraph_to_tex": {
-      "caption":  "Convert Paragraph To TeX",
-      "group":    "tex",
-      "func":     "latex.paragraph_to_tex"
-    },
-    "open_pdf": {
-      "caption":  "Open PDF",
-      "group":    "tex",
-      "flags":    "IsFile",
-      "func":     "latex.launchpdf",
-      "keys":     ["f2"]
-    },
-
     // Makefile.
     "make_makefile": {
       "caption":  "Make Makefile",

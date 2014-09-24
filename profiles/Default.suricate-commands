@@ -202,9 +202,17 @@
 
     // url.
     "searchbar": {
-      "caption":  "Search bar",
+      "caption":  "Search Bar",
       "func":     "searchbar.show",
       "keys":     ["ctrl+o", "ctrl+s"]
+    },
+    "search_on_google": {
+      "caption":  "Search On Google",
+      "group":    "launch",
+      "keys":     ["ctrl+shift+g"],
+      "func":     "searchbar.search_selection",
+      "args":     {"engine": "Google"},
+      "context":  true
     },
 
     // Suricate menu.

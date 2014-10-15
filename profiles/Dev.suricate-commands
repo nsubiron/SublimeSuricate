@@ -1,0 +1,27 @@
+{
+  // Use to override the commands in "commands" key, set on your user folder.
+  "description": "Dev commands not available on packaged release",
+
+  "commands": {
+    "defaults": {
+      "caption":  "",
+      "mnemonic": null,
+      "group":    null,
+      "args":     {},
+      "flags":    null,
+      "keys":     [],
+      "context":  false
+    },
+
+    "generate_docs": {
+      "caption":  "Documentation",
+      "mnemonic": "D",
+      "group":    "main.a.dev",
+      "func":     "doc.to_buffer",
+      "args": {
+        "title": "Sublime Suricate Documentation",
+        "root": "${suricate_path}/lib"
+      }
+    }
+  }
+}

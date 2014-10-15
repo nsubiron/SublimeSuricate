@@ -2,4 +2,8 @@
 
 .gitattributes export-ignore
 .gitignore export-ignore
+gpl-license.txt export-ignore
+
 README.md export-ignore
+lib/doc.py export-ignore
+profiles/Dev.suricate-commands export-ignore

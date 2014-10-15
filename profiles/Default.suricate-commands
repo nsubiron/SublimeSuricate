@@ -165,16 +165,6 @@
     },
 
     // Suricate menu.
-    "doc": {
-      "caption":  "Documentation",
-      "mnemonic": "D",
-      "group":    "main.a.dev",
-      "func":     "doc.to_buffer",
-      "args": {
-        "title": "Sublime Suricate Documentation",
-        "root": "${suricate_path}/lib"
-      }
-    },
     "see_on_github": {
       "caption":  "GitHub",
       "mnemonic": "G",

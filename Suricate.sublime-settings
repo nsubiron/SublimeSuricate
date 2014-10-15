@@ -2,7 +2,7 @@
   "dev_mode": false,
 
   // Requires dev_mode on.
-  "show_suricate_menu": false,
+  "show_suricate_menu": true,
 
   // Profiles are added in the order provided here.
   "profiles": ["Default"],
@@ -13,8 +13,8 @@
   // Replace starting ctrl+o in key bindings by the string given here.
   "override_ctrl_o": false,
 
-  // Known local repositories to show on the vcs quick panel.
-  // { "display name": "path" }
+  // Known local repositories to show on the vcs quick panel. Requires Version
+  // Control profile active. { "display name": "path" }
   "vcs_working_dirs": {},
 
   // List of paths to initialize the open file quick panel. Non existent paths

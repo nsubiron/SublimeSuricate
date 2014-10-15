@@ -48,65 +48,38 @@
       "context":  false
     },
 
-    // Dev.
     "toggle_dev": {
       "caption":  "Toggle Dev Mode",
       "func":     "settings.toggle_boolean",
       "args":     { "key": "dev_mode" }
     },
-
     "add_profile": {
-      "caption":  "Add profile ...",
+      "caption":  "Add profile...",
       "group":    "profiles",
       "func":     "profiles.add"
     },
     "remove_profile": {
-      "caption":  "Remove profile ...",
+      "caption":  "Remove profile...",
       "group":    "profiles",
       "func":     "profiles.remove"
     },
     "show_profiles": {
       "caption":  "Profiles",
+      "mnemonic": "P",
       "group":    "main.a",
       "func":     "profiles.to_buffer"
     },
 
-    // Version control.
-    "vcs_checkout": {
-      "caption":  "Checkout",
-      "group":    "vcs",
-      "flags":    "Surround",
-      "func":     "vcs.call",
-      "args":     { "cmd": "checkout" },
-      "keys":     [ "ctrl+o", "ctrl+c" ],
-      "context":  true
-    },
-    "vcs_diff": {
-      "caption":  "Differences",
-      "group":    "vcs",
-      "flags":    "Git|Svn|Surround",
-      "func":     "vcs.call",
-      "args":     { "cmd": "diff" },
-      "keys":     [ "ctrl+o", "ctrl+d" ],
-      "context":  true
-    },
-    "vcs_quickpanel": {
-      "caption":  "Version Control Quick Panel ...",
-      "group":    "vcs",
-      "func":     "vcs.show_quick_panel",
-      "keys":     [ "ctrl+o", "ctrl+v" ]
-    },
-
     // Quick open/launch.
     "quick_open": {
-      "caption":  "Open File Quick Panel ...",
+      "caption":  "Open File Quick Panel...",
       "group":    "quickpanel",
       "func":     "navigator.launch",
       "args":     { "mode": "open" },
       "keys":     [ "ctrl+shift+o" ]
     },
     "quick_launch": {
-      "caption":  "Launch File Quick Panel ...",
+      "caption":  "Launch File Quick Panel...",
       "group":    "quickpanel",
       "func":     "navigator.launch",
       "args":     { "mode": "launch" },
@@ -144,7 +117,7 @@
 
     // Build variables.
     "copy_build_variable": {
-      "caption":  "Copy Build Variable To Clipboard ...",
+      "caption":  "Copy Build Variable To Clipboard...",
       "group":    "bvars",
       "func":     "sublime_wrapper.copy_build_variable_to_clipboard"
     },
@@ -159,7 +132,7 @@
 
     // Date-time.
     "time_to_clipboard": {
-      "caption":  "Time To Clipboard ...",
+      "caption":  "Time To Clipboard...",
       "group":    "datetime",
       "func":     "datetimeutil.time_to_clipboard"
     },
@@ -213,9 +186,9 @@
       }
     },
     "see_on_github": {
-      "caption":  "Open Repository",
-      "mnemonic": "O",
-      "group":    "main.a.dev",
+      "caption":  "GitHub",
+      "mnemonic": "G",
+      "group":    "main.b.dev",
       "func":     "sublime.open_url",
       "args":     { "url": "https://github.com/nsubiron/SublimeSuricate" }
     },
@@ -252,18 +225,6 @@
       "group":    "main.preferences.commands",
       "func":     "sublime.open_file",
       "args":     { "file": "${packages}/User/Default.suricate-commands" }
-    },
-    "pref_source_control_default": {
-      "caption":  "Source Control – Default",
-      "group":    "main.preferences.vcs",
-      "func":     "sublime.open_file",
-      "args":     { "file": "${suricate_path}/SourceControlCommands.json" }
-    },
-    "pref_source_control_user": {
-      "caption":  "Source Control – User",
-      "group":    "main.preferences.vcs",
-      "func":     "sublime.open_file",
-      "args":     { "file": "${packages}/User/SourceControlCommands.json" }
     }
   }
 }

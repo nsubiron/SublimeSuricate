@@ -88,18 +88,17 @@
 
     // File attributes.
     "chmodx": {
-      "caption":  "Set Executable (chmod +x)",
-      "group":    "attrib",
+      "caption":  "Set Executable (chmod u+x)",
+      "group":    "chmod",
       "flags":    "Linux|IsFile",
-      "func":     "sublime_wrapper.execute",
-      "args":     { "cmd": ["chmod", "+x", "${file}"] },
-      "context":  true
+      "func":     "chmod.executable",
+      "args":     {"path": "${file}"}
     },
     "toggle_read_only": {
       "caption":  "Toggle Read-Only",
-      "group":    "attrib",
+      "group":    "chmod",
       "flags":    "Windows|Linux|IsFile",
-      "func":     "util.toggle_read_only",
+      "func":     "chmod.toggle_read_only",
       "args":     {"path": "${file}"},
       "context":  true
     },
@@ -117,7 +116,7 @@
 
     // Build variables.
     "copy_build_variable": {
-      "caption":  "Copy Build Variable To Clipboard...",
+      "caption":  "Build Variable To Clipboard...",
       "group":    "bvars",
       "func":     "sublime_wrapper.copy_build_variable_to_clipboard"
     },
@@ -132,7 +131,7 @@
 
     // Date-time.
     "time_to_clipboard": {
-      "caption":  "Time To Clipboard...",
+      "caption":  "Date-Time To Clipboard...",
       "group":    "datetime",
       "func":     "datetimeutil.time_to_clipboard"
     },
@@ -141,15 +140,6 @@
       "group":    "datetime",
       "func":     "datetimeutil.continue_serie",
       "keys":     ["ctrl+shift+3"]
-    },
-
-    // Makefile.
-    "make_makefile": {
-      "caption":  "Make Makefile",
-      "flags":    "Makefile",
-      "group":    "make",
-      "func":     "makefile.make",
-      "args":     {"makefile": "${file}"}
     },
 
     // Text.

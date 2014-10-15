@@ -78,11 +78,11 @@ def copy_build_variable_to_clipboard(key=None):
     else:
       on_done([None, vmap[key]])
 
-def paste_build_variable(key=None, view=None):
+def paste_build_variable(edit, key=None, view=None):
     """If key is None, show a quick panel with the currently available build
     variables."""
     vmap = build_variables.get()
-    on_done = lambda picked: insert(picked[1], view, clear=True)
+    on_done = lambda picked: insert(picked[1], edit, view, clear=True)
     if key is None:
       show_quick_panel(sorted([[k,i] for k, i in vmap.items()]), on_done)
     else:

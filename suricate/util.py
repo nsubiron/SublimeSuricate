@@ -46,12 +46,6 @@ def which(name, flags=os.X_OK, pathext=DefaultPathExt):
           return pnameext
     return None
 
-def toggle_read_only(path):
-    if os.access(path, os.W_OK):
-      os.chmod(path, stat.S_IREAD)
-    else:
-      os.chmod(path, stat.S_IWRITE)
-
 def regex_callable(patterns):
     """Return a callable object that returns True if matches any regular
     expression in patterns"""

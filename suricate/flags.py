@@ -110,9 +110,9 @@ class _VcsChecker(object):
           if key in path:
             return flag
         for sub in _iterate_path(path):
-          items = os.listdir(sub)
           for item, flag in VCS_FDS:
-            if item in items:
+            item_path = os.path.join(sub, item)
+            if os.path.isdir(item_path) or os.path.isfile(item_path):
               self.map[sub] = flag
               return flag
         return Flags.EMPTY

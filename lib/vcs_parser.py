@@ -5,12 +5,23 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
+"""Parse output of different version control systems.
+Usage example: git status | python {file} status git"""
+
+NOT_IMPLEMENTED_MESSAGE = """suricate: {command} parser for {vcsname} not implemented.
+Please implement {parser} in {file}."""
+
 def parse(out, command, vcsname):
     """Returns a list of pairs ``[filepath, extra information]``."""
-    mapper = globals()['_%s_mapper__%s' % (command, vcsname)]
+    try:
+      mapper = globals()['_%s_mapper__%s' % (command, vcsname)]
+    except KeyError as error:
+      kwargs = {'parser': error, 'command': command, 'vcsname': vcsname, "file": __file__}
+      print(NOT_IMPLEMENTED_MESSAGE.format(**kwargs))
+      return []
     return [x for x in mapper(out)]
 
-## Private #####################################################################
+## Parsers #####################################################################
 
 def _status_mapper__Surround(out):
     for line in out.split('\n'):
@@ -23,9 +34,23 @@ def _status_mapper__Surround(out):
         text = '%s %s' % (state, line.strip())
         yield [path, text]
 
-def _status_mapper__Git(out):
-    modifiedkey = '#\tmodified:   '
-    for line in out.split('\n'):
-      if line.startswith(modifiedkey):
-        path = line.replace(modifiedkey, '').strip()
-        yield [path, 'modified']
+def _modifiedfiles_mapper__Git(out):
+    return [[x, 'modified'] for x in out.split('\n') if x and not x.isspace()]
+
+## Main ########################################################################
+
+if __name__ == '__main__':
+
+    import sys
+    import argparse
+
+    def main():
+        parser = argparse.ArgumentParser(description=__doc__.format(file=__file__))
+        parser.add_argument('command')
+        parser.add_argument('vcsname')
+        args = parser.parse_args()
+
+        for path, text in parse(sys.stdin.read(), args.command, args.vcsname.title()):
+          print('%s: %s' % (path, text))
+
+    main()

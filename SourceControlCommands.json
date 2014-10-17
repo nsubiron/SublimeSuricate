@@ -76,8 +76,8 @@
         },
         "status_list": {
           "caption": "List Modified Files...",
-          "cmd": ["git", "status", "${path}"],
-          "out": "status_list"
+          "cmd": ["git", "ls-files", "--modified", "${path}"],
+          "out": "modifiedfiles_list"
         }
       }
     },

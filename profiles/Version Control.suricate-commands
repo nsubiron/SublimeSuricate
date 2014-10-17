@@ -13,12 +13,36 @@
     },
 
     "vcs.checkout": {
-      "caption":  "Checkout",
+      "caption":  "Surround Checkout",
       "group":    "vcs",
       "flags":    "Surround",
       "func":     "vcs.call",
       "args":     { "cmd": "checkout" },
       "keys":     [ "ctrl+o", "ctrl+c" ],
+      "context":  true
+    },
+    "vcs.undocheckout": {
+      "caption":  "Surround Undo Checkout",
+      "group":    "vcs",
+      "flags":    "Surround",
+      "func":     "vcs.call",
+      "args":     { "cmd": "undocheckout" },
+      "context":  true
+    },
+    "vcs.gitadd": {
+      "caption":  "Git Add",
+      "group":    "vcs",
+      "flags":    "Git",
+      "func":     "vcs.call",
+      "args":     { "cmd": "add" },
+      "context":  true
+    },
+    "vcs.gitcheckout": {
+      "caption":  "Git Checkout",
+      "group":    "vcs",
+      "flags":    "Git",
+      "func":     "vcs.call",
+      "args":     { "cmd": "gitcheckout" },
       "context":  true
     },
     "vcs.diff": {
@@ -35,6 +59,14 @@
       "group":    "vcs",
       "func":     "vcs.show_quick_panel",
       "keys":     [ "ctrl+o", "ctrl+v" ]
+    },
+    "vcs.currentfilequickpanel": {
+      "caption":  "Version Control Current File Quick Panel...",
+      "group":    "vcs",
+      "flags":    "Git|Svn|Surround",
+      "func":     "vcs.show_quick_panel",
+      "args":     {"path": "${file}"},
+      "keys":     [ "ctrl+o", "ctrl+f" ]
     },
 
     "pref_source_control_default": {

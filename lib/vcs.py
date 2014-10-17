@@ -21,20 +21,20 @@ vcs_parser = import_module('lib.vcs_parser')
 
 SourceControlFileBaseName = 'SourceControlCommands.json'
 
-def _do(cmd, path, out=None, **kwargs):
+def _do(cmd, caption, path, out=None, ask=None, **kwargs):
     working_dir, base_name = os.path.split(path) if os.path.isfile(path) else (path, '.')
     cmd = util.replacekeys(cmd, {'path': base_name})
-    if Verbose: print(' '.join(cmd))
+    if Verbose: print('vcs do: ' + ' '.join(cmd))
+    if ask and not sublime.ok_cancel_dialog(util.replacekeys(ask, {'path': base_name}), caption):
+      return
     if out == 'gui':
       process.new_thread(cmd, working_dir)
     elif out == 'buffer':
       text, err = process.popen(cmd, working_dir)
-      text = unicode(text, 'utf-8')
       name = ' '.join(cmd[:2])
       sublime_wrapper.flush_to_buffer(text, name=name, scratch=True, syntax='Diff')
-    elif out.endswith('_list'):
+    elif out is not None and out.endswith('_list'):
       cout, err = process.popen(cmd, working_dir)
-      cout = unicode(cout, 'utf-8')
       vcsname = flags.to_string(flags.get_vcs(path))
       lst = vcs_parser.parse(cout, out.replace('_list', ''), vcsname)
       window = sublime.active_window()

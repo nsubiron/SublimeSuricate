@@ -11,8 +11,16 @@ import subprocess
 
 from threading import Thread
 
-from suricate import build_variables
 from suricate import Verbose
+from suricate import build_variables
+from suricate import pybase
+
+if pybase.PY2:
+  def decode(string):
+      return None if string is None else unicode(string, 'utf-8')
+else:
+  def decode(bstring):
+      return None if bstring is None else bstring.decode('utf-8')
 
 def touch(paths, times=None):
     for path in paths:
@@ -37,15 +45,15 @@ def system_quiet(command):
 
 def popen(*args, **kwargs):
     """Wait until the subprocess finishes and return (out, err)."""
-    return _popen_internal(*_filter(args), **_filter(kwargs)).communicate()
+    return _popen_internal(*_filter(args), **_filter(kwargs))
 
 def new_thread(*args, **kwargs):
-    """Call popen and wait until finishes within a new thread so Sublime Text do
-    not freezes. Print stdout and show error message if stderr."""
+    """Call popen and wait until finishes within a new thread so Sublime Text
+    does not freeze. Print stdout and show error message if stderr."""
     args, kwargs = _filter((args, kwargs))
     class MyThread(Thread):
         def run(self):
-            out, err = _popen_internal(*args, **kwargs).communicate()
+            out, err = _popen_internal(*args, **kwargs)
             m = 'Subprocess finished.'
             sublime.set_timeout(lambda: sublime.status_message(m), 10)
             print(out)
@@ -59,7 +67,18 @@ def _popen_internal(cmd=[], working_dir=None, shell=__is_windows):
     if Verbose: print('popen: %s' % ' '.join(cmd))
     kwargs = {'cwd': working_dir, 'stdout': subprocess.PIPE, 'shell': shell}
     process = subprocess.Popen(cmd, **kwargs)
-    return process
+    if pybase.PY2:
+      out, err = process.communicate()
+    else:
+      try:
+        out, err = process.communicate(timeout=15)
+      except subprocess.TimeoutExpired:
+        print('WARNING: suricate: timeout expired, killing the process...')
+        process.kill()
+        out, err = process.communicate()
+    if err:
+      print('WARNING: suricate: subprocess returned error: %s' % decode(err))
+    return decode(out), decode(err)
 
 def start_file(path):
     """@todo Get rid of this function.

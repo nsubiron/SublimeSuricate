@@ -10,12 +10,12 @@
       "flags": "Svn",
       "commands": {
         "diff": {
-          "caption": "Compare with Base ...",
+          "caption": "Compare with Base...",
           "cmd": ["TortoiseProc.exe", "/command:diff", "/path:${path}"],
           "out": "gui"
         },
         "commit": {
-          "caption": "Commit ...",
+          "caption": "Commit...",
           "cmd": ["TortoiseProc.exe", "/command:commit", "/path:${path}"],
           "out": "gui"
         }
@@ -27,12 +27,12 @@
       "flags": "Git",
       "commands": {
         "diff": {
-          "caption": "Compare with HEAD ...",
+          "caption": "Compare with HEAD...",
           "cmd": ["TortoiseGitProc.exe", "/command:diff", "/path:${path}"],
           "out": "gui"
         },
         "commit": {
-          "caption": "Commit ...",
+          "caption": "Commit...",
           "cmd": ["TortoiseGitProc.exe", "/command:commit", "/path:${path}"],
           "out": "gui"
         }
@@ -44,46 +44,55 @@
       "flags": "Svn|Git",
       "commands": {
         "diff": {
-          "caption": "Compare ...",
+          "caption": "Compare...",
           "cmd": ["rabbitvcs", "diff", "${path}", "-s"],
           "out": "gui"
         }
       }
     },
     {
-      "name":  "git",
+      "name":  "Git",
       "exes":  ["git"],
       "flags": "Git",
       "commands": {
         "diff": {
-          "caption": "git diff",
+          "caption": "Diff",
           "cmd": ["git", "diff", "${path}"],
           "out": "buffer"
         },
+        "add": {
+          "caption": "Add",
+          "cmd": ["git", "add", "${path}"]
+        },
+        "gitcheckout": {
+          "caption": "Checkout",
+          "cmd": ["git", "checkout", "${path}"],
+          "ask": "Your working copy of ${path} will be replaced by the last version in the repository.\nContinue anyway?"
+        },
         "status": {
-          "caption": "git status",
+          "caption": "Status",
           "cmd": ["git", "status", "${path}"],
           "out": "buffer"
         },
         "status_list": {
-          "caption": "List modified files ...",
+          "caption": "List Modified Files...",
           "cmd": ["git", "status", "${path}"],
           "out": "status_list"
         }
       }
     },
     {
-      "name":  "svn",
+      "name":  "Svn",
       "exes":  ["svn"],
       "flags": "Svn",
       "commands": {
         "diff": {
-          "caption": "svn diff",
+          "caption": "Diff",
           "cmd": ["svn", "diff"],
           "out": "buffer"
         },
         "status": {
-          "caption": "svn status",
+          "caption": "Status",
           "cmd": ["svn", "status", "${path}"],
           "out": "buffer"
         }
@@ -110,6 +119,11 @@
           "caption": "Checkout",
           "cmd": ["sscm", "checkout", "${path}", "-c-"]
         },
+        "undocheckout": {
+          "caption": "Undo Checkout",
+          "cmd": ["sscm", "uncheckout", "${path}"],
+          "ask": "Your working copy of ${path} will be replaced by the last version in the repository.\nContinue anyway?"
+        },
         "diff": {
           "caption": "Differences",
           "cmd": ["sscm", "diff", "${path}", "-c", "-i"],
@@ -123,7 +137,7 @@
       "flags": "Surround|IsDir",
       "commands": {
         "status": {
-          "caption": "List checked out files ...",
+          "caption": "List checked out files...",
           "cmd": ["sscm", "ls", "-f\"Checked Out Files\"", "-r"],
           "out": "status_list"
         }

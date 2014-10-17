@@ -70,6 +70,30 @@
       "func":     "profiles.to_buffer"
     },
 
+    // Settings.
+    "theme_switcher": {
+      "caption":  "Switch Theme...",
+      "group":    "settings",
+      "func":     "settings.set_from_resources",
+      "args":     {
+          "key": "theme",
+          "patterns": ["*.sublime-theme"],
+          "settings_file": "Preferences.sublime-settings",
+          "set_mode": "file_name"
+      }
+    },
+    "color_scheme_switcher": {
+      "caption":  "Switch Color Scheme...",
+      "group":    "settings",
+      "func":     "settings.set_from_resources",
+      "args":     {
+          "key": "color_scheme",
+          "patterns": ["*.tmTheme"],
+          "settings_file": "Preferences.sublime-settings",
+          "set_mode": "file"
+      }
+    },
+
     // Quick open/launch.
     "quick_open": {
       "caption":  "Open File Quick Panel...",

@@ -100,6 +100,16 @@ def backup(src, dst, symlinks=False, ignore=None, timepattern='%Y%m%d%H%M%S'):
     shutil.copytree(src, dst, symlinks, ignore)
     return dst
 
+def make_list(obj):
+    if obj is None:
+      return []
+    elif isinstance(obj, pybase.sequence_types + pybase.set_types):
+      return list(obj)
+    elif isinstance(obj, pybase.mapping_types):
+      return [[key, value] for key, value in obj.items()]
+    else:
+      return [obj]
+
 def replacekeys(obj, dictionary):
     """Replace any ${key} occurrence in obj by its value in dictionary."""
     if obj is None:

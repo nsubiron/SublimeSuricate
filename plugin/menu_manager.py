@@ -83,7 +83,7 @@ class MenuManager(object):
 
     def getfilenames(self):
         files = [self.commands, self.main, self.context, self.keymap]
-        return map(lambda sf: sf.filename, files)
+        return [x.filename for x in files]
 
     def add(self, key, command):
         group = command.group if command.group is not None else ''
@@ -116,6 +116,8 @@ class MenuManager(object):
         if command.keys:
           keybinding = dict(basic)
           keybinding['keys'] = self._override_keys(command.keys)
+          if command.context:
+            keybinding['context'] = command.context
           self.keymap.add(keybinding)
         return not sublimecmd
 

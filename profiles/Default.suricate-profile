@@ -45,6 +45,7 @@
     "args":         {},
     "flags":        null,
     "keys":         [],
+    "context":      null,
     "context_menu": false
   },
 
@@ -58,8 +59,9 @@
     //     "group":        String or null: group commands according to this tag,
     //     "call":         String: module.function (see more info below),
     //     "args":         {String: String}: arguments to be passed to call,
-    //     "flags":        String or null: see flags defined in lib/flags.py,
+    //     "flags":        String or null: see flags defined in flags.py,
     //     "keys":         [String]: key binding,
+    //     "context":      Array: Standard Sublime Text key binding context,
     //     "context_menu": Bool: whether should be included in the context menu
     //   }
     //

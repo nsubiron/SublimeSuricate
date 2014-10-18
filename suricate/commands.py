@@ -21,6 +21,7 @@ DefaultDefaults = (
         'args':           {},
         'flags':          None,
         'keys':           [],
+        'context':        None,
         'context_menu':   False
     }
 )
@@ -34,6 +35,7 @@ TagList = (
         'args',
         'flags',
         'keys',
+        'context',
         'context_menu'
     ]
 )

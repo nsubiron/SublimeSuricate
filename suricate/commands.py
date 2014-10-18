@@ -9,15 +9,34 @@ import sublime
 
 from collections import namedtuple
 
-from . import defs
 from . import flags
-from . import util
 
-ProfileExtension = '.suricate-commands'
+ProfileExtension = '.suricate-profile'
 
-DefaultDefaults = {'group': None, 'args': {}, 'flags': None, 'keys': [], 'context': False}
+DefaultDefaults = (
+    {
+        'caption':        'No description provided',
+        'mnemonic':       None,
+        'group':          None,
+        'args':           {},
+        'flags':          None,
+        'keys':           [],
+        'context_menu':   False
+    }
+)
 
-TagList = ["caption", "mnemonic", "group", "func", "args", "flags", "keys", "context"]
+TagList = (
+    [
+        'caption',
+        'mnemonic',
+        'group',
+        'call',
+        'args',
+        'flags',
+        'keys',
+        'context_menu'
+    ]
+)
 
 Command = namedtuple('Command', TagList)
 
@@ -31,7 +50,7 @@ def _create_commands(settings):
     commands = {}
     jsoncommands = settings.get('commands', {})
     _rupdate(jsoncommands, settings.get('user_commands', {}))
-    defaults = jsoncommands.pop('defaults', DefaultDefaults)
+    defaults = settings.get('defaults', DefaultDefaults)
     for key, item in jsoncommands.items():
       try:
         args = dict(defaults)
@@ -40,7 +59,8 @@ def _create_commands(settings):
         command = Command(**args)
         if flags.check_platform(command.flags):
           commands[key] = command
-      except TypeError as e:
+      except TypeError as exception:
+        print(exception)
         print('Command "%s" not added: mandatory field missing.' % key)
     return commands
 
@@ -50,5 +70,3 @@ def get(profiles):
       settings = sublime.load_settings(profile + ProfileExtension)
       commands.update(_create_commands(settings))
     return commands
-
-

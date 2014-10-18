@@ -52,12 +52,12 @@ class CommandManager(object):
         return False
 
     def run(self, key, metargs):
-        func = self.commands[key].func
+        call = self.commands[key].call
         args = self.commands[key].args
-        module_name, function = func.rsplit('.', 1)
+        module_name, function = call.rsplit('.', 1)
         module = import_module('lib.' + module_name)
         funcobj = getattr(module, function)
         argspec = inspect.getargspec(funcobj).args
-        kwargs = dict((k,i) for k,i in metargs.items() if k in argspec)
+        kwargs = dict((k, i) for k, i in metargs.items() if k in argspec)
         kwargs.update(build_variables.expand(args))
         return funcobj(**kwargs)

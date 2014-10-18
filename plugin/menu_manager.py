@@ -62,7 +62,7 @@ class SublimeFile(SublimeData):
     def writeout(self):
         with open(self.filename, 'w+') as f:
           data = util.replacekeys(self.asdata(), defs.SuricateMenuVariables)
-          f.write(json.dumps(data, indent=2))
+          f.write(json.dumps(data, indent='\t'))
 
 class MenuManager(object):
     def __init__(self, folder, settings):
@@ -91,9 +91,9 @@ class MenuManager(object):
           return False
         if group.endswith('.dev'):
           group = group[:-4]
-        sublimecmd = command.func.startswith('sublime.')
+        sublimecmd = command.call.startswith('sublime.')
         if sublimecmd:
-          _, cmd = command.func.rsplit('.', 1)
+          _, cmd = command.call.rsplit('.', 1)
           basic = {'command': cmd, 'args': command.args}
         else:
           basic = {'command': 'suricate', 'args': {'key': key}}
@@ -106,7 +106,7 @@ class MenuManager(object):
           if command.mnemonic:
             menus['mnemonic'] = command.mnemonic
           self.commands.add(quickpanel)
-          if command.context:
+          if command.context_menu:
             self.context.add(menus, group)
           if group is not None and group.startswith('main.'):
             if group.startswith('main.preferences'):

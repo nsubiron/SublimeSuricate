@@ -1,0 +1,85 @@
+{
+  "description": "Unified commands for different version control systems (experimental)",
+
+  "commands":
+  {
+    "vcs.checkout":
+    {
+      "caption":      "Surround Checkout",
+      "group":        "vcs",
+      "flags":        "Surround",
+      "call":         "vcs.call",
+      "args":         {"cmd": "checkout"},
+      "keys":         ["ctrl+o", "ctrl+c"],
+      "context_menu": true
+    },
+    "vcs.undocheckout":
+    {
+      "caption":      "Surround Undo Checkout",
+      "group":        "vcs",
+      "flags":        "Surround",
+      "call":         "vcs.call",
+      "args":         {"cmd": "undocheckout"},
+      "context_menu": true
+    },
+    "vcs.gitadd":
+    {
+      "caption":      "Git Add",
+      "group":        "vcs",
+      "flags":        "Git",
+      "call":         "vcs.call",
+      "args":         {"cmd": "add"},
+      "context_menu": true
+    },
+    "vcs.gitcheckout":
+    {
+      "caption":      "Git Checkout",
+      "group":        "vcs",
+      "flags":        "Git",
+      "call":         "vcs.call",
+      "args":         {"cmd": "gitcheckout"},
+      "context_menu": true
+    },
+    "vcs.diff":
+    {
+      "caption":      "Differences",
+      "group":        "vcs",
+      "flags":        "Git|Svn|Surround",
+      "call":         "vcs.call",
+      "args":         {"cmd": "diff"},
+      "keys":         ["ctrl+o", "ctrl+d"],
+      "context_menu": true
+    },
+    "vcs.quickpanel":
+    {
+      "caption":      "Version Control Quick Panel...",
+      "group":        "vcs",
+      "call":         "vcs.show_quick_panel",
+      "keys":         ["ctrl+o", "ctrl+v"]
+    },
+    "vcs.currentfilequickpanel":
+    {
+      "caption":      "Version Control Current File Quick Panel...",
+      "group":        "vcs",
+      "flags":        "Git|Svn|Surround",
+      "call":         "vcs.show_quick_panel",
+      "args":         {"path": "${file}"},
+      "keys":         ["ctrl+o", "ctrl+f"]
+    },
+
+    "pref_source_control_default":
+    {
+      "caption":      "Source Control – Default",
+      "group":        "main.preferences.vcs",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${suricate_path}/SourceControlCommands.json"}
+    },
+    "pref_source_control_user":
+    {
+      "caption":      "Source Control – User",
+      "group":        "main.preferences.vcs",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/User/SourceControlCommands.json"}
+    }
+  }
+}

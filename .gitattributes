@@ -6,4 +6,4 @@ gpl-license.txt export-ignore
 
 README.md export-ignore
 lib/doc.py export-ignore
-profiles/Dev.suricate-commands export-ignore
+profiles/Dev.suricate-profile export-ignore

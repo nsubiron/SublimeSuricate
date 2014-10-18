@@ -72,8 +72,8 @@ def print_commands(commands, indentation=4, minsep=10):
         maxcaption = max(maxcaption, len(command.caption))
         lst.append([str(command.group), command.caption, command.keys])
       else:
-        maxcaption = max(maxcaption, len(command.func))
-        lst.append([str(command.group), command.func, command.keys])
+        maxcaption = max(maxcaption, len(command.call))
+        lst.append([str(command.group), command.call, command.keys])
     lst.sort()
     return '\n'.join(indentation*' ' + c.ljust(maxcaption+4) + ','.join(k) for g,c,k in lst)
 

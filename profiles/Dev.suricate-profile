@@ -1,0 +1,19 @@
+{
+  "description": "Dev commands not available on packaged release",
+
+  "commands":
+  {
+    "generate_docs":
+    {
+      "caption":      "Documentation",
+      "mnemonic":     "D",
+      "group":        "main.a.dev",
+      "call":         "doc.to_buffer",
+      "args":
+      {
+        "title": "Sublime Suricate Documentation",
+        "root":  "${suricate_path}/lib"
+      }
+    }
+  }
+}

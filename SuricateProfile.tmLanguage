@@ -3,19 +3,19 @@
 <plist version="1.0">
 	<dict>
 		<key>name</key>
-		<string>Suricate Commands</string>
+		<string>Suricate Profile</string>
 		<key>scopeName</key>
-		<string>source.suricatecommands</string>
+		<string>source.suricate.profile</string>
 		<key>fileTypes</key>
 		<array>
-			<string>suricate-commands</string>
+			<string>suricate-profile</string>
 		</array>
 		<key>patterns</key>
 		<array>
-      <dict>
-        <key>include</key>
-        <string>source.json</string>
-      </dict>
+			<dict>
+				<key>include</key>
+				<string>source.json</string>
+			</dict>
 		</array>
 	</dict>
 </plist>

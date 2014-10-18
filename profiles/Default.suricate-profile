@@ -1,0 +1,297 @@
+{
+  // Default Profile File
+  // ====================
+  //
+  // Use 'ctrl+shift+p' > Suricate: Add/Remove Profile... to activate or
+  // deactivate profiles.
+
+  "description": "Default profile",
+
+  // Do not modify this file, create a copy in your User folder to modify the
+  // commands here or to add new ones, for example:
+  //
+  //     // Packages/User/Default.suricate-profile
+  //     {
+  //       "user_commands":
+  //       {
+  //         "windows_terminal":
+  //         {
+  //           "keys": ["ctrl+shift+t"],
+  //           "args": {"cmd": ["Console.exe", "-d", "${file_path}"]}
+  //         }
+  //       }
+  //     }
+  //
+  // overrides the shortcut of "window_terminal" command (see below) and changes
+  // the shell command used to launch your own terminal. See commands usage
+  // below.
+  //
+  // IMPORTANT: Use "user_commands" in your User folder, do NOT use "commands".
+  // Profile files are loaded as any other Sublime Text settings file; setting
+  // the "command" key in your User folder will cause the commands here to be
+  // ignored.
+
+  "user_commands": {},
+
+  // Optionally, you can define the default fields for the commands in this
+  // profile. If no default is specified for a given tag, commands must contain
+  // that tag in order to be added.
+
+  "defaults":
+  {
+    "caption":      "",
+    "mnemonic":     null,
+    "group":        null,
+    "args":         {},
+    "flags":        null,
+    "keys":         [],
+    "context_menu": false
+  },
+
+  "commands":
+  {
+    // Usage:
+    //
+    //   "command_id": {
+    //     "caption":      String: caption displayed on the GUI,
+    //     "mnemonic":     String or null: key character for menus,
+    //     "group":        String or null: group commands according to this tag,
+    //     "call":         String: module.function (see more info below),
+    //     "args":         {String: String}: arguments to be passed to call,
+    //     "flags":        String or null: see flags defined in lib/flags.py,
+    //     "keys":         [String]: key binding,
+    //     "context_menu": Bool: whether should be included in the context menu
+    //   }
+    //
+    // The "call" field:
+    //
+    //   Specifies the function to be called when executing the command, the
+    //   function must be located in a module inside the 'lib' folder of the
+    //   Suricate Commands package. E.g., "call": "settings.toggle_boolean"
+    //   calls the method 'toggle_boolean()' found in 'lib/settings.py'.
+    //
+    //   To send a command directly to Sublime Text use `sublime.command_name`.
+    //
+    // Special groups:
+    //
+    //   - main.preferences Goes to menu Preferences->Package Settings->Suricate,
+    //   - main.*           Goes to menu Suricate,
+    //   - .*               Won't appear in menus, only key binding added if any
+    //   - *.dev            Only added when dev_mode is on
+    //
+    // Key bindings:
+    //
+    //   By default most of the key bindings here start with ctrl+o, which
+    //   interferes with sublime text's open file action. To override this
+    //   behaviour tweak "override_ctrl_o" setting.
+
+    "toggle_dev":
+    {
+      "caption":      "Toggle Dev Mode",
+      "call":         "settings.toggle_boolean",
+      "args":         { "key": "dev_mode" }
+    },
+    "add_profile":
+    {
+      "caption":      "Add profile...",
+      "group":        "profiles",
+      "call":         "profiles.add"
+    },
+    "remove_profile":
+    {
+      "caption":      "Remove profile...",
+      "group":        "profiles",
+      "call":         "profiles.remove"
+    },
+    "show_profiles":
+    {
+      "caption":      "Profiles",
+      "mnemonic":     "P",
+      "group":        "main.a",
+      "call":         "profiles.to_buffer"
+    },
+
+    // Quick open/launch.
+    "quick_open":
+    {
+      "caption":      "Open File Quick Panel...",
+      "group":        "quickpanel",
+      "call":         "navigator.launch",
+      "args":         { "mode": "open" },
+      "keys":         [ "ctrl+shift+o" ]
+    },
+    "quick_launch":
+    {
+      "caption":      "Launch File Quick Panel...",
+      "group":        "quickpanel",
+      "call":         "navigator.launch",
+      "args":         { "mode": "launch" },
+      "keys":         [ "ctrl+shift+;" ]
+    },
+
+    // File attributes.
+    "chmodx":
+    {
+      "caption":      "Set Executable (chmod u+x)",
+      "group":        "chmod",
+      "flags":        "Linux|IsFile",
+      "call":         "chmod.executable",
+      "args":         {"path": "${file}"}
+    },
+    "toggle_read_only":
+    {
+      "caption":      "Toggle Read-Only",
+      "group":        "chmod",
+      "flags":        "Windows|Linux|IsFile",
+      "call":         "chmod.toggle_read_only",
+      "args":         {"path": "${file}"},
+      "context_menu": true
+    },
+
+    // Open terminal.
+    "windows_terminal":
+    {
+      "caption":      "Open Terminal Here",
+      "group":        "launch",
+      "flags":        "Windows|IsFile",
+      "call":         "process.new_thread",
+      "args":         {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
+      "keys":         ["alt+shift+c"],
+      "context_menu": true
+    },
+
+    // Build variables.
+    "copy_build_variable":
+    {
+      "caption":      "Build Variable To Clipboard...",
+      "group":        "bvars",
+      "call":         "sublime_wrapper.copy_build_variable_to_clipboard"
+    },
+    "paste_basename":
+    {
+      "caption":      "Insert File Base Name",
+      "flags":        "IsFile",
+      "group":        "bvars",
+      "call":         "sublime_wrapper.paste_build_variable",
+      "args":         { "key": "file_base_name" },
+      "keys":         ["alt+c"]
+    },
+
+    // Date-time.
+    "time_to_clipboard":
+    {
+      "caption":      "Date-Time To Clipboard...",
+      "group":        "datetime",
+      "call":         "datetimeutil.time_to_clipboard"
+    },
+    "time_serie":
+    {
+      "caption":      "Continue Time Serie",
+      "group":        "datetime",
+      "call":         "datetimeutil.continue_serie",
+      "keys":         ["ctrl+shift+3"]
+    },
+
+    // Text.
+    "fill_current_line":
+    {
+      "caption":      "Expand Current Line",
+      "call":         "text.fill_current_line",
+      "keys":         ["ctrl+o", "ctrl+e"]
+    },
+
+    // Search.
+    "searchbar":
+    {
+      "caption":      "Search Bar",
+      "call":         "searchbar.show",
+      "keys":         ["ctrl+o", "ctrl+s"]
+    },
+    "search_on_google":
+    {
+      "caption":      "Search On Google",
+      "group":        "launch",
+      "keys":         ["ctrl+shift+g"],
+      "call":         "searchbar.search_selection",
+      "args":         {"engine": "Google"},
+      "context_menu": true
+    },
+
+    // Switchers.
+    "theme_switcher":
+    {
+      "caption":      "Switch Theme...",
+      "group":        "settings",
+      "call":         "settings.set_from_resources",
+      "args":
+      {
+        "key":           "theme",
+        "patterns":      ["*.sublime-theme"],
+        "settings_file": "Preferences.sublime-settings",
+        "set_mode":      "file_name"
+      }
+    },
+    "color_scheme_switcher":
+    {
+      "caption":      "Switch Color Scheme...",
+      "group":        "settings",
+      "call":         "settings.set_from_resources",
+      "args":
+      {
+        "key":           "color_scheme",
+        "patterns":      ["*.tmTheme"],
+        "settings_file": "Preferences.sublime-settings",
+        "set_mode":      "file"
+      }
+    },
+
+    // Suricate menu.
+    "see_on_github":
+    {
+      "caption":      "GitHub",
+      "mnemonic":     "G",
+      "group":        "main.b.dev",
+      "call":         "sublime.open_url",
+      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate" }
+    },
+    "suricate_on_overlay":
+    {
+      "caption":      "Suricate Commands",
+      "mnemonic":     "C",
+      "group":        "main.commands",
+      "call":         "sublime.show_overlay",
+      "args":         {"overlay": "command_palette", "text": "Suricate: "},
+      "keys":         ["ctrl+shift+'"]
+    },
+
+    // Preferences menu.
+    "pref_settings_default":
+    {
+      "caption":      "Settings – Default",
+      "group":        "main.preferences",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${suricate_path}/Suricate.sublime-settings"}
+    },
+    "pref_settings_user":
+    {
+      "caption":      "Settings – User",
+      "group":        "main.preferences",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/User/Suricate.sublime-settings"}
+    },
+    "pref_commands_default":
+    {
+      "caption":      "Default Profile – Default",
+      "group":        "main.preferences.commands",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${suricate_path}/profiles/Default.suricate-profile"}
+    },
+    "pref_commands_user":
+    {
+      "caption":      "Default Profile – User",
+      "group":        "main.preferences.commands",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/User/Default.suricate-profile"}
+    }
+  }
+}

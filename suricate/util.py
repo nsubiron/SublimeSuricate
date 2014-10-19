@@ -19,11 +19,13 @@ from contextlib import contextmanager
 
 @contextmanager
 def pushd(directory):
-    """Context manager to temporally change working directory."""
+    """Context manager to temporally change working directory. Yields None."""
     cwd = os.getcwd()
-    os.chdir(directory)
-    yield
-    os.chdir(cwd)
+    try:
+      os.chdir(directory)
+      yield
+    finally:
+      os.chdir(cwd)
 
 DefaultPathExt = ['']
 if sublime.platform().lower() == 'windows':

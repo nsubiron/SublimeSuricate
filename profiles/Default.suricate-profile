@@ -130,6 +130,17 @@
       "args":         { "mode": "launch" },
       "keys":         [ "ctrl+shift+;" ]
     },
+    "add_to_quick_open":
+    {
+      "caption":      "Add Current File To Quick Open",
+      "group":        "quickpanel",
+      "call":         "settings.append_value_to_array",
+      "args":
+      {
+        "key": "quick_open_path_list",
+        "value": "${file}"
+      }
+    },
 
     // File attributes.
     "chmodx":

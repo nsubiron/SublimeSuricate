@@ -5,8 +5,14 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
+"""Commands to manage settings files. `settings_file` should include a file name
+and extension, but not a path. If none is given, use the default Suricate
+settings file."""
+
 import os
 import sublime
+
+from contextlib import contextmanager
 
 from suricate import defs
 from suricate import import_module
@@ -14,26 +20,45 @@ from suricate import util
 
 sublime_wrapper = import_module('lib.sublime_wrapper')
 
-def toggle_boolean(key, base_name=defs.SettingsFileBaseName):
-    settings = sublime.load_settings(base_name)
-    value = settings.get(key)
-    if isinstance(value, bool):
-      settings.set(key, not value)
-      sublime.save_settings(base_name)
-    else:
-      sublime.error_message('Cannot toggle a non-boolean object "%s"' % key)
-
-def set_key_value(key, value, filename):
-    """Set value for key in settings filename, filename should include a file
-    name and extension, but not a path."""
-    settings = sublime.load_settings(filename)
+@contextmanager
+def load_save_settings(settings_file):
+    """Context manager to load and save settings."""
+    if not settings_file:
+      settings_file = defs.SettingsFileBaseName
+    settings = sublime.load_settings(settings_file)
     if not settings:
-      sublime.error_message('Settings "%s" not found!' % filename)
-    else:
-      settings.set(key, value)
-      sublime.save_settings(filename)
+      message = 'Settings file "%s" not found!' % settings_file
+      sublime.error_message(message)
+      raise Exception(message)
+    # Do not try/catch, don't save if fails.
+    yield settings
+    sublime.save_settings(settings_file)
 
-def set_from_resources(key, patterns, settings_file, set_mode='file', window=None):
+def toggle_boolean(key, settings_file=None):
+    """Toggle the value of key in settings_file."""
+    with load_save_settings(settings_file) as settings:
+      value = settings.get(key)
+      if isinstance(value, bool):
+        settings.set(key, not value)
+      else:
+        sublime.error_message('Cannot toggle a non-boolean object "%s"' % key)
+
+def append_value_to_array(key, value, settings_file=None):
+    """Append value to key in settings_file."""
+    with load_save_settings(settings_file) as settings:
+      lst = settings.get(key, [])
+      if isinstance(lst, list):
+        lst.append(value)
+        settings.set(key, lst)
+      else:
+        sublime.error_message('Cannot append value to a non-array object "%s"' % key)
+
+def set_key_value(key, value, settings_file=None):
+    """Set value for key in settings_file."""
+    with load_save_settings(settings_file) as settings:
+      settings.set(key, value)
+
+def set_from_resources(key, patterns, settings_file=None, set_mode='file', window=None):
     """Set the key in settings_file from a list of resources found based on
     patterns. Available values for `set_mode`:
       * "file": `Packages/Default/Preferences.sublime-settings`

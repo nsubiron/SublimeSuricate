@@ -51,7 +51,7 @@ def launch(mode=OpenMode, view=None):
     _show_quick_panel(items)
 
 def _show_quick_panel(items):
-    if items:
+    if items and isinstance(items, list):
       items = [x for x in items if x is not None]
       on_done = lambda picked: _show_quick_panel(picked.on_done())
       sublime_wrapper.show_quick_panel(items, on_done)

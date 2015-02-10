@@ -12,10 +12,17 @@ import re
 import shutil
 import sublime
 
-from . import pybase
-
 from datetime import datetime
 from contextlib import contextmanager
+
+unichr = chr
+text_type = str
+string_types = (str,)
+numeric_types = (int, float, complex)
+sequence_types = (list, tuple, range)
+binary_sequence_types = (bytes, bytearray, memoryview)
+set_types = (set, frozenset)
+mapping_types = (dict,)
 
 @contextmanager
 def pushd(directory):
@@ -105,9 +112,9 @@ def backup(src, dst, symlinks=False, ignore=None, timepattern='%Y%m%d%H%M%S'):
 def make_list(obj):
     if obj is None:
       return []
-    elif isinstance(obj, pybase.sequence_types + pybase.set_types):
+    elif isinstance(obj, sequence_types + set_types):
       return list(obj)
-    elif isinstance(obj, pybase.mapping_types):
+    elif isinstance(obj, mapping_types):
       return [[key, value] for key, value in obj.items()]
     else:
       return [obj]
@@ -116,15 +123,15 @@ def replacekeys(obj, dictionary):
     """Replace any ${key} occurrence in obj by its value in dictionary."""
     if obj is None:
       return None
-    elif isinstance(obj, pybase.string_types):
+    elif isinstance(obj, string_types):
       for key, value in dictionary.items():
         obj = obj.replace('${%s}' % key, value)
       return obj
     elif isinstance(obj, dict):
       return dict((k, replacekeys(i, dictionary)) for k, i in obj.items())
-    elif isinstance(obj, pybase.sequence_types) or isinstance(obj, pybase.set_types):
+    elif isinstance(obj, sequence_types) or isinstance(obj, set_types):
       return type(obj)(replacekeys(i, dictionary) for i in obj)
-    elif isinstance(obj, bool) or isinstance(obj, pybase.numeric_types):
+    elif isinstance(obj, bool) or isinstance(obj, numeric_types):
       return obj
     else:
       raise Exception('Type object \'%s\' not implemented.' % type(obj))

@@ -13,14 +13,9 @@ from threading import Thread
 
 from suricate import Verbose
 from suricate import build_variables
-from suricate import pybase
 
-if pybase.PY2:
-  def decode(string):
-      return None if string is None else unicode(string, 'utf-8')
-else:
-  def decode(bstring):
-      return None if bstring is None else bstring.decode('utf-8')
+def decode(bstring):
+    return None if bstring is None else bstring.decode('utf-8')
 
 def touch(paths, times=None):
     for path in paths:
@@ -57,7 +52,8 @@ def new_thread(*args, **kwargs):
             out, err = _popen_internal(*args, **kwargs)
             m = 'Subprocess finished.'
             sublime.set_timeout(lambda: sublime.status_message(m), 10)
-            print(out)
+            if out:
+              print(out)
             if err:
               sublime.error_message(err)
     thread = MyThread()
@@ -68,14 +64,11 @@ def _popen_internal(cmd=[], working_dir=None, shell=__is_windows):
     if Verbose: print('popen: %s' % ' '.join(cmd))
     kwargs = {'cwd': working_dir, 'stdout': subprocess.PIPE, 'shell': shell}
     process = subprocess.Popen(cmd, **kwargs)
-    if pybase.PY2:
-      out, err = process.communicate()
-    else:
-      try:
-        out, err = process.communicate(timeout=15)
-      except subprocess.TimeoutExpired:
-        print('WARNING: suricate: timeout expired, ignoring output')
-        return None, None
+    try:
+      out, err = process.communicate(timeout=15)
+    except subprocess.TimeoutExpired:
+      print('WARNING: suricate: timeout expired, ignoring output')
+      return None, None
     if err:
       print('WARNING: suricate: subprocess returned error: %s' % decode(err))
     return decode(out), decode(err)

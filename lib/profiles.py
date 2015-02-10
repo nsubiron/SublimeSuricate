@@ -17,21 +17,9 @@ from . import sublime_wrapper
 Extension = command_parser.ProfileExtension
 SettingsKey = 'profiles'
 
-if sublime.version() < '3000':
-
-  import os
-
-  from suricate import util
-
-  def find_profiles():
-      lst = list(util.fwalk(sublime.packages_path(), ['*' + Extension], followlinks=True))
-      return set(os.path.splitext(os.path.basename(x))[0] for x in lst)
-
-else:
-
-  def find_profiles():
-      lst = sublime.find_resources('*' + Extension)
-      return set(x.rsplit('/', 1)[-1][:-len(Extension)] for x in lst)
+def find_profiles():
+    lst = sublime.find_resources('*' + Extension)
+    return set(x.rsplit('/', 1)[-1][:-len(Extension)] for x in lst)
 
 def add():
     display_list = []

@@ -22,7 +22,9 @@ Suricate variables:
   * ``suricate_path`` The full path to the suricate folder under Packages folder.
   * ``suricate_package_path`` The full installation path of the suricate package."""
 
+import logging
 import os
+
 import sublime
 
 from . import defs
@@ -46,80 +48,13 @@ def get(view=None):
         view = sublime.active_window().active_view()
       if view is not None:
         _add_file('file', view.file_name())
-      _add_file('project', project_file())
+      window = sublime.active_window() if view is None else view.window()
+      _add_file('project', window.project_file_name())
+    except:
+      logging.exception('Error retrieving build variables')
     finally:
       return vmap
 
 def expand(obj, view=None):
     """Expand available build variables in object."""
     return util.replacekeys(obj, get(view))
-
-if sublime.version() > '3000':
-
-  def project_file():
-      """Return the current project file."""
-      return sublime.active_window().project_file_name()
-
-else:
-
-  # Workaround for Sublime Text 2 to retrieve the project file from sublime
-  # session files.
-
-  import json
-  import re
-
-  _abs = lambda p: os.path.abspath(p)
-  _absre = lambda p: os.path.abspath(re.sub(r'^/([^/])/', '\\1:/', p))
-
-  def _load_json_file(path):
-      with open(os.path.normpath(path), 'r') as f:
-        data = f.read()
-        return json.loads(data.replace('\t', ' '), strict=False)
-
-  class _ProjectParser(object):
-      """Check whether a project matches open folders in active window."""
-
-      def __init__(self):
-          self.current = None
-          self.folders = []
-
-      def iscurrent(self):
-          return self._check_folders(self.folders, init=True)
-
-      def _check_folders(self, folders, init=True):
-          if init:
-            self.wfolders = sorted(_abs(p) for p in sublime.active_window().folders())
-            self.number_of_folders = len(self.wfolders)
-          return len(folders) == self.number_of_folders and \
-                 all(folders[x]==self.wfolders[x] for x in xrange(0, self.number_of_folders))
-
-      def parse(self, projects):
-          for project in [p for p in projects if p]:
-            project = _absre(project)
-            project_json = _load_json_file(project)
-            project_folders = sorted(_absre(f['path']) for f in project_json.get('folders', []))
-            if self._check_folders(project_folders, init=False):
-              self.current = project
-              self.folders = project_folders
-              return True
-          return False
-
-  _parser = _ProjectParser()
-
-  def project_file():
-      """Return the current project file."""
-      if _parser.iscurrent():
-        return _parser.current
-      sfolder = _abs(os.path.join(sublime.packages_path(), '..', 'Settings'))
-      data = _load_json_file(os.path.join(sfolder, 'Session.sublime_session'))
-      projects = set(data['workspaces']['recent_workspaces'])
-
-      if os.path.lexists(os.path.join(sfolder, 'Auto Save Session.sublime_session')):
-        data = _load_json_file(os.path.join(sfolder, 'Auto Save Session.sublime_session'))
-        if 'workspaces' in data and \
-           'recent_workspaces' in data['workspaces'] and \
-           data['workspaces']['recent_workspaces']:
-          projects += set(data['workspaces']['recent_workspaces'])
-      if _parser.parse(projects):
-        return _parser.current
-      return None

@@ -9,16 +9,50 @@ from suricate import import_module
 
 sublime_wrapper = import_module('lib.sublime_wrapper')
 
-def complete_line(line, char=None, n=80):
-    """Returns a string of ``char`` that together with ``line`` sums ``n``
-    characters. If ``char`` is ``None`` use ``line``'s last character."""
-    if (line or char) and len(line) < n:
-      return (line[-1] if char is None else char)*(n-len(line))
+def get_max_line_length(view, guess):
+    if guess:
+      try:
+        return int(guess)
+      except TypeError:
+        pass
+    if view.settings().get("wrap_width"):
+      try:
+        return int(view.settings().get("wrap_width"))
+      except TypeError:
+        pass
+    if view.settings().get("rulers"):
+      try:
+        return int(view.settings().get("rulers")[0])
+      except ValueError:
+        pass
+      except TypeError:
+        pass
+    return 78
+
+def complete_line(line, max_line_length, char=None):
+    """Returns a string of `char` that together with `line` sums
+    `max_line_length` characters. If `char` is `None` use `line`'s last
+    character."""
+    if (line or char) and len(line) < max_line_length:
+      return (line[-1] if char is None else char)*(max_line_length-len(line))
     return line
 
-def fill_current_line(edit, view, *args, **kwargs):
-    """See text.complete_line.
-    @todo It doesn't work as expected, rewrite."""
+def split_line(line, max_line_length):
+    """@todo Only splits on spaces."""
+    index = line.rfind(' ', 0, max_line_length + 1)
+    leading_spaces = len(line) - len(line.lstrip())
+    return line[:index] + '\n' + leading_spaces * ' ' + line[index + 1:]
+
+def fill_current_line(edit, view, max_line_length=None, char=None):
+    """@todo It doesn't work as expected, rewrite."""
+    max_line_length = get_max_line_length(view, max_line_length)
     getline = lambda region: view.substr(view.line(region.end()))
-    func = lambda region: complete_line(getline(region), *args, **kwargs)
+    func = lambda region: complete_line(getline(region), max_line_length, char)
     sublime_wrapper.foreach_region(func, edit, view, clear=True)
+
+def split_current_line(edit, view, max_line_length=None):
+    max_line_length = get_max_line_length(view, max_line_length)
+    for region in view.sel():
+      line = view.line(region.end())
+      if line.size() > max_line_length:
+        view.replace(edit, line, split_line(view.substr(line), max_line_length))

@@ -212,6 +212,12 @@
       "call":         "text.fill_current_line",
       "keys":         ["ctrl+o", "ctrl+e"]
     },
+    "split_current_line":
+    {
+      "caption":      "Split Current Line",
+      "call":         "text.split_current_line",
+      "keys":         ["ctrl+o", "ctrl+j"]
+    },
 
     // Dictionaries.
     "switch_language":

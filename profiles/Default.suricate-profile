@@ -213,6 +213,14 @@
       "keys":         ["ctrl+o", "ctrl+e"]
     },
 
+    // Dictionaries.
+    "switch_language":
+    {
+      "caption":      "Quick Switch Dictionary",
+      "call":         "dictionaries.switch_language",
+      "keys":         ["shift+f6"]
+    },
+
     // Search.
     "searchbar":
     {

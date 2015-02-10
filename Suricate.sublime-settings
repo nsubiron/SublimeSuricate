@@ -25,6 +25,10 @@
   // are ignored.
   "quick_launch_path_list": [],
 
+  // List of dictionaries for quick switch in the form "Packages/Language -
+  // English/en_GB.dic", if empty all dictionaries will be used.
+  "quick_switch_dictionary_list": [],
+
   // Default search engine for the search bar.
   "default_search_engine": "DuckDuckGo"
 }

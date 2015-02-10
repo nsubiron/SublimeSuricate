@@ -34,7 +34,7 @@ def launchpdf(view=None):
     """Launch pdf associated with view."""
     bvars = build_variables.get(view)
     prefix = os.path.abspath(os.path.join(bvars['file_path'], bvars['file_base_name']))
-    process.start_file(prefix + '.pdf')
+    process.startfile(prefix + '.pdf')
 
 def convert_to_tex(string):
     """Convert special characters to TeX symbols."""

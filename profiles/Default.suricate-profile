@@ -167,7 +167,7 @@
       "caption":      "Open Terminal Here",
       "group":        "launch",
       "flags":        "Windows|IsFile",
-      "call":         "process.new_thread",
+      "call":         "process.spawn",
       "args":         {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
       "keys":         ["alt+shift+c"],
       "context_menu": true

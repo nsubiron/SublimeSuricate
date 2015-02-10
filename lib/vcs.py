@@ -28,7 +28,7 @@ def _do(cmd, caption, path, out=None, ask=None, **kwargs):
     if ask and not sublime.ok_cancel_dialog(util.replacekeys(ask, {'path': base_name}), caption):
       return
     if out == 'gui':
-      process.new_thread(cmd, working_dir)
+      process.async(cmd, working_dir)
     elif out == 'buffer':
       text, err = process.popen(cmd, working_dir)
       name = ' '.join(cmd[:2])

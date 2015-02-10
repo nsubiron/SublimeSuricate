@@ -68,7 +68,7 @@ class _ItemFactory(object):
         if mode == OpenMode:
           self.on_done_file = window.open_file
         else:
-          self.on_done_file = process.start_file
+          self.on_done_file = process.startfile
 
     def from_folder(self, path):
         parent = self.create(os.path.join(path, '..'), '..')

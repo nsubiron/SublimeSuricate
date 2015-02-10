@@ -218,6 +218,12 @@
       "call":         "text.split_current_line",
       "keys":         ["ctrl+o", "ctrl+j"]
     },
+    "randomize":
+    {
+      "caption":      "Randomize",
+      "call":         "text.randomize",
+      "keys":         ["ctrl+o", "ctrl+r"]
+    },
 
     // Dictionaries.
     "switch_language":

@@ -5,6 +5,8 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
+import random
+
 from suricate import import_module
 
 sublime_wrapper = import_module('lib.sublime_wrapper')
@@ -40,6 +42,8 @@ def complete_line(line, max_line_length, char=None):
 def split_line(line, max_line_length):
     """@todo Only splits on spaces."""
     index = line.rfind(' ', 0, max_line_length + 1)
+    if index == -1:
+      return line
     leading_spaces = len(line) - len(line.lstrip())
     return line[:index] + '\n' + leading_spaces * ' ' + line[index + 1:]
 
@@ -56,3 +60,13 @@ def split_current_line(edit, view, max_line_length=None):
       line = view.line(region.end())
       if line.size() > max_line_length:
         view.replace(edit, line, split_line(view.substr(line), max_line_length))
+
+def randomize(edit, view):
+    alphabet = "_{}[]#()<>%$:;.?*+-\\/^&|~!=,'0123456789" \
+               "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for region in view.sel():
+      if region.size() > 0:
+        chars = [random.choice(alphabet) for x in range(0, region.size())]
+        view.replace(edit, region, ''.join(chars))
+      else:
+        view.insert(edit, region.end(), random.choice(alphabet))

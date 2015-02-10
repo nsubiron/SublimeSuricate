@@ -33,7 +33,8 @@ def _filter(obj):
 
 def system(command):
     command = _filter(command)
-    if Verbose: print('Executing: ' + command)
+    if Verbose:
+      print('Executing: ' + command)
     return os.system(command)
 
 def system_quiet(command):
@@ -73,9 +74,8 @@ def _popen_internal(cmd=[], working_dir=None, shell=__is_windows):
       try:
         out, err = process.communicate(timeout=15)
       except subprocess.TimeoutExpired:
-        print('WARNING: suricate: timeout expired, killing the process...')
-        process.kill()
-        out, err = process.communicate()
+        print('WARNING: suricate: timeout expired, ignoring output')
+        return None, None
     if err:
       print('WARNING: suricate: subprocess returned error: %s' % decode(err))
     return decode(out), decode(err)

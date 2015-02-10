@@ -31,7 +31,7 @@
   // the "command" key in your User folder will cause the commands here to be
   // ignored.
 
-  "user_commands": {},
+  // "user_commands": {},
 
   // Optionally, you can define the default fields for the commands in this
   // profile. If no default is specified for a given tag, commands must contain

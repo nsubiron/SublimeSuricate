@@ -31,12 +31,16 @@ def get_max_line_length(view, guess):
         pass
     return 78
 
-def complete_line(line, max_line_length, char=None):
+def line_length(line, tab_width):
+    return len(line) + line.count('\t') * (tab_width - 1)
+
+def complete_line(line, max_line_length, tab_width, char=None):
     """Returns a string of `char` that together with `line` sums
     `max_line_length` characters. If `char` is `None` use `line`'s last
     character."""
-    if (line or char) and len(line) < max_line_length:
-      return (line[-1] if char is None else char)*(max_line_length-len(line))
+    length = line_length(line, tab_width)
+    if (line or char) and length < max_line_length:
+      return (line[-1] if char is None else char)*(max_line_length-length)
     return line
 
 def split_line(line, max_line_length):
@@ -50,8 +54,9 @@ def split_line(line, max_line_length):
 def fill_current_line(edit, view, max_line_length=None, char=None):
     """@todo It doesn't work as expected, rewrite."""
     max_line_length = get_max_line_length(view, max_line_length)
+    tab_size = view.settings().get('tab_size', 4)
     getline = lambda region: view.substr(view.line(region.end()))
-    func = lambda region: complete_line(getline(region), max_line_length, char)
+    func = lambda region: complete_line(getline(region), max_line_length, tab_size, char)
     sublime_wrapper.foreach_region(func, edit, view, clear=True)
 
 def split_current_line(edit, view, max_line_length=None):

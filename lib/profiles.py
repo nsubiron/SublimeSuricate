@@ -69,8 +69,9 @@ def to_buffer():
     title = 'Profiles'
     text = '%s\n%s\n\n' % (title, '='*len(title))
     current = suricate.Settings.get(SettingsKey, [])
+    no_keybindings = suricate.Settings.get('ignore_default_keybindings', False)
     profiles = [['Your profile', current]] + [[x,[x]] for x in find_profiles()]
     for name, profile in profiles:
       text += '### %s\n\n' % name
-      text += print_commands(command_parser.get(profile)) + '\n\n'
+      text += print_commands(command_parser.get(profile, no_keybindings)) + '\n\n'
     sublime_wrapper.flush_to_buffer(text, name=title, scratch=True, syntax='Markdown')

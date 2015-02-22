@@ -1,26 +1,33 @@
 {
   "description": "Commands to work with LaTeX",
 
+  "defaults":
+  {
+    "mnemonic":     null,
+    "group":        "tex",
+    "args":         {},
+    "flags":        null,
+    "keys":         [],
+    "context_menu": false,
+    "context": [{"key": "selector", "operator": "equal", "operand": "text.tex.latex"}]
+  },
+
   "commands":
   {
     "latex.paragraph_to_tex":
     {
       "caption":      "LaTeX: Convert Symbols In Paragraph",
-      "group":        "tex",
       "call":         "latex.paragraph_to_tex"
     },
     "latex.open_pdf":
     {
-      "caption":      "LaTeX: Open Associated PDF",
-      "group":        "tex",
+      "caption":      "LaTeX: Launch PDF",
       "flags":        "IsFile",
-      "call":         "latex.launchpdf",
-      "keys":         ["f2"]
+      "call":         "latex.launchpdf"
     },
     "latex.delete_intermediate_files":
     {
       "caption":      "LaTeX: Remove Intermediate Files",
-      "group":        "tex",
       "flags":        "IsFile",
       "call":         "latex.clean"
     }

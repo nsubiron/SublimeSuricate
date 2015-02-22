@@ -5,7 +5,7 @@
 		<key>name</key>
 		<string>Suricate Profile</string>
 		<key>scopeName</key>
-		<string>source.suricate.profile</string>
+		<string>source.suricate-profile</string>
 		<key>fileTypes</key>
 		<array>
 			<string>suricate-profile</string>

@@ -59,7 +59,14 @@ def show_quick_panel(path=None):
         if display_list:
           on_done = lambda picked: _show_quick_panel(picked.do())
           sublime_wrapper.show_quick_panel(display_list, on_done)
-    _show_quick_panel(_get_list(path))
+    initial_list = _get_list(path)
+    if initial_list:
+      _show_quick_panel(initial_list)
+    else:
+      message = 'Nothing found under source control. ' \
+                'Try adding items to "vcs_working_dirs" in your ' \
+                'Suricate settings file.'
+      sublime.error_message(message)
 
 class PathProxy(list):
     def __init__(self, name, vcs, path):

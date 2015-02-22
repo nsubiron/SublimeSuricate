@@ -41,7 +41,9 @@ def flush_to_buffer(text, name=None, scratch=False, syntax=None, syntax_file=Non
     if name is not None:
       view.set_name(name)
     if syntax is not None:
-      view.set_syntax_file('Packages/{0}/{0}.tmLanguage'.format(syntax))
+      syntax_files = sublime.find_resources(syntax + '.tmLanguage')
+      if syntax_files:
+        view.set_syntax_file(syntax_files[0])
     elif syntax_file is not None:
       view.set_syntax_file(syntax_file)
     auto_indent = view.settings().get("auto_indent")

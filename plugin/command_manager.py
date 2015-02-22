@@ -39,7 +39,8 @@ class CommandManager(object):
     def reload_settings(self):
         self._clear_on_change()
         self.profiles = self.settings.get('profiles', [])
-        commands = command_parser.get(self.profiles)
+        ignore_default_keybindings = self.settings.get('ignore_default_keybindings', False)
+        commands = command_parser.get(self.profiles, ignore_default_keybindings)
         self.commands = menu_manager.print_menus(commands, defs.SuricatePath, self.settings)
         self._add_on_change()
 

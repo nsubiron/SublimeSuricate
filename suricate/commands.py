@@ -15,7 +15,7 @@ from . import flags
 
 ProfileExtension = '.suricate-profile'
 
-DefaultDefaults = (
+DefaultDefaults = \
     {
         'caption':        'No description provided',
         'mnemonic':       None,
@@ -26,9 +26,8 @@ DefaultDefaults = (
         'context':        None,
         'context_menu':   False
     }
-)
 
-TagList = (
+TagList = \
     [
         'caption',
         'mnemonic',
@@ -40,7 +39,6 @@ TagList = (
         'context',
         'context_menu'
     ]
-)
 
 Command = namedtuple('Command', TagList)
 
@@ -50,11 +48,18 @@ def _rupdate(lhs, rhs):
       ilhs.update(irhs)
       lhs[key] = ilhs
 
-def _create_commands(settings):
+def _remove_key_bindings(jsoncommands):
+    for item in jsoncommands.values():
+      if 'keys' in item:
+        item.pop('keys')
+
+def _create_commands(profile, ignore_default_keybindings):
     commands = {}
-    jsoncommands = settings.get('commands', {})
-    _rupdate(jsoncommands, settings.get('user_commands', {}))
-    defaults = settings.get('defaults', DefaultDefaults)
+    jsoncommands = profile.get('commands', {})
+    if ignore_default_keybindings:
+      _remove_key_bindings(jsoncommands)
+    _rupdate(jsoncommands, profile.get('user_commands', {}))
+    defaults = profile.get('defaults', DefaultDefaults)
     for key, item in jsoncommands.items():
       try:
         args = dict(defaults)
@@ -68,9 +73,9 @@ def _create_commands(settings):
         suricate.log('WARNING: Command "%s" not added: mandatory field missing.', key)
     return commands
 
-def get(profiles):
+def get(profiles, ignore_default_keybindings):
     commands = {}
-    for profile in profiles:
-      settings = sublime.load_settings(profile + ProfileExtension)
-      commands.update(_create_commands(settings))
+    for profile_name in profiles:
+      profile = sublime.load_settings(profile_name + ProfileExtension)
+      commands.update(_create_commands(profile, ignore_default_keybindings))
     return commands

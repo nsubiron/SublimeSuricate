@@ -59,13 +59,13 @@
     //     "group":        String or null: group commands according to this tag,
     //     "call":         String: module.function (see more info below),
     //     "args":         {String: String}: arguments to be passed to call,
-    //     "flags":        String or null: see flags defined in flags.py,
+    //     "flags":        String or null: see supported flags below,
     //     "keys":         [String]: key binding,
     //     "context":      Array: Standard Sublime Text key binding context,
-    //     "context_menu": Bool: whether should be included in the context menu
+    //     "context_menu": Bool: whether should appear in the context menu
     //   }
     //
-    // The "call" field:
+    // The "call" tag:
     //
     //   Specifies the function to be called when executing the command, the
     //   function must be located in a module inside the 'lib' folder of the
@@ -86,6 +86,16 @@
     //   By default most of the key bindings here start with ctrl+o, which
     //   interferes with sublime text's open file action. To override this
     //   behaviour tweak "override_ctrl_o" setting.
+    //
+    //   Alternatively, key bindings given inside "commands" can be ignored
+    //   adding `"ignore_default_keybindings": true` to the settings file. (Key
+    //   bindings given by "user_commands" are still considered).
+    //
+    // Supported flags:
+    //
+    //   * Platforms: Linux, Windows, Osx
+    //   * Version control systems: Git, Svn, Surround
+    //   * Other: IsFile, IsDir, Never
 
     "toggle_dev":
     {

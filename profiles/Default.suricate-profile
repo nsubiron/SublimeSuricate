@@ -182,6 +182,16 @@
       "keys":         ["alt+shift+c"],
       "context_menu": true
     },
+    "linux_terminal":
+    {
+      "caption":      "Open Terminal Here",
+      "group":        "launch",
+      "flags":        "Linux|IsFile",
+      "call":         "process.spawn",
+      "args":         {"cmd": ["gnome-terminal"], "working_dir": "${file_path}"},
+      "keys":         ["alt+shift+c"],
+      "context_menu": true
+    },
 
     // Build variables.
     "copy_build_variable":

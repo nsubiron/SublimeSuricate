@@ -23,21 +23,15 @@ class Flags(object):
     Svn         = 0x0010
     Surround    = 0x0020
     # File types.
-    IsFile      = 0x0040
-    TeX         = 0x0080
-    Makefile    = 0x0100
-    # Folder types.
+    IsFile      = 0x0100
     IsDir       = 0x0200
     # Never active.
     Never       = 0x8000
 
 ExorGroups = [
   (Flags.Linux|Flags.Windows|Flags.Osx, True),
-  (Flags.Svn|Flags.Surround|Flags.Git, False),
-  (Flags.TeX|Flags.Makefile, False)
+  (Flags.Svn|Flags.Surround|Flags.Git, False)
 ]
-
-FILE_TYPES = [('*.tex', Flags.TeX), ('Makefile*', Flags.Makefile)]
 
 VCS_FDS = [('.git', Flags.Git), ('.svn', Flags.Svn), ('.MySCMServerInfo', Flags.Surround)]
 
@@ -67,7 +61,6 @@ del STRMAP[Flags.EMPTY]
 def to_string(flags):
     return '|'.join(n for f, n in STRMAP.items() if check(flags, f))
 
-
 PLATFORM = from_string(sublime.platform().title())
 
 def check_platform(flags):
@@ -81,7 +74,7 @@ def parse(path):
       return PLATFORM
     if os.path.isfile(path):
       folder, name = os.path.split(path)
-      return PLATFORM|Flags.IsFile|_filetype(name)|_vcs(folder)
+      return PLATFORM|Flags.IsFile|_vcs(folder)
     elif os.path.isdir(path):
       return PLATFORM|Flags.IsDir|_vcs(path)
 
@@ -95,10 +88,6 @@ def get_vcs(path):
 def _parseft(pattern, flag):
     r = re.compile(fnmatch.translate(pattern))
     return lambda filename: flag if r.match(filename) else Flags.EMPTY
-
-_FILE_CHECKS = map(lambda x: _parseft(*x), FILE_TYPES)
-
-_filetype = lambda n: reduce(lambda x, y: x|y(n), _FILE_CHECKS, Flags.EMPTY)
 
 class _VcsChecker(object):
     def __init__(self):

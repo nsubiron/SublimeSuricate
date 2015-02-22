@@ -12,13 +12,22 @@ import sys
 import sublime
 import sublime_plugin
 
-Verbose = False
+DEBUG = False
 
 ForceReloadModules = True
 
+def log(message, *args):
+    print('Suricate: ' + message % args)
+
+if DEBUG:
+  def debug(message, *args):
+      log(message, *args)
+else:
+  def debug(message, *args):
+      pass
+
 def import_module(name, force_reload=ForceReloadModules):
-    if Verbose:
-      print('  import ' + name)
+    debug('import %s', name)
     m = importlib.import_module('.' + name, __package__)
     return imp.reload(m) if force_reload else m
 
@@ -35,18 +44,19 @@ class DummyManager(object):
 MANAGER = DummyManager()
 
 def plugin_loaded():
-    print('Suricate: reloading dependencies')
-    # Reload suricate package.
+    log('Loading dependencies')
     suricate = import_module('suricate', True)
+    suricate.log = log
+    suricate.debug = debug
+    suricate.import_module = import_module
+    sys.modules['suricate'] = suricate
+    # Reload suricate package.
     defs = import_module('suricate.defs', True)
     import_module('suricate.flags', True)
     import_module('suricate.util', True)
     import_module('suricate.build_variables', True)
     import_module('suricate.commands', True)
-    suricate.import_module = import_module
     suricate.Settings = sublime.load_settings(defs.SettingsFileBaseName)
-    suricate.Verbose = Verbose
-    sys.modules['suricate'] = suricate
     # Reload plugin package.
     import_module('plugin', True)
     import_module('plugin.menu_manager', True)
@@ -64,8 +74,7 @@ class SuricateCommand(sublime_plugin.TextCommand):
         self._update()
 
     def _update(self):
-        if Verbose:
-          print('Updating flags for view %s' % self.view.buffer_id())
+        debug('Updating flags for view %s' % self.view.buffer_id())
         self.filename = self.view.file_name()
         self.flags = MANAGER.update(self.filename)
 

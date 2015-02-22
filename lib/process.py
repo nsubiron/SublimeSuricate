@@ -9,8 +9,7 @@ import os
 import sublime
 import subprocess
 
-from suricate import Verbose
-from suricate import build_variables
+import suricate
 
 def touch(paths, times=None):
     for path in paths:
@@ -43,16 +42,15 @@ def popen(cmd, working_dir=None, shell=None, timeout=None):
     """Wrapper around subprocess.Popen. Launch a new process and wait timeout
     seconds for output. Return stdout, stderr."""
     # Prepare arguments.
-    cmd = build_variables.expand(cmd)
-    working_dir = build_variables.expand(working_dir)
+    cmd = suricate.build_variables.expand(cmd)
+    working_dir = suricate.build_variables.expand(working_dir)
     if shell is None:
       shell = sublime.platform().lower() == 'windows'
     kwargs = {'cwd': working_dir, 'shell': shell}
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.PIPE
     # Launch process.
-    if Verbose:
-      print('Suricate: popen: %s' % ' '.join(cmd))
+    suricate.debug('Popen: %s', ' '.join(cmd))
     process = subprocess.Popen(cmd, **kwargs)
     try:
       out, err = process.communicate(timeout=timeout)
@@ -60,12 +58,12 @@ def popen(cmd, working_dir=None, shell=None, timeout=None):
       return decode(out), decode(err)
     except subprocess.TimeoutExpired:
       if timeout != 0:
-        print('WARNING: suricate: popen: time-out expired, ignoring output')
+        suricate.log('WARNING: Popen: time-out expired, ignoring output')
       return None, None
 
 def startfile(path):
     """Try to emulate the behaviour of double-clicking the file."""
-    path = build_variables.expand(path)
+    path = suricate.build_variables.expand(path)
     platform = sublime.platform().lower()
     if not os.access(path, os.F_OK):
       sublime.error_message('Cannot open file "%s"' % path)

@@ -9,14 +9,13 @@
 
 import sublime
 
-from suricate import Settings
-from suricate import import_module
+import suricate
 
-sublime_wrapper = import_module('lib.sublime_wrapper')
+sublime_wrapper = suricate.import_module('lib.sublime_wrapper')
 
 Engines = {
-  'DuckDuckGo': 'https://duckduckgo.com/?q=',
-  'Google': 'https://www.google.com/search?q='
+    'DuckDuckGo': 'https://duckduckgo.com/?q=',
+    'Google': 'https://www.google.com/search?q='
 }
 
 def show(caption=None, engine=None):
@@ -40,8 +39,8 @@ def _on_done(prefix, string, window):
 
 def _get_default_engine_if_not_valid(engine, default='DuckDuckGo'):
     if engine is None:
-      engine = Settings.get('default_search_engine', default)
+      engine = suricate.Settings.get('default_search_engine', default)
     if engine not in Engines:
-      print('Search engine "%s" not implemented.' % engine)
+      suricate.log('ERROR: Search engine "%s" not implemented.', engine)
       engine = default
     return engine

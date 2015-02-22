@@ -8,7 +8,9 @@
 """Parse output of different version control systems.
 Usage example: git status | python {file} status git"""
 
-NOT_IMPLEMENTED_MESSAGE = """suricate: {command} parser for {vcsname} not implemented.
+import suricate
+
+NOT_IMPLEMENTED_MESSAGE = """{command} parser for {vcsname} not implemented.
 Please implement {parser} in {file}."""
 
 def parse(out, command, vcsname):
@@ -17,7 +19,7 @@ def parse(out, command, vcsname):
       mapper = globals()['_%s_mapper__%s' % (command, vcsname)]
     except KeyError as error:
       kwargs = {'parser': error, 'command': command, 'vcsname': vcsname, "file": __file__}
-      print(NOT_IMPLEMENTED_MESSAGE.format(**kwargs))
+      suricate.log(NOT_IMPLEMENTED_MESSAGE.format(**kwargs))
       return []
     return [x for x in mapper(out)]
 

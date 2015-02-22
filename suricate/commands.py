@@ -7,6 +7,8 @@
 
 import sublime
 
+import suricate
+
 from collections import namedtuple
 
 from . import flags
@@ -62,8 +64,8 @@ def _create_commands(settings):
         if flags.check_platform(command.flags):
           commands[key] = command
       except TypeError as exception:
-        print(exception)
-        print('Command "%s" not added: mandatory field missing.' % key)
+        suricate.debug('Exception %s', exception)
+        suricate.log('WARNING: Command "%s" not added: mandatory field missing.', key)
     return commands
 
 def get(profiles):

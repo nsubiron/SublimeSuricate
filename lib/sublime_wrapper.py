@@ -10,7 +10,7 @@
 import os
 import sublime
 
-from suricate import build_variables
+import suricate
 
 def execute(**kwargs):
     """Runs an external process asynchronously. On Windows, GUIs are suppressed.
@@ -31,7 +31,8 @@ def execute(**kwargs):
       * quiet ``Bool``: If True prints less information about running the
       command."""
     window = sublime.active_window()
-    window.run_command('exec', build_variables.expand(kwargs, window.active_view()))
+    kwargs = suricate.build_variables.expand(kwargs, window.active_view())
+    window.run_command('exec', kwargs)
 
 def flush_to_buffer(text, name=None, scratch=False, syntax=None, syntax_file=None):
     """Flush text to a new buffer."""
@@ -54,7 +55,7 @@ def show_quick_panel(display_list, on_done, window=None):
     callable object that accepts one argument, the element picked (not the
     index!). It won't be called if the user cancels."""
     if not display_list:
-      print('Quick panel fed with an empty list!')
+      suricate.log('ERROR: Quick panel fed with an empty list!')
       return
     if window is None:
       window = sublime.active_window()
@@ -71,20 +72,20 @@ def show_quick_panel(display_list, on_done, window=None):
 def copy_build_variable_to_clipboard(key=None):
     """If key is None, show a quick panel with the currently available build
     variables."""
-    vmap = build_variables.get()
+    vmap = suricate.build_variables.get()
     on_done = lambda picked: sublime.set_clipboard(picked[1])
     if key is None:
-      show_quick_panel(sorted([[k,i] for k, i in vmap.items()]), on_done)
+      show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
     else:
       on_done([None, vmap[key]])
 
 def paste_build_variable(edit, key=None, view=None):
     """If key is None, show a quick panel with the currently available build
     variables."""
-    vmap = build_variables.get()
+    vmap = suricate.build_variables.get()
     on_done = lambda picked: insert(picked[1], edit, view, clear=True)
     if key is None:
-      show_quick_panel(sorted([[k,i] for k, i in vmap.items()]), on_done)
+      show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
     else:
       on_done([None, vmap[key]])
 

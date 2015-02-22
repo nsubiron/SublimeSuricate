@@ -9,14 +9,14 @@ import sublime
 
 import os
 
-from suricate import Settings
+import suricate
 
 def switch_language(view):
-    dicts = Settings.get('quick_switch_dictionary_list', [])
+    dicts = suricate.Settings.get('quick_switch_dictionary_list', [])
     if not dicts:
       dicts = sublime.find_resources('*.dic')
       if not dicts:
-        print('ERROR: no dictionary found')
+        suricate.log('ERROR: no dictionary found')
         return
     current = view.settings().get('dictionary')
     next_item_index = dicts.index(current) + 1 if current in dicts else 0

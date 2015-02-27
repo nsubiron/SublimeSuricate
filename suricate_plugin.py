@@ -78,11 +78,14 @@ class SuricateCommand(sublime_plugin.TextCommand):
         self.filename = self.view.file_name()
         self.flags = MANAGER.update(self.filename)
 
-    def is_visible(self, key=None):
+    def is_visible(self, key=None, **kwargs):
         if self.filename != self.view.file_name():
           self._update()
         return MANAGER.is_enabled(key, self.flags)
 
-    def run(self, edit, key):
-        args = {'edit': edit, 'view': self.view, 'active_flags': self.flags}
+    def want_event(self):
+        return True
+
+    def run(self, edit, key, event=None):
+        args = {'edit': edit, 'view': self.view, 'event': event, 'active_flags': self.flags}
         MANAGER.run(key, args)

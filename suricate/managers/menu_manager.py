@@ -9,19 +9,28 @@ import json
 import os
 import sublime
 
-from suricate import defs
-from suricate import util
-
-Folder = defs.SuricatePath
+from .. import util
+from .._suricate import _SuricateAPI as SuricateAPI
 
 CommandsFileBaseName =    'Suricate.sublime-commands'
 MainMenuFileBaseName =    'Main.sublime-menu'
 ContextMenuFileBaseName = 'Context.sublime-menu'
 KeymapFileBaseName =      'Default (%s).sublime-keymap' % sublime.platform().title()
 
+
+def get_menu_variables():
+    SuricateBaseName = SuricateAPI.package_name
+    SuricateMenuVariables = {
+      'suricate_base_name': SuricateBaseName,
+      'suricate_package_path': '${packages}/' + SuricateBaseName,
+      'suricate_path': '${packages}/' + SuricateBaseName
+    }
+    return SuricateMenuVariables
+
 def print_menus(commands, folder, settings):
     """Generate sublime files based on commands. Return the commands dictionary
     filtering out the commands not added."""
+    print(folder)
     if not os.path.exists(folder):
       os.mkdir(folder)
     manager = MenuManager(folder, settings)
@@ -61,7 +70,7 @@ class SublimeFile(SublimeData):
 
     def writeout(self):
         with open(self.filename, 'w+') as f:
-          data = util.replacekeys(self.asdata(), defs.SuricateMenuVariables)
+          data = util.replacekeys(self.asdata(), get_menu_variables())
           f.write(json.dumps(data, indent='\t'))
 
 class MenuManager(object):

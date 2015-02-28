@@ -1,0 +1,122 @@
+# Sublime Suricate, Copyright (C) 2013 N. Subiron
+#
+# This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you
+# are welcome to redistribute it and/or modify it under the terms of the GNU
+# General Public License as published by the Free Software Foundation, either
+# version 3 of the License, or (at your option) any later version.
+
+import imp
+import os
+import sys
+
+import sublime
+
+
+_THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+
+
+class _SuricateAPI(object):
+    api_is_ready = False
+    debug_log = False
+    is_packaged = _THIS_FOLDER.endswith('.sublime-package')
+    if is_packaged:
+        package_path = _THIS_FOLDER
+    else:
+        package_path = os.path.abspath(os.path.join(_THIS_FOLDER, '..'))
+    package_name = os.path.splitext(os.path.basename(package_path))[0]
+    library_module_name = '.'.join([package_name, 'lib'])
+    settings_file_base_name = 'Suricate.sublime-settings'
+    generated_files_path = None
+    variables = {}
+
+    @staticmethod
+    def set_ready():
+        packages_path = sublime.packages_path()
+        folder_path = os.path.join(packages_path, _SuricateAPI.package_name)
+        _SuricateAPI.generated_files_path = os.path.abspath(folder_path)
+        _SuricateAPI._init_variables()
+        _SuricateAPI.api_is_ready = True
+
+    @staticmethod
+    def set_debug_log(active=None):
+        if active is None:
+            _SuricateAPI.debug_log = not _SuricateAPI.debug_log
+        else:
+            _SuricateAPI.debug_log = bool(active)
+
+    @staticmethod
+    def _init_variables():
+        is_valid = lambda k, v: not k.startswith('_') and isinstance(v, str)
+        prefix = 'suricate_'
+        api_vars = vars(_SuricateAPI)
+        variables = dict((prefix+k, v) for k, v in api_vars.items() if is_valid(k, v))
+        _SuricateAPI.variables.update(variables)
+
+
+def log(message, *args):
+    print('Suricate: ' + message % args)
+
+
+def debuglog(message, *args):
+    if _SuricateAPI.debug_log:
+        log(message, *args)
+
+
+def set_debuglog(active=None):
+    _SuricateAPI.set_debug_log(active)
+
+
+if _SuricateAPI.is_packaged:
+
+
+    def reload_module(module_name):
+        pass
+
+
+else:
+
+
+    def reload_module(module_name):
+        module = sys.modules.get(module_name)
+        if module:
+            return imp.reload(module)
+
+
+if sublime.version() > '3068':
+
+
+    def get_variables(window=None):
+        if window is None:
+            window = sublime.active_window()
+        variables = sublime.active_window().extract_variables()
+        variables.update(_SuricateAPI.variables)
+        return variables
+
+
+    def expand_variables(value, variables=None, window=None):
+        if variables is None:
+            variables = get_variables(window)
+        return sublime.expand_variables(value, variables)
+
+
+else:
+
+
+    # @todo
+    raise NotImplementedError
+
+
+def get_variable(key, default=None):
+    return get_variables().get(key, default)
+
+
+def get_settings():
+    return sublime.load_settings(_SuricateAPI.settings_file_base_name)
+
+
+# @todo Remove
+import importlib
+def import_module(name, force_reload=True):
+    debuglog('import %s', name)
+    m = importlib.import_module('.' + name, __package__)
+    return imp.reload(m) if force_reload else m

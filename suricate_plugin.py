@@ -12,61 +12,31 @@ import sys
 import sublime
 import sublime_plugin
 
-DEBUG = False
 
-ForceReloadModules = True
+from . import suricate
+sys.modules['suricate'] = suricate
 
-def log(message, *args):
-    print('Suricate: ' + message % args)
 
-if DEBUG:
-  def debug(message, *args):
-      log(message, *args)
-else:
-  def debug(message, *args):
-      pass
+from .suricate._suricate import _SuricateAPI as SuricateAPI
+from .suricate.managers import command_manager
 
-def import_module(name, force_reload=ForceReloadModules):
-    debug('import %s', name)
-    m = importlib.import_module('.' + name, __package__)
-    return imp.reload(m) if force_reload else m
 
-class DummyManager(object):
-    def update(self, view):
-        pass
+MANAGER = command_manager.CommandManager()
 
-    def is_enabled(self, key):
-        return False
-
-    def run(self, key):
-        pass
-
-MANAGER = DummyManager()
 
 def plugin_loaded():
-    log('Loading dependencies')
-    suricate = import_module('suricate', True)
-    suricate.log = log
-    suricate.debug = debug
-    suricate.import_module = import_module
-    sys.modules['suricate'] = suricate
-    # Reload suricate package.
-    defs = import_module('suricate.defs', True)
-    import_module('suricate.flags', True)
-    import_module('suricate.util', True)
-    import_module('suricate.build_variables', True)
-    import_module('suricate.commands', True)
-    suricate.Settings = sublime.load_settings(defs.SettingsFileBaseName)
-    # Reload plugin package.
-    import_module('plugin', True)
-    import_module('plugin.menu_manager', True)
-    command_manager = import_module('plugin.command_manager', True)
-    # Starting up manager.
-    global MANAGER
-    MANAGER = command_manager.CommandManager()
-    MANAGER.load(suricate.Settings)
-    suricate.Settings.clear_on_change('Suricate')
-    suricate.Settings.add_on_change('Suricate', MANAGER.reload_settings)
+    SuricateAPI.set_ready()
+    # suricate.set_debuglog(True)
+
+    for x in sorted(SuricateAPI.variables.items()):
+        print('-> %s = %r' % x)
+
+    settings = suricate.get_settings()
+    MANAGER.load(settings)
+    settings.clear_on_change('Suricate')
+    settings.add_on_change('Suricate', MANAGER.reload_settings)
+    suricate.log('active')
+
 
 class SuricateCommand(sublime_plugin.TextCommand):
     def __init__(self, *args, **kwargs):
@@ -74,18 +44,24 @@ class SuricateCommand(sublime_plugin.TextCommand):
         self._update()
 
     def _update(self):
-        debug('Updating flags for view %s' % self.view.buffer_id())
+        suricate.debuglog('Updating flags for view %s' % self.view.buffer_id())
         self.filename = self.view.file_name()
         self.flags = MANAGER.update(self.filename)
 
     def is_visible(self, key=None, **kwargs):
         if self.filename != self.view.file_name():
-          self._update()
+            self._update()
         return MANAGER.is_enabled(key, self.flags)
 
     def want_event(self):
         return True
 
     def run(self, edit, key, event=None):
-        args = {'edit': edit, 'view': self.view, 'event': event, 'active_flags': self.flags}
+        args = {
+            'edit': edit,
+            'view': self.view,
+            'window': self.view.window(),
+            'event': event,
+            'active_flags': self.flags
+        }
         MANAGER.run(key, args)

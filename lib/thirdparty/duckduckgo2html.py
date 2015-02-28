@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Retrieve results from the DuckDuckGo zero-click API in simple HTML format"""
+"""Retrieve results from the DuckDuckGo zero-click API in simple HTML format."""
 
 import json as jsonlib
 import logging
@@ -8,15 +8,18 @@ import re
 import urllib.request, urllib.error, urllib.parse
 
 
+__version__ = (1, 0, 0)
+
+
 def results2html(results, results_priority=None, max_number_of_results=None,
-                 ignore_incomplete=False, always_show_related=False,
+                 ignore_incomplete=True, always_show_related=False,
                  header_start_level=1, hide_headers=False, hide_signature=False):
     if not results:
-        return 'Sorry, no results found'
+        return ''
 
     if not results_priority:
         results_priority = ['answer', 'abstract', 'definition', 'results',
-                            'redirect', 'related']
+                            'infobox', 'redirect', 'related']
 
     if not always_show_related:
         other = [x for x in results_priority if x != 'related']
@@ -43,7 +46,7 @@ def results2html(results, results_priority=None, max_number_of_results=None,
 
     html_contents[:] = [x for x in html_contents if x]
     if not html_contents:
-        return 'Sorry, no results found'
+        return ''
 
     if not hide_signature:
         html_contents.append('<footer><small>Results from DuckDuckGo</small></footer>')
@@ -105,6 +108,7 @@ class Results(object):
         self.abstract = Abstract(json)
         self.definition = Definition(json)
         self.redirect = Redirect(json)
+        self.infobox = Infobox(json)
 
     def get(self, name):
         if hasattr(self, name) and getattr(self, name):
@@ -225,8 +229,36 @@ class Redirect(_ResultItemBase):
         super().__init__('Redirect')
         self.url = json['Redirect']
 
+    def is_complete(self):
+        return True if self.url else False
+
     def as_html(self):
         return _html_url(self.url) if self.url else None
+
+
+class Infobox(_ResultItemBase):
+    class Content(object):
+        def __init__(self, json):
+            self.data_type = json.get('data_type', '') if json else ''
+            self.label = json.get('label', '') if json else ''
+            self.value = json.get('value', '') if json else ''
+
+        def as_html(self):
+            if self.data_type == 'string' and self.label and self.value:
+                return '<b>{0}</b> {1}'.format(self.label, self.value)
+
+    def __init__(self, json):
+        super().__init__('Infobox')
+        infobox = json.get('Infobox') if json.get('Infobox') else {}
+        self.meta = infobox.get('meta', [])
+        self.content = [Infobox.Content(x) for x in infobox.get('content', [])]
+
+    def is_complete(self):
+        return True if self.content else False
+
+    def as_html(self):
+        contents = [x.as_html() for x in self.content]
+        return '<br>'.join(x for x in contents if x)
 
 
 if __name__ == '__main__':
@@ -235,8 +267,17 @@ if __name__ == '__main__':
     import sys
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('query', nargs='*', help='the search query')
+    parser.add_argument(
+        'query',
+        nargs='*',
+        help='the search query')
+    parser.add_argument(
+        '-v', '--version',
+        action='version',
+        version='%(prog)s v{0}.{1}.{2}'.format(*__version__))
     args = parser.parse_args()
+
+    logging.basicConfig(format='%(levelname)s: %(filename)s: %(message)s')
 
     if args.query:
         queries = [' '.join(args.query)]
@@ -247,4 +288,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     for query in queries:
-        print(results2html(search(query)))
+        html = results2html(search(query))
+        if html:
+            print(html)
+        else:
+            logging.warning('No results found')

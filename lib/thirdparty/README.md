@@ -1,5 +1,5 @@
-duckduckgo2html
-===============
+[duckduckgo2html](https://github.com/nsubiron/duckduckgo2html.git)
+==================================================================
 
 Python 3 library to retrieve results from the
 [DuckDuckGo zero-click API](https://api.duckduckgo.com) in simple HTML format.

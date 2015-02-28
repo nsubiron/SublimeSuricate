@@ -16,14 +16,42 @@
   {
     "searchtools.duckduckgo_popup":
     {
-      "caption":      "DuckDuckGo Quick Answers",
+      "caption":      "DuckDuckGo!",
+      "keys":         ["ctrl+shift+alt+o"],
+      "group":        "a.duckduckgo",
+      "call":         "duckduckgo.show_popup",
+      "context_menu": true,
+      "args":
+      {
+        "css_file": "Packages/${suricate_base_name}/css/default.css",
+        "scope_regex": "(source).(?P<keyword>[a-z+-_]+)",
+        "ignore_incomplete": false,
+        "always_show_related": true
+      }
+    },
+
+    "searchtools.duckduckgo_popup_condensed":
+    {
+      "caption":      "DuckDuckGo Quick Answer",
+      "keys":         ["shift+alt+o"],
       "call":         "duckduckgo.show_popup",
       "args":
       {
         "css_file": "Packages/${suricate_base_name}/css/default.css",
-        "always_show_related": true
-      },
-      "keys":         ["shift+alt+o"]
+        "scope_regex": "(source).(?P<keyword>[a-z+-_]+)",
+        "results_priority": ["answer", "abstract", "definition", "results",
+                             "redirect", "related"],
+        "hide_headers": true,
+        "max_number_of_results": 2,
+        "ignore_incomplete": true,
+        "always_show_related": false
+      }
+    },
+
+    "searchtools.duckduckgo_insert_answer":
+    {
+      "caption":      "DuckDuckGo Insert Answer",
+      "call":         "duckduckgo.insert_answer",
     }
   }
 }

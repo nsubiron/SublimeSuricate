@@ -1,0 +1,29 @@
+{
+  "description": "Tools to search the web",
+
+  "defaults":
+  {
+    "mnemonic":     null,
+    "group":        "searchtools",
+    "args":         {},
+    "flags":        null,
+    "keys":         [],
+    "context_menu": false,
+    "context":      null
+  },
+
+  "commands":
+  {
+    "searchtools.duckduckgo_popup":
+    {
+      "caption":      "DuckDuckGo Quick Answers",
+      "call":         "duckduckgo.show_popup",
+      "args":
+      {
+        "css_file": "Packages/${suricate_base_name}/css/default.css",
+        "always_show_related": true
+      },
+      "keys":         ["shift+alt+o"]
+    }
+  }
+}

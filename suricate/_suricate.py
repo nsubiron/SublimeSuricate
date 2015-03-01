@@ -11,6 +11,8 @@ import sys
 
 import sublime
 
+from . import _variables
+
 
 _THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
@@ -31,6 +33,8 @@ class _SuricateAPI(object):
 
     @staticmethod
     def set_ready():
+        if _SuricateAPI.api_is_ready:
+            raise RuntimeError('suricate API already initialized')
         packages_path = sublime.packages_path()
         folder_path = os.path.join(packages_path, _SuricateAPI.package_name)
         _SuricateAPI.generated_files_path = os.path.abspath(folder_path)
@@ -51,6 +55,10 @@ class _SuricateAPI(object):
         api_vars = vars(_SuricateAPI)
         variables = dict((prefix+k, v) for k, v in api_vars.items() if is_valid(k, v))
         _SuricateAPI.variables.update(variables)
+
+
+def api_is_ready():
+    return _SuricateAPI.api_is_ready
 
 
 def log(message, *args):
@@ -82,36 +90,30 @@ else:
             return imp.reload(module)
 
 
-if sublime.version() > '3068':
+def extract_variables(window=None):
+    if window is None:
+        window = sublime.active_window()
+    variables = _variables.extract_window_variables(window)
+    variables.update(_SuricateAPI.variables)
+    return variables
 
 
-    def get_variables(window=None):
-        if window is None:
-            window = sublime.active_window()
-        variables = sublime.active_window().extract_variables()
-        variables.update(_SuricateAPI.variables)
-        return variables
-
-
-    def expand_variables(value, variables=None, window=None):
-        if variables is None:
-            variables = get_variables(window)
-        return sublime.expand_variables(value, variables)
-
-
-else:
-
-
-    # @todo
-    raise NotImplementedError
+def expand_variables(value, variables=None, window=None):
+    if variables is None:
+        variables = extract_variables(window)
+    return _variables.expand_variables(value, variables)
 
 
 def get_variable(key, default=None):
-    return get_variables().get(key, default)
+    return extract_variables().get(key, default)
 
 
 def get_settings():
     return sublime.load_settings(_SuricateAPI.settings_file_base_name)
+
+
+def get_setting(key, default=None):
+    return get_settings().get(key, default)
 
 
 # @todo Remove

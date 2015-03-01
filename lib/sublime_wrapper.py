@@ -7,13 +7,12 @@
 
 """Handy wrappers around sublime API."""
 
-import os
 import sublime
 
 import suricate
 
 
-def execute(**kwargs):
+def execute(window=None, **kwargs):
     """Runs an external process asynchronously. On Windows, GUIs are suppressed.
     ``exec`` is the default command used by build systems, thus it provides
     similar functionality. However, a few options in build systems are taken
@@ -31,8 +30,9 @@ def execute(**kwargs):
       This is invoked via Build: Cancel command from the Command Palette.
       * quiet ``Bool``: If True prints less information about running the
       command."""
-    window = sublime.active_window()
-    kwargs = suricate.build_variables.expand(kwargs, window.active_view())
+    if window is None:
+        window = sublime.active_window()
+    kwargs = suricate.expand_variables(kwargs, window=window)
     window.run_command('exec', kwargs)
 
 
@@ -82,26 +82,26 @@ def show_quick_panel(display_list, on_done, window=None):
     sublime.set_timeout(_on_show_quick_panel, 0)
 
 
-def copy_build_variable_to_clipboard(key=None):
+def copy_build_variable_to_clipboard(key=None, window=None):
     """If key is None, show a quick panel with the currently available build
     variables."""
-    vmap = suricate.build_variables.get()
+    variables = suricate.extract_variables(window)
     on_done = lambda picked: sublime.set_clipboard(picked[1])
     if key is None:
-        show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
+        show_quick_panel(sorted([[k, i] for k, i in variables.items()]), on_done)
     else:
-        on_done([None, vmap[key]])
+        on_done([None, variables[key]])
 
 
-def paste_build_variable(edit, key=None, view=None):
+def paste_build_variable(edit, key=None, view=None, window=None):
     """If key is None, show a quick panel with the currently available build
     variables."""
-    vmap = suricate.build_variables.get()
+    variables = suricate.extract_variables(window)
     on_done = lambda picked: insert(picked[1], edit, view, clear=True)
     if key is None:
-        show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
+        show_quick_panel(sorted([[k, i] for k, i in variables.items()]), on_done)
     else:
-        on_done([None, vmap[key]])
+        on_done([None, variables[key]])
 
 
 def get_selection(view=None):
@@ -132,3 +132,19 @@ def foreach_region(func, edit, view, clear=False):
             view.insert(edit, region.begin(), string)
         else:
             view.replace(edit, region, string)
+
+
+def locate_and_load_resource(hint):
+    """Try to load the first match of hint"""
+    try:
+        return sublime.load_resource(hint)
+    except OSError:
+        pass
+    resources = sublime.find_resources(hint)
+    if not resources:
+        sublime.error_message('Unable to locate %r' % hint)
+        raise OSError('resource not found')
+    first = resources[0]
+    if len(resources) > 1:
+        suricate.log('WARNING: more than one %r found, using %r', hint, first)
+    return sublime.load_resource(first)

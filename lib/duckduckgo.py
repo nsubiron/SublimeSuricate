@@ -7,22 +7,25 @@
 
 """Search on DuckDuckGo"""
 
-import sublime
-
 import logging
 import re
 
-from .thirdparty import duckduckgo2html
+import sublime
 
 import suricate
 
-sublime_wrapper = suricate.import_module('lib.sublime_wrapper')
+from . import sublime_wrapper
+from .thirdparty import duckduckgo2html
+
+suricate.reload_module(sublime_wrapper)
+suricate.reload_module(duckduckgo2html)
+
 
 DDG_USERAGENT = 'sublime-suricate'
 
 
 def get_answer(query, scope=None, **kwargs):
-    suricate.log('Searching %r (using scope %r)...', query, scope)
+    suricate.debuglog('searching %r using scope %r...', query, scope)
     try:
         html = ''
 
@@ -48,9 +51,7 @@ def get_answer(query, scope=None, **kwargs):
         results = duckduckgo2html.search(query, DDG_USERAGENT)
         html += duckduckgo2html.results2html(results, **kwargs)
 
-        if not html:
-            return 'Sorry, no results found'
-        return html
+        return html if html else 'Sorry, no results found'
     except:
         message = 'Sorry, there was an error retrieving the answer.'
         logging.exception(message)
@@ -91,8 +92,8 @@ def show_popup(view, event=None, css_file=None, scope_regex=None, **kwargs):
     scope = _get_scope(view, scope_regex, point) if scope_regex else None
     answer = get_answer(query, scope=scope, **kwargs)
     if css_file is not None:
-        style = '<style>%s</style>' % sublime.load_resource(
-            css_file).replace('\r', '')
+        css = sublime_wrapper.locate_and_load_resource(css_file)
+        style = '<style>%s</style>' % css.replace('\r', '')
         answer = style + answer
     on_navigate = lambda url: view.window().run_command(
         'open_url', {
@@ -106,9 +107,9 @@ def show_popup(view, event=None, css_file=None, scope_regex=None, **kwargs):
 
 def insert_answer(edit, view, event=None):
     if event:
-        query, point = _get_query_by_event(view, event)
+        query = _get_query_by_event(view, event)[0]
     else:
-        query, point = _get_query_by_selection(view)
+        query = _get_query_by_selection(view)[0]
     results = duckduckgo2html.search(query, DDG_USERAGENT)
     if results and hasattr(
             results,

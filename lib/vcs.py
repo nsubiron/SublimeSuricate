@@ -10,21 +10,26 @@ import sublime
 
 import suricate
 
-process = suricate.import_module('lib.process')
-sublime_wrapper = suricate.import_module('lib.sublime_wrapper')
-vcs_parser = suricate.import_module('lib.vcs_parser')
+from . import chmod
+from . import process
+from . import sublime_wrapper
+from . import vcs_parser
+
+suricate.reload_module(chmod)
+suricate.reload_module(process)
+suricate.reload_module(sublime_wrapper)
+suricate.reload_module(vcs_parser)
 
 SourceControlFileBaseName = 'SourceControlCommands.json'
 
 
 def _do(cmd, caption, path, out=None, ask=None, **kwargs):
-    replacekeys = suricate.util.replacekeys
     working_dir, base_name = os.path.split(
         path) if os.path.isfile(path) else (path, '.')
-    cmd = replacekeys(cmd, {'path': base_name})
-    suricate.debug('vcs do: %s', ' '.join(cmd))
+    cmd = suricate.expand_variables(cmd, {'path': base_name})
+    suricate.debuglog('vcs do: %s', ' '.join(cmd))
     if ask and not sublime.ok_cancel_dialog(
-        replacekeys(
+        suricate.expand_variables(
             ask, {
             'path': base_name}), caption):
         return
@@ -59,8 +64,8 @@ def call(cmd, active_flags, view):
         if cmdi is not None and suricate.flags.special_check(
                 active_flags, suricate.flags.from_string(
                     item['flags'])) and all(
-                suricate.util.which(exe) is not None for exe in item['exes']):
-            suricate.debug('%s: %s', item['name'], cmdi['caption'])
+                chmod.which(exe) is not None for exe in item['exes']):
+            suricate.debuglog('%s: %s', item['name'], cmdi['caption'])
             cmdi['path'] = view.file_name()
             return _do(**cmdi)
     suricate.log('ERROR: Source control command \'%s\' is not available.', cmd)
@@ -108,8 +113,8 @@ class _CmdiProxy(list):
 def _get_list(path):
     if path is None:
         repos = {'Current File': '${file}'}
-        repos.update(suricate.Settings.get('vcs_working_dirs', {}))
-        repos = suricate.build_variables.expand(repos)
+        repos.update(suricate.get_setting('vcs_working_dirs', {}))
+        repos = suricate.expand_variables(repos)
 
         def parse_settings(repositories):
             for name, path in repositories.items():
@@ -135,7 +140,7 @@ def get_commands(active_flags, path):
                 active_flags,
                 suricate.flags.from_string(
                     item['flags'])) and all(
-                suricate.util.which(exe) is not None for exe in item['exes']):
+                chmod.which(exe) is not None for exe in item['exes']):
             for name, cmdi in item.get('commands', {}).items():
                 cmdi['path'] = path
                 commandlist.append(_CmdiProxy(item['name'], cmdi))

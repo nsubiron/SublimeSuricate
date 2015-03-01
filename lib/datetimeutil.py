@@ -5,13 +5,15 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
+from datetime import datetime
+
 import sublime
 
-from datetime import datetime
-from suricate import Settings
-from suricate import import_module
+import suricate
 
-sublime_wrapper = import_module('lib.sublime_wrapper')
+from . import sublime_wrapper
+
+suricate.reload_module(sublime_wrapper)
 
 
 def _datetime_formats():
@@ -29,7 +31,7 @@ def _datetime_formats():
         '%H:%M:%S',
         '%H:%M',
         '%Y']
-    return Settings.get('time_formats', defaults)
+    return suricate.get_setting('time_formats', defaults)
 
 
 def get_times(tstring=None, quiet=False):
@@ -39,36 +41,35 @@ def get_times(tstring=None, quiet=False):
     formats = _datetime_formats()
     if tstring is None:
         time = datetime.now()
-    else:  # 11/21/13 14:00:44
+    else:
         time, _ = _read_time(tstring, formats, quiet)
     if time is None:
         return None
     return [time.strftime(format) for format in formats]
 
 
-def _read_time(tstring, tformats, quiet=False):
+# @todo use dateutil.parser
+def _read_time(time_string, time_formats):
     """Try to convert tstring to a format in tformats, return first
     match. If non of them matches, show an error message."""
-    for format in tformats:
+    for time_format in time_formats:
         try:
-            return datetime.strptime(str(tstring), format), format
+            return datetime.strptime(str(time_string), time_format), time_format
         except ValueError:
             pass
-    if not quiet:
-        msg = 'Unknown time format: "%s"\nSee "time_formats" in settings file.'
-        sublime.error_message(string % tstring)
+    message = 'unknown time format: %r, see %r in settings file.'
+    suricate.debuglog(message, time_string, 'time_formats')
     return None, None
 
 
 def time_to_clipboard(view=None):
     regions = sublime_wrapper.get_selection(view)
-    tformats = _datetime_formats()
+    time_formats = _datetime_formats()
     for selection in regions + [None]:
-        times = get_times(selection, tformats)
+        times = get_times(selection, time_formats)
         if times is not None:
             break
-    on_done = lambda picked: sublime.set_clipboard(picked)
-    sublime_wrapper.show_quick_panel(times, on_done)
+    sublime_wrapper.show_quick_panel(times, sublime.set_clipboard)
 
 
 def continue_serie(edit, view):
@@ -85,13 +86,13 @@ def continue_serie(edit, view):
     while lines[-1][indentation] == ' ':
         indentation += 1
     formats = _datetime_formats()
-    time0, format = _read_time(lines[-2].strip(), formats)
-    time1, format = _read_time(lines[-1].strip(), formats)
+    time0, time_format = _read_time(lines[-2].strip(), formats)
+    time1, time_format = _read_time(lines[-1].strip(), formats)
     if not time0 or not time1:
         return
     diff = time1 - time0
-    next = time1 + diff
+    incremented = time1 + diff
     if selection[-1] != '\n':
         selection += '\n'
-    selection += ' ' * indentation + next.strftime(format) + '\n'
+    selection += ' ' * indentation + incremented.strftime(time_format) + '\n'
     sublime_wrapper.insert(selection, edit, view)

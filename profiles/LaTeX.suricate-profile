@@ -23,7 +23,7 @@
     {
       "caption":      "LaTeX: Launch PDF",
       "flags":        "IsFile",
-      "call":         "latex.launchpdf"
+      "call":         "latex.launch_pdf"
     },
     "latex.delete_intermediate_files":
     {

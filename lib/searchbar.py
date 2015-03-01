@@ -11,9 +11,13 @@ import sublime
 
 import suricate
 
-sublime_wrapper = suricate.import_module('lib.sublime_wrapper')
+from . import sublime_wrapper
 
-Engines = {
+suricate.reload_module(sublime_wrapper)
+
+
+# @todo get more, add to settings?
+ENGINES = {
     'DuckDuckGo': 'https://duckduckgo.com/?q=',
     'Google': 'https://www.google.com/search?q='
 }
@@ -21,7 +25,7 @@ Engines = {
 
 def show(caption=None, engine=None):
     engine = _get_default_engine_if_not_valid(engine)
-    prefix = Engines[engine]
+    prefix = ENGINES[engine]
     if not caption:
         caption = '%s:' % engine
     window = sublime.active_window()
@@ -30,7 +34,7 @@ def show(caption=None, engine=None):
 
 
 def search_selection(view=None, engine=None):
-    prefix = Engines[_get_default_engine_if_not_valid(engine)]
+    prefix = ENGINES[_get_default_engine_if_not_valid(engine)]
     window = sublime.active_window()
     for string in sublime_wrapper.get_selection(view):
         _on_done(prefix, string, window)
@@ -43,8 +47,8 @@ def _on_done(prefix, string, window):
 
 def _get_default_engine_if_not_valid(engine, default='DuckDuckGo'):
     if engine is None:
-        engine = suricate.Settings.get('default_search_engine', default)
-    if engine not in Engines:
+        engine = suricate.get_setting('default_search_engine', default)
+    if engine not in ENGINES:
         suricate.log('ERROR: Search engine "%s" not implemented.', engine)
         engine = default
     return engine

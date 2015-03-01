@@ -7,9 +7,11 @@
 
 import random
 
-from suricate import import_module
+import suricate
 
-sublime_wrapper = import_module('lib.sublime_wrapper')
+from . import sublime_wrapper
+
+suricate.reload_module(sublime_wrapper)
 
 
 def get_max_line_length(view, guess):

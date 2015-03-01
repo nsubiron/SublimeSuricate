@@ -5,7 +5,9 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
+import importlib
 import inspect
+import sys
 
 import sublime
 
@@ -14,6 +16,15 @@ from .. import command_parser
 from .. import flags
 
 from . import menu_manager
+
+
+def _import_module(name):
+    library_module_name = suricate.get_variable('suricate_library_module_name')
+    module_name = '.'.join([library_module_name, name])
+    was_present = module_name in sys.modules
+    suricate.debuglog('import module %r', module_name)
+    module = importlib.import_module(module_name)
+    return suricate.reload_module(module) if was_present else module
 
 
 class CommandManager(object):
@@ -65,10 +76,12 @@ class CommandManager(object):
         return False
 
     def run(self, key, metargs):
+        if not suricate.api_is_ready():
+            raise RuntimeError('suricate API not ready')
         call = self.commands[key].call
         args = self.commands[key].args
         module_name, function = call.rsplit('.', 1)
-        module = suricate.import_module(module_name)
+        module = _import_module(module_name)
         funcobj = getattr(module, function)
         argspec = inspect.getargspec(funcobj).args
         kwargs = dict((k, i) for k, i in metargs.items() if k in argspec)

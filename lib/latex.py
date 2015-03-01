@@ -8,46 +8,55 @@
 # version 3 of the License, or (at your option) any later version.
 
 import os
+
 import sublime
 
-from suricate import build_variables
-from suricate import import_module
+import suricate
 
-process = import_module('lib.process')
-sublime_wrapper = import_module('lib.sublime_wrapper')
+from . import process
+from . import sublime_wrapper
+
+suricate.reload_module(process)
+suricate.reload_module(sublime_wrapper)
 
 
-def clean(view=None):
+def _get_path_prefix(window):
+    variables = suricate.extract_variables(window)
+    return os.path.abspath(
+        os.path.join(
+            variables['file_path'],
+            variables['file_base_name']))
+
+
+def clean(window=None):
     """Remove LaTeX temporary files."""
     temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
                        '.glo', '.bbl', '.ilg', '.toc', '.ind', '.out',
                        '.synctex.gz', '.blg']
-    bvars = build_variables.get(view)
-    prefix = os.path.abspath(
-        os.path.join(
-            bvars['file_path'],
-            bvars['file_base_name']))
+    prefix = _get_path_prefix(window)
     counter = 0
-    for path in map(lambda ext: prefix + ext, temp_extensions):
+    for path in [prefix + ext for ext in temp_extensions]:
         if os.access(path, os.F_OK):
             os.remove(path)
             counter += 1
-    sublime.status_message('%i files removed' % counter)
+    message = '%i files removed' % counter
+    suricate.log(message)
+    sublime.status_message(message)
 
 
-def launchpdf(view=None):
-    """Launch pdf associated with view."""
-    bvars = build_variables.get(view)
-    prefix = os.path.abspath(
-        os.path.join(
-            bvars['file_path'],
-            bvars['file_base_name']))
-    process.startfile(prefix + '.pdf')
+def launch_pdf(window=None):
+    """Launch PDF associated with view."""
+    process.startfile(_get_path_prefix(window) + '.pdf')
 
 
 def convert_to_tex(string):
     """Convert special characters to TeX symbols."""
-    for char, tex in Map:
+    # @todo add more symbols
+    tex_symbols = sublime_wrapper.locate_and_load_resource('tex_symbols_map')
+    if not tex_symbols:
+        suricate.log('ERROR: unable to load \'tex_symbols_map\'')
+        return
+    for char, tex in [x.split(' ') for x in tex_symbols.splitlines()]:
         string = string.replace(char, tex)
     return string
 
@@ -57,46 +66,3 @@ def paragraph_to_tex(edit, view):
     view.run_command('expand_selection_to_paragraph')
     func = lambda region: convert_to_tex(view.substr(region))
     sublime_wrapper.foreach_region(func, edit, view, clear=True)
-
-Map = [
-    ('#', r'\#'),
-    ('%', r'\%'),
-    ('&', r'\&'),
-    ('~', r'~'),
-    ('¡', r'!`'),
-    ('¿', r'?`'),
-    ('À', r'\`A'),
-    ('Á', r'\'A'),
-    ('Ä', r'\"A'),
-    ('Ç', r'\c{C}'),
-    ('È', r'\`E'),
-    ('É', r'\'E'),
-    ('Ë', r'\"E'),
-    ('Ì', r'\`I'),
-    ('Í', r'\'I'),
-    ('Ï', r'\"I'),
-    ('Ñ', r'\~N'),
-    ('Ò', r'\`O'),
-    ('Ó', r'\'O'),
-    ('Ö', r'\"O'),
-    ('Ù', r'\`U'),
-    ('Ú', r'\'U'),
-    ('Ü', r'\"U'),
-    ('à', r'\`a'),
-    ('á', r'\'a'),
-    ('ä', r'\"a'),
-    ('ç', r'\c{c}'),
-    ('è', r'\`e'),
-    ('é', r'\'e'),
-    ('ë', r'\"e'),
-    ('ì', r'\`i'),
-    ('í', r'\'i'),
-    ('ï', r'\"i'),
-    ('ñ', r'\~n'),
-    ('ò', r'\`o'),
-    ('ó', r'\'o'),
-    ('ö', r'\"o'),
-    ('ù', r'\`u'),
-    ('ú', r'\'u'),
-    ('ü', r'\"u'),
-]

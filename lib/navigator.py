@@ -6,18 +6,31 @@
 # version 3 of the License, or (at your option) any later version.
 
 import os
+
 import sublime
 
-from suricate import Settings
-from suricate import build_variables
-from suricate import import_module
-from suricate import util
+import suricate
 
-process = import_module('lib.process')
-sublime_wrapper = import_module('lib.sublime_wrapper')
+from . import process
+from . import sublime_wrapper
 
-OpenMode = 'open'
-LaunchMode = 'launch'
+suricate.reload_module(process)
+suricate.reload_module(sublime_wrapper)
+
+OPEN_MODE = 'open'
+LAUNCH_MODE = 'launch'
+
+
+# @todo remove
+import fnmatch
+import re
+def _regex_callable(patterns):
+    if patterns is None:
+        return lambda x: False
+    if isinstance(patterns, str):
+        patterns = [patterns]
+    regex = re.compile(r'|'.join(fnmatch.translate(p) for p in patterns))
+    return lambda x: regex.match(x) is not None
 
 
 def exclude_patterns(exclude_binaries):
@@ -28,25 +41,24 @@ def exclude_patterns(exclude_binaries):
     file_exclude = settings.get('file_exclude_patterns')
     if exclude_binaries:
         file_exclude += settings.get('binary_file_patterns')
-    return util.regex_callable(
-        folder_exclude), util.regex_callable(file_exclude)
+    return _regex_callable(folder_exclude), _regex_callable(file_exclude)
 
 
-def launch(mode=OpenMode, view=None):
+def launch(mode=OPEN_MODE, view=None):
     """Open navigator quick panel.
       * ``mode=='open'`` Open selected file with Sublime Text
       * ``mode=='launch'`` Try to externally launch selected file"""
-    if mode != OpenMode and mode != LaunchMode:
+    if mode != OPEN_MODE and mode != LAUNCH_MODE:
         raise Exception('Unknown mode!')
     window = sublime.active_window()
-    settingskey = 'quick_%s_path_list' % mode
-    paths = build_variables.expand(Settings.get(settingskey))
+    paths = suricate.get_setting('quick_%s_path_list' % mode)
+    paths = suricate.expand_variables(paths, window=window)
     factory = _ItemFactory(mode, window)
     items = []
     if view is not None:
         current_file = view.file_name()
         if current_file is not None:
-            if mode == LaunchMode:
+            if mode == LAUNCH_MODE:
                 items.append(factory.create(current_file, 'Current file'))
             items.append(
                 factory.create(
@@ -78,8 +90,8 @@ class _ItemFactory(object):
 
     def __init__(self, mode, window):
         self.mode = mode
-        self.direxcl, self.filexcl = exclude_patterns(mode == OpenMode)
-        if mode == OpenMode:
+        self.direxcl, self.filexcl = exclude_patterns(mode == OPEN_MODE)
+        if mode == OPEN_MODE:
             self.on_done_file = window.open_file
         else:
             self.on_done_file = process.startfile

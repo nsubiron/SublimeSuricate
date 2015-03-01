@@ -7,7 +7,6 @@
 
 import imp
 import os
-import sys
 
 import sublime
 
@@ -112,19 +111,9 @@ def get_variable(key, default=None):
     return extract_variables().get(key, default)
 
 
-def get_settings():
+def load_settings():
     return sublime.load_settings(_SuricateAPI.settings_file_base_name)
 
 
 def get_setting(key, default=None):
-    return get_settings().get(key, default)
-
-
-# @todo Remove
-import importlib
-def import_module(name):
-    module_name = '.'.join([_SuricateAPI.library_module_name, name])
-    was_present = module_name in sys.modules
-    debuglog('import module %r', module_name)
-    module = importlib.import_module(module_name)
-    return reload_module(module) if was_present else module
+    return load_settings().get(key, default)

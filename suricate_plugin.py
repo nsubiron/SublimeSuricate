@@ -20,8 +20,7 @@ MANAGER = command_manager.CommandManager()
 def plugin_loaded():
     SuricateAPI.set_ready()
     sys.modules['suricate'] = suricate
-    suricate.set_debuglog(True)
-    settings = suricate.get_settings()
+    settings = suricate.load_settings()
     MANAGER.load(settings)
     settings.clear_on_change('Suricate')
     settings.add_on_change('Suricate', MANAGER.reload_settings)

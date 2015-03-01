@@ -9,23 +9,23 @@
 and extension, but not a path. If none is given, use the default Suricate
 settings file."""
 
+from contextlib import contextmanager
 import os
+
 import sublime
 
-from contextlib import contextmanager
+import suricate
 
-from suricate import defs
-from suricate import import_module
-from suricate import util
+from . import sublime_wrapper
 
-sublime_wrapper = import_module('lib.sublime_wrapper')
+suricate.reload_module(sublime_wrapper)
 
 
 @contextmanager
 def load_save_settings(settings_file):
     """Context manager to load and save settings."""
     if not settings_file:
-        settings_file = defs.SettingsFileBaseName
+        settings_file = suricate.get_variable('suricate_settings_file_base_name')
     settings = sublime.load_settings(settings_file)
     if not settings:
         message = 'Settings file "%s" not found!' % settings_file
@@ -34,6 +34,17 @@ def load_save_settings(settings_file):
     # Do not try/catch, don't save if fails.
     yield settings
     sublime.save_settings(settings_file)
+
+
+def _make_list(obj):
+    if obj is None:
+        return []
+    elif isinstance(obj, (list, tuple, range, set, frozenset)):
+        return list(obj)
+    elif isinstance(obj, dict):
+        return [[key, value] for key, value in obj.items()]
+    else:
+        return [obj]
 
 
 def toggle_boolean(key, settings_file=None):
@@ -89,7 +100,7 @@ def set_from_resources(
     else:
         sublime.error_message('Unknown set_mode "%s".' % set_mode)
         return
-    for pattern in util.make_list(patterns):
+    for pattern in _make_list(patterns):
         resources.update(clean(x) for x in sublime.find_resources(pattern))
     on_done = lambda picked: set_key_value(key, picked, settings_file)
     sublime_wrapper.show_quick_panel(sorted(list(resources)), on_done, window)

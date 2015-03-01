@@ -6,8 +6,9 @@
 # version 3 of the License, or (at your option) any later version.
 
 import os
-import sublime
 import subprocess
+
+import sublime
 
 import suricate
 
@@ -47,15 +48,15 @@ def popen(cmd, working_dir=None, shell=None, timeout=None):
     """Wrapper around subprocess.Popen. Launch a new process and wait timeout
     seconds for output. Return stdout, stderr."""
     # Prepare arguments.
-    cmd = suricate.build_variables.expand(cmd)
-    working_dir = suricate.build_variables.expand(working_dir)
+    cmd = suricate.expand_variables(cmd)
+    working_dir = suricate.expand_variables(working_dir)
     if shell is None:
         shell = sublime.platform().lower() == 'windows'
     kwargs = {'cwd': working_dir, 'shell': shell}
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.PIPE
     # Launch process.
-    suricate.debug('Popen: %s', ' '.join(cmd))
+    suricate.debuglog('popen: %s', ' '.join(cmd))
     process = subprocess.Popen(cmd, **kwargs)
     try:
         out, err = process.communicate(timeout=timeout)
@@ -69,7 +70,7 @@ def popen(cmd, working_dir=None, shell=None, timeout=None):
 
 def startfile(path):
     """Try to emulate the behaviour of double-clicking the file."""
-    path = suricate.build_variables.expand(path)
+    path = suricate.expand_variables(path)
     platform = sublime.platform().lower()
     if not os.access(path, os.F_OK):
         sublime.error_message('Cannot open file "%s"' % path)

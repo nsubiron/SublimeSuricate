@@ -6,15 +6,18 @@
 # version 3 of the License, or (at your option) any later version.
 
 import configparser
+
 import sublime
 
-from suricate import import_module
+import suricate
 
-sublime_wrapper = import_module('lib.sublime_wrapper')
+from . import sublime_wrapper
+
+suricate.reload_module(sublime_wrapper)
 
 
-def insert(view, inifile, section):
-    string = sublime.load_resource('Packages/User/' + inifile)
+def insert(view, ini_file, section):
+    string = sublime_wrapper.locate_and_load_resource(ini_file)
     config = configparser.ConfigParser()
     config.read_file(string.split('\n'))
     display_list = [[x, y] for x, y in config[section].items()]

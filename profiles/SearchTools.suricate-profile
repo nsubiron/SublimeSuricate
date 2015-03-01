@@ -23,7 +23,7 @@
       "context_menu": true,
       "args":
       {
-        "css_file": "Packages/${suricate_base_name}/css/default.css",
+        "css_file": "Packages/${suricate_package_name}/css/default.css",
         "scope_regex": "(source).(?P<keyword>[a-z+-_]+)",
         "ignore_incomplete": false,
         "always_show_related": true
@@ -37,7 +37,7 @@
       "call":         "duckduckgo.show_popup",
       "args":
       {
-        "css_file": "Packages/${suricate_base_name}/css/default.css",
+        "css_file": "Packages/${suricate_package_name}/css/default.css",
         "scope_regex": "(source).(?P<keyword>[a-z+-_]+)",
         "results_priority": ["answer", "abstract", "definition", "results",
                              "redirect", "related"],

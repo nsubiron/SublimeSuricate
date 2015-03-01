@@ -11,18 +11,21 @@ import os
 
 import suricate
 
+
 def switch_language(view):
     dicts = suricate.Settings.get('quick_switch_dictionary_list', [])
     if not dicts:
-      dicts = sublime.find_resources('*.dic')
-      if not dicts:
-        suricate.log('ERROR: no dictionary found')
-        return
+        dicts = sublime.find_resources('*.dic')
+        if not dicts:
+            suricate.log('ERROR: no dictionary found')
+            return
     current = view.settings().get('dictionary')
     next_item_index = dicts.index(current) + 1 if current in dicts else 0
     next_item = dicts[next_item_index % len(dicts)]
     if next_item in sublime.find_resources('*.dic'):
-      view.settings().set('dictionary', next_item)
-      sublime.status_message('Dictionary changed to %s' % os.path.basename(next_item))
+        view.settings().set('dictionary', next_item)
+        sublime.status_message(
+            'Dictionary changed to %s' %
+            os.path.basename(next_item))
     else:
-      sublime.error_message('Dictionary "%s" not available' % next_item)
+        sublime.error_message('Dictionary "%s" not available' % next_item)

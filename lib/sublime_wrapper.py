@@ -12,6 +12,7 @@ import sublime
 
 import suricate
 
+
 def execute(**kwargs):
     """Runs an external process asynchronously. On Windows, GUIs are suppressed.
     ``exec`` is the default command used by build systems, thus it provides
@@ -34,42 +35,52 @@ def execute(**kwargs):
     kwargs = suricate.build_variables.expand(kwargs, window.active_view())
     window.run_command('exec', kwargs)
 
-def flush_to_buffer(text, name=None, scratch=False, syntax=None, syntax_file=None):
+
+def flush_to_buffer(
+        text,
+        name=None,
+        scratch=False,
+        syntax=None,
+        syntax_file=None):
     """Flush text to a new buffer."""
     view = sublime.active_window().new_file()
     view.set_scratch(scratch)
     if name is not None:
-      view.set_name(name)
+        view.set_name(name)
     if syntax is not None:
-      syntax_files = sublime.find_resources(syntax + '.tmLanguage')
-      if syntax_files:
-        view.set_syntax_file(syntax_files[0])
+        syntax_files = sublime.find_resources(syntax + '.tmLanguage')
+        if syntax_files:
+            view.set_syntax_file(syntax_files[0])
     elif syntax_file is not None:
-      view.set_syntax_file(syntax_file)
+        view.set_syntax_file(syntax_file)
     auto_indent = view.settings().get("auto_indent")
     view.settings().set("auto_indent", False)
     view.run_command('insert', {'characters': text})
     view.settings().set("auto_indent", auto_indent)
     view.run_command("move_to", {"to": "bof"})
 
+
 def show_quick_panel(display_list, on_done, window=None):
     """Show a quick panel fed with display_list on window. on_done must be a
     callable object that accepts one argument, the element picked (not the
     index!). It won't be called if the user cancels."""
     if not display_list:
-      suricate.log('ERROR: Quick panel fed with an empty list!')
-      return
+        suricate.log('ERROR: Quick panel fed with an empty list!')
+        return
     if window is None:
-      window = sublime.active_window()
+        window = sublime.active_window()
+
     def _on_done(index):
         if index != -1:
-          on_done(display_list[index])
+            on_done(display_list[index])
         sublime.status_message('Cancelled')
     # This allows nested quick panels on Sublime Text 3.
+
     def _on_show_quick_panel():
         window.run_command('hide_overlay')
         window.show_quick_panel(display_list, _on_done)
     sublime.set_timeout(_on_show_quick_panel, 0)
+
 
 def copy_build_variable_to_clipboard(key=None):
     """If key is None, show a quick panel with the currently available build
@@ -77,9 +88,10 @@ def copy_build_variable_to_clipboard(key=None):
     vmap = suricate.build_variables.get()
     on_done = lambda picked: sublime.set_clipboard(picked[1])
     if key is None:
-      show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
+        show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
     else:
-      on_done([None, vmap[key]])
+        on_done([None, vmap[key]])
+
 
 def paste_build_variable(edit, key=None, view=None):
     """If key is None, show a quick panel with the currently available build
@@ -87,33 +99,36 @@ def paste_build_variable(edit, key=None, view=None):
     vmap = suricate.build_variables.get()
     on_done = lambda picked: insert(picked[1], edit, view, clear=True)
     if key is None:
-      show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
+        show_quick_panel(sorted([[k, i] for k, i in vmap.items()]), on_done)
     else:
-      on_done([None, vmap[key]])
+        on_done([None, vmap[key]])
+
 
 def get_selection(view=None):
     """Retrieve selected regions as a list of strings."""
     if view is None:
-      view = sublime.active_window().active_view()
+        view = sublime.active_window().active_view()
     return [view.substr(region) for region in view.sel()]
+
 
 def insert(string, edit, view, clear=False):
     """Insert string replacing view's current selection. If clear, move the
     cursor to the end of each region."""
     for region in view.sel():
-      if clear:
-        view.replace(edit, region, '')
-        view.insert(edit, region.begin(), string)
-      else:
-        view.replace(edit, region, string)
+        if clear:
+            view.replace(edit, region, '')
+            view.insert(edit, region.begin(), string)
+        else:
+            view.replace(edit, region, string)
+
 
 def foreach_region(func, edit, view, clear=False):
     """Replace each selected region by the result of applying func on that
     region. If clear, move the cursor to the end of each region."""
     for region in view.sel():
-      string = func(region)
-      if clear:
-        view.replace(edit, region, '')
-        view.insert(edit, region.begin(), string)
-      else:
-        view.replace(edit, region, string)
+        string = func(region)
+        if clear:
+            view.replace(edit, region, '')
+            view.insert(edit, region.begin(), string)
+        else:
+            view.replace(edit, region, string)

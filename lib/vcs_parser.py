@@ -13,33 +13,40 @@ import suricate
 NOT_IMPLEMENTED_MESSAGE = """{command} parser for {vcsname} not implemented.
 Please implement {parser} in {file}."""
 
+
 def parse(out, command, vcsname):
     """Returns a list of pairs ``[filepath, extra information]``."""
     try:
-      mapper = globals()['_%s_mapper__%s' % (command, vcsname)]
+        mapper = globals()['_%s_mapper__%s' % (command, vcsname)]
     except KeyError as error:
-      kwargs = {'parser': error, 'command': command, 'vcsname': vcsname, "file": __file__}
-      suricate.log(NOT_IMPLEMENTED_MESSAGE.format(**kwargs))
-      return []
+        kwargs = {
+            'parser': error,
+            'command': command,
+            'vcsname': vcsname,
+            "file": __file__}
+        suricate.log(NOT_IMPLEMENTED_MESSAGE.format(**kwargs))
+        return []
     return [x for x in mapper(out)]
 
-## Parsers #####################################################################
+## Parsers ###############################################################
+
 
 def _status_mapper__Surround(out):
     for line in out.split('\n'):
-      if not line.startswith(' '):
-        folder = '/'.join(line.strip().split('/')[1:])
-      elif line.startswith(' ') and not line.startswith(' '*2):
-        basename, state = line.split()[:2]
-        path = '/'.join([folder, basename])
-      elif line.startswith('   -'):
-        text = '%s %s' % (state, line.strip())
-        yield [path, text]
+        if not line.startswith(' '):
+            folder = '/'.join(line.strip().split('/')[1:])
+        elif line.startswith(' ') and not line.startswith(' ' * 2):
+            basename, state = line.split()[:2]
+            path = '/'.join([folder, basename])
+        elif line.startswith('   -'):
+            text = '%s %s' % (state, line.strip())
+            yield [path, text]
+
 
 def _modifiedfiles_mapper__Git(out):
     return [[x, 'modified'] for x in out.split('\n') if x and not x.isspace()]
 
-## Main ########################################################################
+## Main ##################################################################
 
 if __name__ == '__main__':
 
@@ -47,12 +54,15 @@ if __name__ == '__main__':
     import argparse
 
     def main():
-        parser = argparse.ArgumentParser(description=__doc__.format(file=__file__))
+        parser = argparse.ArgumentParser(
+            description=__doc__.format(
+                file=__file__))
         parser.add_argument('command')
         parser.add_argument('vcsname')
         args = parser.parse_args()
 
-        for path, text in parse(sys.stdin.read(), args.command, args.vcsname.title()):
-          print('%s: %s' % (path, text))
+        for path, text in parse(
+                sys.stdin.read(), args.command, args.vcsname.title()):
+            print('%s: %s' % (path, text))
 
     main()

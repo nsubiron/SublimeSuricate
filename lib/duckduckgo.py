@@ -20,78 +20,99 @@ sublime_wrapper = suricate.import_module('lib.sublime_wrapper')
 
 DDG_USERAGENT = 'sublime-suricate'
 
+
 def get_answer(query, scope=None, **kwargs):
     suricate.log('Searching %r (using scope %r)...', query, scope)
     try:
-      html = ''
+        html = ''
 
-      if scope and scope.lower() != query.lower():
-        scoped_kwargs = dict(kwargs)
-        scoped_kwargs['hide_headers'] = True
-        scoped_kwargs['hide_signature'] = True
+        if scope and scope.lower() != query.lower():
+            scoped_kwargs = dict(kwargs)
+            scoped_kwargs['hide_headers'] = True
+            scoped_kwargs['hide_signature'] = True
 
-        scoped_results = duckduckgo2html.search(scope + ' ' + query, DDG_USERAGENT)
-        scoped_html = duckduckgo2html.results2html(scoped_results, **scoped_kwargs)
+            scoped_results = duckduckgo2html.search(
+                scope +
+                ' ' +
+                query,
+                DDG_USERAGENT)
+            scoped_html = duckduckgo2html.results2html(
+                scoped_results,
+                **scoped_kwargs)
 
-        if scoped_html and not kwargs.get('hide_headers', False):
-          html += '<h1>Scope {0}</h1>'.format(scope)
-        if scoped_html:
-          html += scoped_html
+            if scoped_html and not kwargs.get('hide_headers', False):
+                html += '<h1>Scope {0}</h1>'.format(scope)
+            if scoped_html:
+                html += scoped_html
 
-      results = duckduckgo2html.search(query, DDG_USERAGENT)
-      html += duckduckgo2html.results2html(results, **kwargs)
+        results = duckduckgo2html.search(query, DDG_USERAGENT)
+        html += duckduckgo2html.results2html(results, **kwargs)
 
-      if not html:
-        return 'Sorry, no results found'
-      return html
+        if not html:
+            return 'Sorry, no results found'
+        return html
     except:
-      message = 'Sorry, there was an error retrieving the answer.'
-      logging.exception(message)
-      return message
+        message = 'Sorry, there was an error retrieving the answer.'
+        logging.exception(message)
+        return message
+
 
 def _get_query_by_event(view, event):
     point = view.window_to_text((event['x'], event['y']))
     for region in view.sel():
-      if region.contains(point):
-        return view.substr(region), point
+        if region.contains(point):
+            return view.substr(region), point
     return view.substr(view.word(point)), point
+
 
 def _get_query_by_selection(view):
     selection = view.sel()
     # Single cursor only.
     if len(selection) == 1:
-      if selection[0].empty():
-        return view.substr(view.word(selection[0].a)), selection[0].a
-      else:
-        return view.substr(selection[0]), selection[0].a
+        if selection[0].empty():
+            return view.substr(view.word(selection[0].a)), selection[0].a
+        else:
+            return view.substr(selection[0]), selection[0].a
     return None, 0
+
 
 def _get_scope(view, regex, point):
     matchobj = re.match(regex, str(view.scope_name(point)))
     return matchobj.group('keyword') if matchobj else None
 
+
 def show_popup(view, event=None, css_file=None, scope_regex=None, **kwargs):
     if event:
-      query, point = _get_query_by_event(view, event)
+        query, point = _get_query_by_event(view, event)
     else:
-      query, point = _get_query_by_selection(view)
+        query, point = _get_query_by_selection(view)
     if not query:
-      return
+        return
     scope = _get_scope(view, scope_regex, point) if scope_regex else None
     answer = get_answer(query, scope=scope, **kwargs)
     if css_file is not None:
-      style = '<style>%s</style>' % sublime.load_resource(css_file).replace('\r', '')
-      answer = style + answer
-    on_navigate = lambda url: view.window().run_command('open_url', {'url': url})
-    view.show_popup(answer, location=point, on_navigate=on_navigate, max_width=450)
+        style = '<style>%s</style>' % sublime.load_resource(
+            css_file).replace('\r', '')
+        answer = style + answer
+    on_navigate = lambda url: view.window().run_command(
+        'open_url', {
+            'url': url})
+    view.show_popup(
+        answer,
+        location=point,
+        on_navigate=on_navigate,
+        max_width=450)
+
 
 def insert_answer(edit, view, event=None):
     if event:
-      query, point = _get_query_by_event(view, event)
+        query, point = _get_query_by_event(view, event)
     else:
-      query, point = _get_query_by_selection(view)
+        query, point = _get_query_by_selection(view)
     results = duckduckgo2html.search(query, DDG_USERAGENT)
-    if results and hasattr(results, 'answer') and results.answer and results.answer.text:
-      sublime_wrapper.insert(results.answer.text, edit, view, clear=False)
+    if results and hasattr(
+            results,
+            'answer') and results.answer and results.answer.text:
+        sublime_wrapper.insert(results.answer.text, edit, view, clear=False)
     else:
-      sublime.status_message('Sorry, no results found')
+        sublime.status_message('Sorry, no results found')

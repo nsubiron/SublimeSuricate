@@ -59,7 +59,8 @@ class _SuricateAPI(object):
         is_valid = lambda k, v: not k.startswith('_') and isinstance(v, str)
         prefix = 'suricate_'
         api_vars = vars(_SuricateAPI)
-        variables = dict((prefix+k, v) for k, v in api_vars.items() if is_valid(k, v))
+        variables = dict((prefix + k, v)
+                         for k, v in api_vars.items() if is_valid(k, v))
         _SuricateAPI.variables.update(variables)
 
 
@@ -82,13 +83,11 @@ def set_debuglog(active=None):
 
 if _SuricateAPI.is_packaged:
 
-
     def reload_module(module):
         pass
 
 
 else:
-
 
     def reload_module(module):
         debuglog('reloading module %r', module.__name__)

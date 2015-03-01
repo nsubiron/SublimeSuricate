@@ -16,31 +16,41 @@ from suricate import import_module
 process = import_module('lib.process')
 sublime_wrapper = import_module('lib.sublime_wrapper')
 
+
 def clean(view=None):
     """Remove LaTeX temporary files."""
     temp_extensions = ['.log', '.aux', '.dvi', '.lof', '.lot', '.bit', '.idx',
                        '.glo', '.bbl', '.ilg', '.toc', '.ind', '.out',
                        '.synctex.gz', '.blg']
     bvars = build_variables.get(view)
-    prefix = os.path.abspath(os.path.join(bvars['file_path'], bvars['file_base_name']))
+    prefix = os.path.abspath(
+        os.path.join(
+            bvars['file_path'],
+            bvars['file_base_name']))
     counter = 0
     for path in map(lambda ext: prefix + ext, temp_extensions):
-      if os.access(path, os.F_OK):
-        os.remove(path)
-        counter += 1
+        if os.access(path, os.F_OK):
+            os.remove(path)
+            counter += 1
     sublime.status_message('%i files removed' % counter)
+
 
 def launchpdf(view=None):
     """Launch pdf associated with view."""
     bvars = build_variables.get(view)
-    prefix = os.path.abspath(os.path.join(bvars['file_path'], bvars['file_base_name']))
+    prefix = os.path.abspath(
+        os.path.join(
+            bvars['file_path'],
+            bvars['file_base_name']))
     process.startfile(prefix + '.pdf')
+
 
 def convert_to_tex(string):
     """Convert special characters to TeX symbols."""
     for char, tex in Map:
-      string = string.replace(char, tex)
+        string = string.replace(char, tex)
     return string
+
 
 def paragraph_to_tex(edit, view):
     """Convert special characters in paragraph to TeX symbols."""

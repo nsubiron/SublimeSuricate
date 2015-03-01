@@ -8,14 +8,17 @@
 import os
 import stat
 
+
 def _current_permisions(path):
     return os.stat(path).st_mode
+
 
 def executable(path):
     os.chmod(path, _current_permisions(path)|stat.S_IEXEC)
 
+
 def toggle_read_only(path):
     if os.access(path, os.W_OK):
-      os.chmod(path, stat.S_IREAD)
+        os.chmod(path, stat.S_IREAD)
     else:
-      os.chmod(path, _current_permisions(path)|stat.S_IWRITE)
+        os.chmod(path, _current_permisions(path)|stat.S_IWRITE)

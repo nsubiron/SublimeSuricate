@@ -17,6 +17,7 @@ from . import menu_manager
 
 
 class CommandManager(object):
+
     def __init__(self):
         self.commands = {}
         self.profiles = []
@@ -34,19 +35,24 @@ class CommandManager(object):
     def _add_on_change(self):
         for profile in self.profiles:
             settings = sublime.load_settings(profile)
-            settings.add_on_change('SuricateCommandManager', self.reload_settings)
+            settings.add_on_change(
+                'SuricateCommandManager',
+                self.reload_settings)
 
     def reload_settings(self):
         self._clear_on_change()
         profile_extension = suricate.get_variable('suricate_profile_extension')
         active_profiles = self.settings.get('profiles', [])
-        self.profiles = [x+profile_extension for x in active_profiles if x]
+        self.profiles = [x + profile_extension for x in active_profiles if x]
         commands = command_parser.parse_profiles(
             self.profiles,
             self.settings.get('ignore_default_keybindings', False))
         # @todo
         folder = suricate.get_variable('suricate_generated_files_path')
-        self.commands = menu_manager.print_menus(commands, folder, self.settings)
+        self.commands = menu_manager.print_menus(
+            commands,
+            folder,
+            self.settings)
         self._add_on_change()
 
     @staticmethod
@@ -66,5 +72,8 @@ class CommandManager(object):
         funcobj = getattr(module, function)
         argspec = inspect.getargspec(funcobj).args
         kwargs = dict((k, i) for k, i in metargs.items() if k in argspec)
-        kwargs.update(suricate.expand_variables(args, window=metargs.get('window')))
+        kwargs.update(
+            suricate.expand_variables(
+                args,
+                window=metargs.get('window')))
         return funcobj(**kwargs)

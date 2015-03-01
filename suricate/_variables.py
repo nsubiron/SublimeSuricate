@@ -26,10 +26,8 @@ import sublime
 
 if sublime.version() > '3068':
 
-
     def extract_window_variables(window):
         return window.extract_variables()
-
 
     def expand_variables(value, variables):
         return sublime.expand_variables(value, variables)
@@ -37,17 +35,16 @@ if sublime.version() > '3068':
 
 else:
 
-
     import logging
     import os
     import re
-
 
     def extract_window_variables(window):
         variables = {}
         try:
             view = window.active_view()
             variables['packages'] = sublime.packages_path()
+
             def _add_file(key, path):
                 if path:
                     folder, file_name = os.path.split(path)
@@ -65,7 +62,6 @@ else:
         except:
             logging.exception('Error retrieving build variables')
         return variables
-
 
     def expand_variables(value, variables):
         if isinstance(value, str):

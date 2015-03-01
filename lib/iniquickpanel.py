@@ -12,10 +12,13 @@ from suricate import import_module
 
 sublime_wrapper = import_module('lib.sublime_wrapper')
 
+
 def insert(view, inifile, section):
     string = sublime.load_resource('Packages/User/' + inifile)
     config = configparser.ConfigParser()
     config.read_file(string.split('\n'))
-    display_list =  [[x,y] for x,y in config[section].items()]
-    on_done = lambda picked: view.run_command('insert', {'characters': picked[0]})
+    display_list = [[x, y] for x, y in config[section].items()]
+    on_done = lambda picked: view.run_command(
+        'insert', {
+            'characters': picked[0]})
     sublime_wrapper.show_quick_panel(display_list, on_done)

@@ -43,6 +43,11 @@ class _SuricateAPI(object):
         _SuricateAPI.api_is_ready = True
 
     @staticmethod
+    def unload():
+        _SuricateAPI.api_is_ready = False
+        _SuricateAPI.variables.clear()
+
+    @staticmethod
     def set_debug_log(active=None):
         if active is None:
             _SuricateAPI.debug_log = not _SuricateAPI.debug_log

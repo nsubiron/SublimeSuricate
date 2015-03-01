@@ -5,18 +5,11 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
-import imp
-import importlib
 import sys
 
-import sublime
 import sublime_plugin
 
-
 from . import suricate
-sys.modules['suricate'] = suricate
-
-
 from .suricate._suricate import _SuricateAPI as SuricateAPI
 from .suricate.managers import command_manager
 
@@ -26,16 +19,18 @@ MANAGER = command_manager.CommandManager()
 
 def plugin_loaded():
     SuricateAPI.set_ready()
-    # suricate.set_debuglog(True)
-
-    for x in sorted(SuricateAPI.variables.items()):
-        print('-> %s = %r' % x)
-
+    sys.modules['suricate'] = suricate
+    suricate.set_debuglog(True)
     settings = suricate.get_settings()
     MANAGER.load(settings)
     settings.clear_on_change('Suricate')
     settings.add_on_change('Suricate', MANAGER.reload_settings)
     suricate.log('active')
+
+
+def plugin_unloaded():
+    SuricateAPI.unload()
+    suricate.debuglog('unloaded')
 
 
 class SuricateCommand(sublime_plugin.TextCommand):
@@ -44,7 +39,7 @@ class SuricateCommand(sublime_plugin.TextCommand):
         self._update()
 
     def _update(self):
-        suricate.debuglog('Updating flags for view %s' % self.view.buffer_id())
+        suricate.debuglog('updating flags for view %s' % self.view.buffer_id())
         self.filename = self.view.file_name()
         self.flags = MANAGER.update(self.filename)
 

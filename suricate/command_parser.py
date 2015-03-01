@@ -13,7 +13,7 @@ from . import _suricate as suricate
 from . import flags
 
 
-DEFAULT_DEFAULTS = \
+_DEFAULT_DEFAULTS = \
     {
         'caption':        'No description provided',
         'mnemonic':       None,
@@ -26,10 +26,10 @@ DEFAULT_DEFAULTS = \
     }
 
 
-TAG_LIST = ['call'] + [x for x in DEFAULT_DEFAULTS.keys()]
+_TAG_LIST = ['call'] + [x for x in _DEFAULT_DEFAULTS.keys()]
 
 
-Command = collections.namedtuple('Command', TAG_LIST)
+Command = collections.namedtuple('Command', _TAG_LIST)
 
 
 def _rupdate(lhs, rhs):
@@ -51,7 +51,7 @@ def _create_commands(profile, ignore_default_keybindings):
     if ignore_default_keybindings:
         _remove_key_bindings(jsoncommands)
     _rupdate(jsoncommands, profile.get('user_commands', {}))
-    defaults = profile.get('defaults', DEFAULT_DEFAULTS)
+    defaults = profile.get('defaults', _DEFAULT_DEFAULTS)
     for key, item in jsoncommands.items():
         try:
             args = dict(defaults)

@@ -25,7 +25,7 @@ def plugin_loaded():
     MANAGER.load(settings)
     settings.clear_on_change('Suricate')
     settings.add_on_change('Suricate', MANAGER.reload_settings)
-    suricate.log('active')
+    suricate.debuglog('active')
 
 
 def plugin_unloaded():

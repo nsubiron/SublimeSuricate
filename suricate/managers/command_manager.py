@@ -40,7 +40,7 @@ class CommandManager(object):
         self._clear_on_change()
         profile_extension = suricate.get_variable('suricate_profile_extension')
         active_profiles = self.settings.get('profiles', [])
-        self.profiles = [x+profile_extension for x in active_profiles]
+        self.profiles = [x+profile_extension for x in active_profiles if x]
         commands = command_parser.parse_profiles(
             self.profiles,
             self.settings.get('ignore_default_keybindings', False))
@@ -62,9 +62,9 @@ class CommandManager(object):
         call = self.commands[key].call
         args = self.commands[key].args
         module_name, function = call.rsplit('.', 1)
-        module = suricate.import_module('lib.' + module_name)
+        module = suricate.import_module(module_name)
         funcobj = getattr(module, function)
         argspec = inspect.getargspec(funcobj).args
         kwargs = dict((k, i) for k, i in metargs.items() if k in argspec)
-        kwargs.update(suricate.expand_variables(args, metargs.get('window')))
+        kwargs.update(suricate.expand_variables(args, window=metargs.get('window')))
         return funcobj(**kwargs)

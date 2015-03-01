@@ -83,17 +83,16 @@ def set_debuglog(active=None):
 if _SuricateAPI.is_packaged:
 
 
-    def reload_module(module_name):
+    def reload_module(module):
         pass
 
 
 else:
 
 
-    def reload_module(module_name):
-        module = sys.modules.get(module_name)
-        if module:
-            return imp.reload(module)
+    def reload_module(module):
+        debuglog('reloading module %r', module.__name__)
+        return imp.reload(module)
 
 
 def extract_variables(window=None):
@@ -124,7 +123,9 @@ def get_setting(key, default=None):
 
 # @todo Remove
 import importlib
-def import_module(name, force_reload=True):
-    debuglog('import %s', name)
-    m = importlib.import_module('.' + name, __package__)
-    return imp.reload(m) if force_reload else m
+def import_module(name):
+    module_name = '.'.join([_SuricateAPI.library_module_name, name])
+    was_present = module_name in sys.modules
+    debuglog('import module %r', module_name)
+    module = importlib.import_module(module_name)
+    return reload_module(module) if was_present else module

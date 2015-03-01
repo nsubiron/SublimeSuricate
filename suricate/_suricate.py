@@ -28,6 +28,7 @@ class _SuricateAPI(object):
     package_name = os.path.splitext(os.path.basename(package_path))[0]
     library_module_name = '.'.join([package_name, 'lib'])
     settings_file_base_name = 'Suricate.sublime-settings'
+    profile_extension = '.suricate-profile'
     generated_files_path = None
     variables = {}
 

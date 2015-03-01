@@ -9,9 +9,9 @@ import inspect
 
 import sublime
 
-from .. import commands as command_parser
-from .. import flags
 from .. import _suricate as suricate
+from .. import command_parser
+from .. import flags
 
 from . import menu_manager
 
@@ -28,19 +28,22 @@ class CommandManager(object):
 
     def _clear_on_change(self):
         for profile in self.profiles:
-            settings = sublime.load_settings(profile + command_parser.ProfileExtension)
-            settings.clear_on_change('CommandManager')
+            settings = sublime.load_settings(profile)
+            settings.clear_on_change('SuricateCommandManager')
 
     def _add_on_change(self):
         for profile in self.profiles:
-            settings = sublime.load_settings(profile + command_parser.ProfileExtension)
-            settings.add_on_change('CommandManager', self.reload_settings)
+            settings = sublime.load_settings(profile)
+            settings.add_on_change('SuricateCommandManager', self.reload_settings)
 
     def reload_settings(self):
         self._clear_on_change()
-        self.profiles = self.settings.get('profiles', [])
-        ignore_default_keybindings = self.settings.get('ignore_default_keybindings', False)
-        commands = command_parser.get(self.profiles, ignore_default_keybindings)
+        profile_extension = suricate.get_variable('suricate_profile_extension')
+        active_profiles = self.settings.get('profiles', [])
+        self.profiles = [x+profile_extension for x in active_profiles]
+        commands = command_parser.parse_profiles(
+            self.profiles,
+            self.settings.get('ignore_default_keybindings', False))
         # @todo
         folder = suricate.get_variable('suricate_generated_files_path')
         self.commands = menu_manager.print_menus(commands, folder, self.settings)

@@ -72,7 +72,7 @@
       "caption":      "Source Control – Default",
       "group":        "main.preferences.vcs",
       "call":         "sublime.open_file",
-      "args":         {"file": "${suricate_path}/SourceControlCommands.json"}
+      "args":         {"file": "${packages}/${suricate_package_name}/SourceControlCommands.json"}
     },
     "pref_source_control_user":
     {

@@ -13,6 +13,15 @@ import sublime
 from .. import _suricate as suricate
 
 
+def _get_menu_variables():
+    variables = suricate.extract_variables()
+    def _get_key_value(key, value):
+        if key.startswith('suricate_'):
+            return (key, value)
+        return (key, '${%s}' % key)
+    return dict(_get_key_value(*x) for x in variables.items())
+
+
 def print_menus(commands, folder, settings):
     """Generate sublime files based on commands. Return the commands dictionary
     filtering out the commands not added."""
@@ -28,6 +37,7 @@ def print_menus(commands, folder, settings):
 
 
 class _SublimeData(object):
+
     def __init__(self):
         self.base = []
         self.groups = {}
@@ -51,13 +61,14 @@ class _SublimeData(object):
 
 
 class _SublimeFile(_SublimeData):
+
     def __init__(self, path, basename):
         super().__init__()
         self.filename = os.path.join(path, basename)
 
-    def write_out(self):
+    def write_out(self, variables):
         with open(self.filename, 'w+') as fd:
-            data = suricate.expand_variables(self.as_data())
+            data = suricate.expand_variables(self.as_data(), variables)
             fd.write(json.dumps(data, indent='\t'))
 
 
@@ -74,13 +85,17 @@ def _regex_callable(patterns):
 
 
 class _MenuManager(object):
+
     def __init__(self, folder, settings):
-        self.smain    = _SublimeData()
-        self.pmain    = _SublimeData()
+        self.smain = _SublimeData()
+        self.pmain = _SublimeData()
         self.commands = _SublimeFile(folder, 'Suricate.sublime-commands')
-        self.main     = _SublimeFile(folder, 'Main.sublime-menu')
-        self.context  = _SublimeFile(folder, 'Context.sublime-menu')
-        self.keymap   = _SublimeFile(folder, 'Suricate.sublime-keymap')
+        self.main = _SublimeFile(folder, 'Main.sublime-menu')
+        self.context = _SublimeFile(folder, 'Context.sublime-menu')
+        self.keymap = _SublimeFile(
+            folder,
+            'Default (%s).sublime-keymap' %
+            sublime.platform().title())
         # Settings.
         self.dev_mode = settings.get('dev_mode', False)
         self.override_ctrl_o = settings.get('override_ctrl_o', False)
@@ -127,11 +142,12 @@ class _MenuManager(object):
         return not sublimecmd
 
     def write_out(self):
-        self.commands.write_out()
-        self.context.write_out()
-        self.keymap.write_out()
+        variables = _get_menu_variables()
+        self.commands.write_out(variables)
+        self.context.write_out(variables)
+        self.keymap.write_out(variables)
         self._fill_main_menu()
-        self.main.write_out()
+        self.main.write_out(variables)
 
     def _group_is_valid(self, group):
         if group.endswith('.dev') and not self.dev_mode:
@@ -144,9 +160,15 @@ class _MenuManager(object):
         return keys
 
     def _fill_main_menu(self):
-        suricate_settings = {"caption": "Suricate", "children": self.pmain.as_data()}
-        package_settings = {"id": "package-settings", "children": [suricate_settings]}
-        preferences_menu = {"id": "preferences", "children": [package_settings]}
+        suricate_settings = {
+            "caption": "Suricate",
+            "children": self.pmain.as_data()}
+        package_settings = {
+            "id": "package-settings",
+            "children": [suricate_settings]}
+        preferences_menu = {
+            "id": "preferences",
+            "children": [package_settings]}
         self.main.add(preferences_menu)
         if self.dev_mode and self.show_suricate_menu:
             suricate_menu = {

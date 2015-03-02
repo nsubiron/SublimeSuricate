@@ -323,7 +323,7 @@
       "caption":      "Settings – Default",
       "group":        "main.preferences",
       "call":         "sublime.open_file",
-      "args":         {"file": "${suricate_path}/Suricate.sublime-settings"}
+      "args":         {"file": "${packages}/${suricate_package_name}/Suricate.sublime-settings"}
     },
     "pref_settings_user":
     {
@@ -337,7 +337,7 @@
       "caption":      "Default Profile – Default",
       "group":        "main.preferences.commands",
       "call":         "sublime.open_file",
-      "args":         {"file": "${suricate_path}/profiles/Default.suricate-profile"}
+      "args":         {"file": "${packages}/${suricate_package_name}/profiles/Default.suricate-profile"}
     },
     "pref_commands_user":
     {

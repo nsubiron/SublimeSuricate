@@ -83,7 +83,7 @@ def set_debuglog(active=None):
 if _SuricateAPI.is_packaged:
 
     def reload_module(module):
-        pass
+        return module
 
 
 else:

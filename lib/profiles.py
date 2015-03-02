@@ -8,7 +8,7 @@
 import sublime
 
 import suricate
-import suricate.command_parser as command_parser
+from suricate import command_parser
 
 from . import sublime_wrapper
 

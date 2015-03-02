@@ -62,7 +62,7 @@ def search(query, useragent='duckduckgo2html', **kwargs):
         'no_redirect': '1',
         'no_html': '1',
         'skip_disambig': '0',
-        }
+    }
     params.update(kwargs)
     enc_params = urllib.parse.urlencode(params)
     url = 'http://api.duckduckgo.com/?' + enc_params
@@ -202,7 +202,7 @@ class Answer(_ResultItemBase):
         return True if self.text else False
 
     def as_html(self):
-        return self.text
+        return self.text.replace('\n', '<br>').replace('\r', '')
 
 
 class Definition(_ResultItemBase):

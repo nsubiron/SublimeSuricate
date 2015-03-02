@@ -8,16 +8,18 @@
     "args":         {},
     "flags":        null,
     "keys":         [],
+    "selector":     "text.tex",
     "context_menu": false,
-    "context": [{"key": "selector", "operator": "equal", "operand": "text.tex.latex"}]
+    "context": [{"key": "selector", "operator": "equal", "operand": "text.tex"}]
   },
 
   "commands":
   {
     "latex.paragraph_to_tex":
     {
-      "caption":      "LaTeX: Convert Symbols In Paragraph",
-      "call":         "latex.paragraph_to_tex"
+      "caption":      "LaTeX: Convert Symbols In Paragraph (textmode)",
+      "call":         "latex.paragraph_to_tex",
+      "selector":     "text"
     },
     "latex.open_pdf":
     {

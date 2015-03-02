@@ -21,6 +21,7 @@ _DEFAULT_DEFAULTS = \
         'args':           {},
         'flags':          None,
         'keys':           [],
+        'selector':       None,
         'context':        None,
         'context_menu':   False
     }

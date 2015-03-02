@@ -67,6 +67,10 @@ def api_is_ready():
     return _SuricateAPI.api_is_ready
 
 
+def is_packaged():
+    return _SuricateAPI.is_packaged
+
+
 def log(message, *args):
     print('Suricate: ' + message % args)
 

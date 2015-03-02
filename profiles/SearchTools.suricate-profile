@@ -1,30 +1,19 @@
 {
   "description": "Tools to search the web",
 
-  "defaults":
-  {
-    "mnemonic":     null,
-    "group":        "searchtools",
-    "args":         {},
-    "flags":        null,
-    "keys":         [],
-    "context_menu": false,
-    "context":      null
-  },
-
   "commands":
   {
     "searchtools.duckduckgo_popup":
     {
       "caption":      "DuckDuckGo!",
       "keys":         ["ctrl+shift+alt+o"],
-      "group":        "a.duckduckgo",
+      "group":        "duckduckgo",
       "call":         "duckduckgo.show_popup",
       "context_menu": true,
       "args":
       {
         "css_file": "Packages/${suricate_package_name}/css/default.css",
-        "scope_regex": "(source).(?P<keyword>[a-z+-_]+)",
+        "scope_regex": "(source|text\\.[a-z]+)\\.(?P<keyword>[a-z+\\-_]+)",
         "ignore_incomplete": false,
         "always_show_related": true
       }
@@ -34,11 +23,12 @@
     {
       "caption":      "DuckDuckGo Quick Answer",
       "keys":         ["shift+alt+o"],
+      "group":        "duckduckgo",
       "call":         "duckduckgo.show_popup",
       "args":
       {
         "css_file": "Packages/${suricate_package_name}/css/default.css",
-        "scope_regex": "(source).(?P<keyword>[a-z+-_]+)",
+        "scope_regex": "(source|text\\.[a-z]+)\\.(?P<keyword>[a-z+\\-_]+)",
         "results_priority": ["answer", "abstract", "definition", "results",
                              "redirect", "related"],
         "hide_headers": true,
@@ -51,6 +41,7 @@
     "searchtools.duckduckgo_insert_answer":
     {
       "caption":      "DuckDuckGo Insert Answer",
+      "group":        "duckduckgo",
       "call":         "duckduckgo.insert_answer",
     }
   }

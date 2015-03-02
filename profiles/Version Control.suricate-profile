@@ -63,8 +63,7 @@
       "group":        "vcs",
       "flags":        "Git|Svn|Surround",
       "call":         "vcs.show_quick_panel",
-      "args":         {"path": "${file}"},
-      "keys":         ["ctrl+o", "ctrl+f"]
+      "args":         {"path": "${file}"}
     },
 
     "pref_source_control_default":

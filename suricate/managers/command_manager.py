@@ -27,6 +27,13 @@ def _import_module(name):
     return suricate.reload_module(module) if was_present else module
 
 
+def _match_selector(selector, view):
+    if not selector:
+        return True
+    result = [view.score_selector(x.end(), selector) for x in view.sel()]
+    return sum(result) > 0
+
+
 class CommandManager(object):
 
     def __init__(self):
@@ -70,9 +77,11 @@ class CommandManager(object):
     def update(filename):
         return flags.parse(filename)
 
-    def is_enabled(self, key, currentflags):
+    def is_enabled(self, key, current_flags, view):
         if key in self.commands:
-            return flags.special_check(currentflags, self.commands[key].flags)
+            command = self.commands[key]
+            return _match_selector(command.selector, view) and \
+                   flags.special_check(current_flags, command.flags)
         return False
 
     def run(self, key, metargs):

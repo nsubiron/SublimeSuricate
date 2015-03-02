@@ -7,8 +7,13 @@
 
   "description": "Default profile",
 
+  // User Commands
+  // -------------
+  //
   // Do not modify this file, create a copy in your User folder to modify the
-  // commands here or to add new ones, for example:
+  // commands here or to add new ones.
+  //
+  // Example
   //
   //     // Packages/User/Default.suricate-profile
   //     {
@@ -33,6 +38,9 @@
 
   // "user_commands": {},
 
+  // Defaults
+  // --------
+  //
   // Optionally, you can define the default fields for the commands in this
   // profile. If no default is specified for a given tag, commands must contain
   // that tag in order to be added.
@@ -45,6 +53,7 @@
     "args":         {},
     "flags":        null,
     "keys":         [],
+    "selector":     null,
     "context":      null,
     "context_menu": false
   },
@@ -61,6 +70,7 @@
     //     "args":         {String: String}: arguments to be passed to call,
     //     "flags":        String or null: see supported flags below,
     //     "keys":         [String]: key binding,
+    //     "selector":     String: scope selector,
     //     "context":      Array: Standard Sublime Text key binding context,
     //     "context_menu": Bool: whether should appear in the context menu
     //   }
@@ -73,6 +83,8 @@
     //   calls the method 'toggle_boolean()' found in 'lib/settings.py'.
     //
     //   To send a command directly to Sublime Text use `sublime.command_name`.
+    //   Note that under this case the "selector" declared here won't have any
+    //   effect since the command will have its own.
     //
     // Special groups:
     //
@@ -156,7 +168,7 @@
     "chmodx":
     {
       "caption":      "Set Executable (chmod u+x)",
-      "group":        "chmod",
+      "group":        "osutil",
       "flags":        "Linux|IsFile",
       "call":         "chmod.executable",
       "args":         {"path": "${file}"}
@@ -164,7 +176,7 @@
     "toggle_read_only":
     {
       "caption":      "Toggle Read-Only",
-      "group":        "chmod",
+      "group":        "osutil",
       "flags":        "Windows|Linux|IsFile",
       "call":         "chmod.toggle_read_only",
       "args":         {"path": "${file}"},

@@ -66,11 +66,11 @@ else:
     def expand_variables(value, variables):
         if isinstance(value, str):
             for key, item in variables.items():
-                value = re.sub(r'(\$\{%s\})' % key, value, item)
+                value = re.sub(r'(\$\{%s\})' % key, item, value)
             return value
         elif isinstance(value, (list, tuple, range, set, frozenset)):
-            return type(value)(expand_variables(x) for x in value)
+            return type(value)(expand_variables(x, variables) for x in value)
         elif isinstance(value, dict):
-            return dict((k, expand_variables(v)) for k, v in value.items())
+            return dict((k, expand_variables(v, variables)) for k, v in value.items())
         else:
             return value

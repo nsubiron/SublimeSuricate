@@ -26,7 +26,8 @@ def _get_current_profile_set():
 
 
 def _set_and_save_profiles(value):
-    settings_file_base_name = suricate.get_variable('settings_file_base_name')
+    variable_name = 'suricate_settings_file_base_name'
+    settings_file_base_name = suricate.get_variable(variable_name)
     settings = sublime.load_settings(settings_file_base_name)
     settings.set('profiles', list(value))
     sublime.save_settings(settings_file_base_name)

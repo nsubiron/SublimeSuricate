@@ -33,11 +33,10 @@ def get_answer(query, scope=None, **kwargs):
             scoped_kwargs = dict(kwargs)
             scoped_kwargs['hide_headers'] = True
             scoped_kwargs['hide_signature'] = True
+            scoped_kwargs['max_number_of_results'] = 1
 
             scoped_results = duckduckgo2html.search(
-                scope +
-                ' ' +
-                query,
+                scope + ' ' + query,
                 DDG_USERAGENT)
             scoped_html = duckduckgo2html.results2html(
                 scoped_results,
@@ -47,6 +46,10 @@ def get_answer(query, scope=None, **kwargs):
                 html += '<h1>Scope {0}</h1>'.format(scope)
             if scoped_html:
                 html += scoped_html
+                if 'max_number_of_results' in kwargs and kwargs['max_number_of_results']:
+                    kwargs['max_number_of_results'] -= 1
+                    if kwargs['max_number_of_results'] < 1:
+                        return html
 
         results = duckduckgo2html.search(query, DDG_USERAGENT)
         html += duckduckgo2html.results2html(results, **kwargs)

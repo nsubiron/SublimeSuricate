@@ -15,7 +15,7 @@ Please implement {parser} in {file}."""
 
 
 def parse(out, command, vcsname):
-    """Returns a list of pairs ``[filepath, extra information]``."""
+    """Returns a list of pairs `[filepath, extra information]`."""
     try:
         mapper = globals()['_%s_mapper__%s' % (command, vcsname)]
     except KeyError as error:

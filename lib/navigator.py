@@ -46,8 +46,8 @@ def exclude_patterns(exclude_binaries):
 
 def launch(mode=OPEN_MODE, view=None):
     """Open navigator quick panel.
-      * ``mode=='open'`` Open selected file with Sublime Text
-      * ``mode=='launch'`` Try to externally launch selected file"""
+      * `mode=='open'` Open selected file with Sublime Text
+      * `mode=='launch'` Try to externally launch selected file"""
     if mode != OPEN_MODE and mode != LAUNCH_MODE:
         raise Exception('Unknown mode!')
     window = sublime.active_window()

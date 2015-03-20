@@ -34,7 +34,7 @@ def _datetime_formats():
     return suricate.get_setting('time_formats', defaults)
 
 
-def get_times(tstring=None, quiet=False):
+def get_times(tstring=None):
     """Return a list of the different formats available for tstring, see
     "time_formats" on settings file. If tstring is None, use current
     time."""
@@ -42,7 +42,7 @@ def get_times(tstring=None, quiet=False):
     if tstring is None:
         time = datetime.now()
     else:
-        time, _ = _read_time(tstring, formats, quiet)
+        time, _ = _read_time(tstring, formats)
     if time is None:
         return None
     return [time.strftime(format) for format in formats]
@@ -64,9 +64,8 @@ def _read_time(time_string, time_formats):
 
 def time_to_clipboard(view=None):
     regions = sublime_wrapper.get_selection(view)
-    time_formats = _datetime_formats()
     for selection in regions + [None]:
-        times = get_times(selection, time_formats)
+        times = get_times(selection)
         if times is not None:
             break
     sublime_wrapper.show_quick_panel(times, sublime.set_clipboard)

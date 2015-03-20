@@ -310,6 +310,32 @@
       }
     },
 
+    // Documentation.
+    "documentation_modules":
+    {
+      "caption":       "Documentation (API)",
+      "mnemonic":      "m",
+      "group":         "main.preferences.documentation",
+      "call":          "docs.to_buffer",
+      "args":
+      {
+        "title": "Suricate API Documentation",
+        "modules":
+        [
+          {
+            "alias": "suricate",
+            "module": "${suricate_package_name}.suricate._suricate",
+            "recursive": false
+          },
+          {
+            "alias": "lib",
+            "module": "${suricate_library_module_name}",
+            "recursive": true
+          }
+        ]
+      }
+    },
+
     // Suricate menu.
     "see_on_github":
     {

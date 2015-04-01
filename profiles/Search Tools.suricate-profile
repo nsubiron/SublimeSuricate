@@ -3,31 +3,47 @@
 
   "commands":
   {
+    "searchtools.searchbar":
+    {
+      "caption":      "Search Bar",
+      "group":        "default.searchtools",
+      "keys":         ["ctrl+o", "ctrl+s"],
+      "call":         "searchbar.show"
+    },
+
+    "searchtools.search_on_google":
+    {
+      "caption":      "Search On Google",
+      "group":        "default.searchtools",
+      "keys":         ["ctrl+o", "ctrl+g"],
+      "call":         "searchbar.search_selection",
+      "args":         {"engine": "Google"},
+      "context_menu": true
+    },
+
     "searchtools.duckduckgo_popup":
     {
       "caption":      "DuckDuckGo!",
+      "group":        "default.searchtools",
       "keys":         ["ctrl+shift+alt+o"],
-      "group":        "duckduckgo",
       "call":         "duckduckgo.show_popup",
-      "context_menu": true,
       "args":
       {
-        "css_file": "Packages/${suricate_package_name}/css/default.css",
         "scope_regex": "(source|text\\.[a-z]+)\\.(?P<keyword>[a-z+\\-_]+)",
         "ignore_incomplete": false,
         "always_show_related": true
-      }
+      },
+      "context_menu": true
     },
 
     "searchtools.duckduckgo_popup_condensed":
     {
       "caption":      "DuckDuckGo Quick Answer",
+      "group":        "default.searchtools",
       "keys":         ["shift+alt+o"],
-      "group":        "duckduckgo",
       "call":         "duckduckgo.show_popup",
       "args":
       {
-        "css_file": "Packages/${suricate_package_name}/css/default.css",
         "scope_regex": "(source|text\\.[a-z]+)\\.(?P<keyword>[a-z+\\-_]+)",
         "results_priority": ["answer", "abstract", "definition", "results",
                              "redirect", "related"],
@@ -41,7 +57,7 @@
     "searchtools.duckduckgo_insert_answer":
     {
       "caption":      "DuckDuckGo Insert Answer",
-      "group":        "duckduckgo",
+      "group":        "default.searchtools",
       "call":         "duckduckgo.insert_answer",
     }
   }

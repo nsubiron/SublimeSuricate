@@ -141,16 +141,16 @@
       "caption":      "Open File Quick Panel...",
       "group":        "quickpanel",
       "call":         "navigator.launch",
-      "args":         { "mode": "open" },
-      "keys":         [ "ctrl+shift+o" ]
+      "args":         {"mode": "open"},
+      "keys":         ["ctrl+o", "ctrl+p"]
     },
     "quick_launch":
     {
       "caption":      "Launch File Quick Panel...",
       "group":        "quickpanel",
       "call":         "navigator.launch",
-      "args":         { "mode": "launch" },
-      "keys":         [ "ctrl+shift+;" ]
+      "args":         {"mode": "launch"},
+      "keys":         ["ctrl+o", "ctrl+;"]
     },
     "add_to_quick_open":
     {
@@ -219,7 +219,7 @@
       "group":        "bvars",
       "call":         "sublime_wrapper.paste_build_variable",
       "args":         { "key": "file_base_name" },
-      "keys":         ["alt+c"]
+      "keys":         ["ctrl+o", "ctrl+n"]
     },
 
     // Date-time.
@@ -233,8 +233,7 @@
     {
       "caption":      "Continue Time Serie",
       "group":        "datetime",
-      "call":         "datetimeutil.continue_serie",
-      "keys":         ["ctrl+shift+3"]
+      "call":         "datetimeutil.continue_serie"
     },
 
     // Text.
@@ -253,8 +252,7 @@
     "randomize":
     {
       "caption":      "Randomize",
-      "call":         "text.randomize",
-      "keys":         ["ctrl+o", "ctrl+r"]
+      "call":         "text.randomize"
     },
 
     // Dictionaries.
@@ -263,23 +261,6 @@
       "caption":      "Quick Switch Dictionary",
       "call":         "dictionaries.switch_language",
       "keys":         ["shift+f6"]
-    },
-
-    // Search.
-    "searchbar":
-    {
-      "caption":      "Search Bar",
-      "call":         "searchbar.show",
-      "keys":         ["ctrl+o", "ctrl+s"]
-    },
-    "search_on_google":
-    {
-      "caption":      "Search On Google",
-      "group":        "launch",
-      "keys":         ["ctrl+shift+g"],
-      "call":         "searchbar.search_selection",
-      "args":         {"engine": "Google"},
-      "context_menu": true
     },
 
     // Switchers.

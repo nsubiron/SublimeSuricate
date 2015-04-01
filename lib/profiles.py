@@ -90,7 +90,8 @@ def to_buffer():
     extension = suricate.get_variable('suricate_profile_extension')
     current = _get_current_profile_set()
     no_keybindings = suricate.get_setting('ignore_default_keybindings', False)
-    profiles = [['Your profile', current]] + [[x, [x]] for x in find_profiles()]
+    your_profile = 'Your profile: [%s]' % ', '.join(sorted(current))
+    profiles = [[your_profile, current]] + [[x, [x]] for x in find_profiles()]
     for name, profile_names in profiles:
         profile_files = [x + extension for x in profile_names]
         text += '### %s\n\n' % name

@@ -7,13 +7,11 @@
 
 """Search online"""
 
-import sublime
-
 import suricate
 
-from . import sublime_wrapper
+from . import popup_util
 
-suricate.reload_module(sublime_wrapper)
+suricate.reload_module(popup_util)
 
 
 # @todo get more, add to settings?
@@ -23,21 +21,22 @@ ENGINES = {
 }
 
 
-def show(caption=None, engine=None):
+def show(view, window, caption=None, engine=None):
     engine = _get_default_engine_if_not_valid(engine)
     prefix = ENGINES[engine]
     if not caption:
         caption = '%s:' % engine
-    window = sublime.active_window()
+    selected_words = popup_util.SelectedWords.make(view, extend_to_words=False)
+    initial_text = selected_words.words if selected_words else ''
     on_done = lambda string: _on_done(prefix, string, window)
-    window.show_input_panel(caption, '', on_done, None, None)
+    window.show_input_panel(caption, initial_text, on_done, None, None)
 
 
-def search_selection(view=None, engine=None):
+def search_selection(view, event=None, engine=None):
     prefix = ENGINES[_get_default_engine_if_not_valid(engine)]
-    window = sublime.active_window()
-    for string in sublime_wrapper.get_selection(view):
-        _on_done(prefix, string, window)
+    selected_words = popup_util.SelectedWords.make(view, event)
+    query = selected_words.words if selected_words else ''
+    _on_done(prefix, query, view.window())
 
 
 def _on_done(prefix, string, window):

@@ -14,9 +14,11 @@ import sublime
 
 import suricate
 
+from . import popup_util
 from . import sublime_wrapper
 from .thirdparty import duckduckgo2html
 
+suricate.reload_module(popup_util)
 suricate.reload_module(sublime_wrapper)
 suricate.reload_module(duckduckgo2html)
 
@@ -55,29 +57,10 @@ def get_answer(query, scope=None, **kwargs):
         html += duckduckgo2html.results2html(results, **kwargs)
 
         return html if html else 'Sorry, no results found'
-    except:
+    except Exception:
         message = 'Sorry, there was an error retrieving the answer.'
         logging.exception(message)
         return message
-
-
-def _get_query_by_event(view, event):
-    point = view.window_to_text((event['x'], event['y']))
-    for region in view.sel():
-        if region.contains(point):
-            return view.substr(region), point
-    return view.substr(view.word(point)), point
-
-
-def _get_query_by_selection(view):
-    selection = view.sel()
-    # Single cursor only.
-    if len(selection) == 1:
-        if selection[0].empty():
-            return view.substr(view.word(selection[0].a)), selection[0].a
-        else:
-            return view.substr(selection[0]), selection[0].a
-    return None, 0
 
 
 def _get_scope(view, regex, point):
@@ -86,37 +69,20 @@ def _get_scope(view, regex, point):
 
 
 def show_popup(view, event=None, css_file=None, scope_regex=None, **kwargs):
-    if event:
-        query, point = _get_query_by_event(view, event)
-    else:
-        query, point = _get_query_by_selection(view)
-    if not query:
-        return
-    scope = _get_scope(view, scope_regex, point) if scope_regex else None
-    answer = get_answer(query, scope=scope, **kwargs)
-    if css_file is not None:
-        css = sublime_wrapper.locate_and_load_resource(css_file)
-        style = '<style>%s</style>' % css.replace('\r', '')
-        answer = style + answer
-    on_navigate = lambda url: view.window().run_command(
-        'open_url', {
-            'url': url})
-    view.show_popup(
-        answer,
-        location=point,
-        on_navigate=on_navigate,
-        max_width=450)
+    popup = popup_util.PopUp(view, event=event, css_file=css_file)
+    if popup.selected_words and popup.selected_words.words:
+        point = popup.selected_words.position
+        scope = _get_scope(view, scope_regex, point) if scope_regex else None
+        answer = get_answer(popup.selected_words.words, scope=scope, **kwargs)
+        popup.show(answer, max_width=450)
 
 
 def insert_answer(edit, view, event=None):
-    if event:
-        query = _get_query_by_event(view, event)[0]
-    else:
-        query = _get_query_by_selection(view)[0]
-    results = duckduckgo2html.search(query, DDG_USERAGENT)
-    if results and hasattr(
-            results,
-            'answer') and results.answer and results.answer.text:
-        sublime_wrapper.insert(results.answer.text, edit, view, clear=False)
-    else:
-        sublime.status_message('Sorry, no results found')
+    selected_words = popup_util.SelectedWords.make(view, event)
+    if selected_words and selected_words.words:
+        results = duckduckgo2html.search(selected_words.words, DDG_USERAGENT)
+        has_answer = results and hasattr(results, 'answer') and results.answer
+        if has_answer and results.answer.text:
+            sublime_wrapper.insert(results.answer.text, edit, view, clear=False)
+        else:
+            sublime.status_message('Sorry, no results found')

@@ -49,6 +49,7 @@ def flush_to_buffer(
         view.set_name(name)
     if syntax is not None:
         syntax_files = sublime.find_resources(syntax + '.tmLanguage')
+        syntax_files += sublime.find_resources(syntax + '.hidden-tmLanguage')
         if syntax_files:
             view.set_syntax_file(syntax_files[0])
     elif syntax_file is not None:

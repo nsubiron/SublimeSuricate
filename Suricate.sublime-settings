@@ -5,7 +5,7 @@
   "show_suricate_menu": true,
 
   // Profiles are added in the order provided here.
-  "profiles": ["Default", "Search Tools"],
+  "profiles": ["Default", "Miscellaneous", "Search Tools"],
 
   // Command groups matching any of this patterns are ignored.
   "ignore_groups": [],

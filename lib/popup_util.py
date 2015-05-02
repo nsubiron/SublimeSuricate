@@ -19,11 +19,15 @@ from . import sublime_wrapper
 suricate.reload_module(sublime_wrapper)
 
 
+def score(lhs, rhs):
+    intersection = set(lhs.split()).intersection(set(rhs.split()))
+    return sum(len(x) for x in intersection) / len(lhs + rhs)
+
+
 def _find_best_css(view, folder, default=None):
-    regex_remove = re.compile(r'[\(\)\{\}\[\]\\]')
+    regex_remove = re.compile(r'[\(\)\{\}\[\]\\-]')
     get_basename = lambda x: os.path.splitext(os.path.basename(x))[0]
-    clean = lambda x: regex_remove.sub('', get_basename(x).lower())
-    score = lambda x, y: len(set(x.split()).intersection(set(y.split())))
+    clean = lambda x: regex_remove.sub(' ', get_basename(x).lower())
     css_files = [
         x for x in sublime.find_resources('*.css') if x.startswith(folder)]
     color_scheme = clean(view.settings().get('color_scheme'))
@@ -70,7 +74,7 @@ class SelectedWords(object):
             selection = view.sel()
             # Single cursor only.
             if len(selection) == 1:
-                point = selection[0].a
+                point = selection[0].b
                 if selection[0].empty():
                     return SelectedWords(make_word(point), point)
                 else:

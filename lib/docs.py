@@ -150,6 +150,9 @@ class MarkdownWriter(object):
 import pkgutil
 
 def to_buffer(title, modules):
+    # @todo infinite recursion.
+    assert not suricate.is_packaged()
+
     writer = MarkdownWriter()
     writer.add_header(title, level=1)
 

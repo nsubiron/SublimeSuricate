@@ -139,7 +139,7 @@
     {
       "caption":       "Documentation (API)",
       "mnemonic":      "m",
-      "group":         "main.preferences.documentation",
+      "group":         "main.preferences.documentation.dev",
       "call":          "docs.to_buffer",
       "args":
       {

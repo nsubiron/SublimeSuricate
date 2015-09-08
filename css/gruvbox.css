@@ -1,0 +1,40 @@
+html {
+    background-color: #212121;
+    color: #fdf4c1aa;
+}
+
+body {
+    font-size: 13px;
+}
+
+a {
+    color: #fabd2f;
+}
+
+b {
+    color: #fa5c4b;
+    font-weight: 0;
+    font-size: 14px;
+}
+
+h1 {
+    color: #8ec07c;
+    margin-top: 5pt;
+    margin-bottom: 3pt;
+    font-weight: 0;
+    font-size: 12px;
+}
+
+h2 {
+    color: #d3869b;
+    margin-top: 3pt;
+    margin-bottom: 3pt;
+    font-weight: 0;
+    font-size: 12px;
+}
+
+small {
+    color: #4c4c4c;
+    font-size: 10px;
+    text-align: right;
+}

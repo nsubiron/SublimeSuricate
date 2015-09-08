@@ -84,17 +84,11 @@ def set_debuglog(active=None):
     _SuricateAPI.set_debug_log(active)
 
 
-if _SuricateAPI.is_packaged:
-
-    def reload_module(module):
-        return module
-
-
-else:
-
-    def reload_module(module):
+def reload_module(module):
+    if get_setting('dev_mode', False):
         debuglog('reloading module %r', module.__name__)
         return imp.reload(module)
+    return module
 
 
 def extract_variables(window=None):

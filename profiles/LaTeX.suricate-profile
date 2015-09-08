@@ -18,20 +18,20 @@
     "latex.paragraph_to_tex":
     {
       "caption":      "LaTeX: Convert Symbols In Paragraph (textmode)",
-      "call":         "latex.paragraph_to_tex",
+      "call":         "Suricate.lib.latex.paragraph_to_tex",
       "selector":     "text"
     },
     "latex.open_pdf":
     {
       "caption":      "LaTeX: Launch PDF",
       "flags":        "IsFile",
-      "call":         "latex.launch_pdf"
+      "call":         "Suricate.lib.latex.launch_pdf"
     },
     "latex.delete_intermediate_files":
     {
       "caption":      "LaTeX: Remove Intermediate Files",
       "flags":        "IsFile",
-      "call":         "latex.clean"
+      "call":         "Suricate.lib.latex.clean"
     }
   }
 }

@@ -8,7 +8,7 @@
       "caption":      "Surround Checkout",
       "group":        "vcs",
       "flags":        "Surround",
-      "call":         "vcs.call",
+      "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "checkout"},
       "keys":         ["ctrl+o", "ctrl+c"],
       "context_menu": true
@@ -18,7 +18,7 @@
       "caption":      "Surround Undo Checkout",
       "group":        "vcs",
       "flags":        "Surround",
-      "call":         "vcs.call",
+      "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "undocheckout"},
       "context_menu": true
     },
@@ -27,7 +27,7 @@
       "caption":      "Git Add",
       "group":        "vcs",
       "flags":        "Git",
-      "call":         "vcs.call",
+      "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "add"},
       "context_menu": true
     },
@@ -36,7 +36,7 @@
       "caption":      "Git Checkout",
       "group":        "vcs",
       "flags":        "Git",
-      "call":         "vcs.call",
+      "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "gitcheckout"},
       "context_menu": true
     },
@@ -45,7 +45,7 @@
       "caption":      "Differences",
       "group":        "vcs",
       "flags":        "Git|Svn|Surround",
-      "call":         "vcs.call",
+      "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "diff"},
       "keys":         ["ctrl+o", "ctrl+d"],
       "context_menu": true
@@ -54,7 +54,7 @@
     {
       "caption":      "Version Control Quick Panel...",
       "group":        "vcs",
-      "call":         "vcs.show_quick_panel",
+      "call":         "Suricate.lib.vcs.show_quick_panel",
       "keys":         ["ctrl+o", "ctrl+v"]
     },
     "vcs.currentfilequickpanel":
@@ -62,7 +62,7 @@
       "caption":      "Version Control Current File Quick Panel...",
       "group":        "vcs",
       "flags":        "Git|Svn|Surround",
-      "call":         "vcs.show_quick_panel",
+      "call":         "Suricate.lib.vcs.show_quick_panel",
       "args":         {"path": "${file}"}
     },
 

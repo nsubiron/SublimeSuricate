@@ -8,7 +8,7 @@
       "caption":      "Search Bar",
       "group":        "default.searchtools",
       "keys":         ["ctrl+o", "ctrl+s"],
-      "call":         "searchbar.show"
+      "call":         "Suricate.lib.searchbar.show"
     },
 
     "searchtools.search_on_google":
@@ -16,7 +16,7 @@
       "caption":      "Search On Google",
       "group":        "default.searchtools",
       "keys":         ["ctrl+o", "ctrl+g"],
-      "call":         "searchbar.search_selection",
+      "call":         "Suricate.lib.searchbar.search_selection",
       "args":         {"engine": "Google"},
       "context_menu": true
     },
@@ -26,7 +26,7 @@
       "caption":      "DuckDuckGo!",
       "group":        "default.searchtools",
       "keys":         ["ctrl+shift+alt+o"],
-      "call":         "duckduckgo.show_popup",
+      "call":         "Suricate.lib.duckduckgo.show_popup",
       "args":
       {
         "scope_regex": "(source|text\\.[a-z]+)\\.(?P<keyword>[a-z+\\-_]+)",
@@ -41,7 +41,7 @@
       "caption":      "DuckDuckGo Quick Answer",
       "group":        "default.searchtools",
       "keys":         ["shift+alt+o"],
-      "call":         "duckduckgo.show_popup",
+      "call":         "Suricate.lib.duckduckgo.show_popup",
       "args":
       {
         "scope_regex": "(source|text\\.[a-z]+)\\.(?P<keyword>[a-z+\\-_]+)",
@@ -58,7 +58,7 @@
     {
       "caption":      "DuckDuckGo Insert Answer",
       "group":        "default.searchtools",
-      "call":         "duckduckgo.insert_answer",
+      "call":         "Suricate.lib.duckduckgo.insert_answer",
     }
   }
 }

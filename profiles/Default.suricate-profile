@@ -112,27 +112,27 @@
     "toggle_dev":
     {
       "caption":      "Toggle Dev Mode",
-      "call":         "settings.toggle_boolean",
+      "call":         "Suricate.lib.settings.toggle_boolean",
       "args":         { "key": "dev_mode" }
     },
     "add_profile":
     {
       "caption":      "Add profile...",
       "group":        "profiles",
-      "call":         "profiles.add"
+      "call":         "Suricate.lib.profiles.add"
     },
     "remove_profile":
     {
       "caption":      "Remove profile...",
       "group":        "profiles",
-      "call":         "profiles.remove"
+      "call":         "Suricate.lib.profiles.remove"
     },
     "show_profiles":
     {
       "caption":      "Profiles",
       "mnemonic":     "P",
       "group":        "main.a",
-      "call":         "profiles.to_buffer"
+      "call":         "Suricate.lib.profiles.to_buffer"
     },
 
     "documentation_modules":
@@ -140,7 +140,7 @@
       "caption":       "Documentation (API)",
       "mnemonic":      "m",
       "group":         "main.preferences.documentation.dev",
-      "call":          "docs.to_buffer",
+      "call":          "Suricate.lib.docs.to_buffer",
       "args":
       {
         "title": "Suricate API Documentation",

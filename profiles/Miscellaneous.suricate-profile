@@ -8,7 +8,7 @@
     {
       "caption":      "Open File Quick Panel...",
       "group":        "quickpanel",
-      "call":         "navigator.launch",
+      "call":         "Suricate.lib.navigator.launch",
       "args":         {"mode": "open"},
       "keys":         ["ctrl+o", "ctrl+p"]
     },
@@ -16,7 +16,7 @@
     {
       "caption":      "Launch File Quick Panel...",
       "group":        "quickpanel",
-      "call":         "navigator.launch",
+      "call":         "Suricate.lib.navigator.launch",
       "args":         {"mode": "launch"},
       "keys":         ["ctrl+o", "ctrl+;"]
     },
@@ -24,7 +24,7 @@
     {
       "caption":      "Add Current File To Quick Open",
       "group":        "quickpanel",
-      "call":         "settings.append_value_to_array",
+      "call":         "Suricate.lib.settings.append_value_to_array",
       "args":
       {
         "key": "quick_open_path_list",
@@ -38,7 +38,7 @@
       "caption":      "Set Executable (chmod u+x)",
       "group":        "osutil",
       "flags":        "Linux|IsFile",
-      "call":         "chmod.executable",
+      "call":         "Suricate.lib.chmod.executable",
       "args":         {"path": "${file}"}
     },
     "toggle_read_only":
@@ -46,7 +46,7 @@
       "caption":      "Toggle Read-Only",
       "group":        "osutil",
       "flags":        "Windows|Linux|IsFile",
-      "call":         "chmod.toggle_read_only",
+      "call":         "Suricate.lib.chmod.toggle_read_only",
       "args":         {"path": "${file}"},
       "context_menu": true
     },
@@ -57,7 +57,7 @@
       "caption":      "Open Terminal Here",
       "group":        "launch",
       "flags":        "Windows|IsFile",
-      "call":         "process.spawn",
+      "call":         "Suricate.lib.process.spawn",
       "args":         {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
       "context_menu": true
     },
@@ -66,7 +66,7 @@
       "caption":      "Open Terminal Here",
       "group":        "launch",
       "flags":        "Linux|IsFile",
-      "call":         "process.spawn",
+      "call":         "Suricate.lib.process.spawn",
       "args":         {"cmd": ["gnome-terminal"], "working_dir": "${file_path}"},
       "context_menu": true
     },
@@ -76,14 +76,14 @@
     {
       "caption":      "Build Variable To Clipboard...",
       "group":        "bvars",
-      "call":         "sublime_wrapper.copy_build_variable_to_clipboard"
+      "call":         "Suricate.lib.sublime_wrapper.copy_build_variable_to_clipboard"
     },
     "paste_basename":
     {
       "caption":      "Insert File Base Name",
       "flags":        "IsFile",
       "group":        "bvars",
-      "call":         "sublime_wrapper.paste_build_variable",
+      "call":         "Suricate.lib.sublime_wrapper.paste_build_variable",
       "args":         { "key": "file_base_name" },
       "keys":         ["ctrl+o", "ctrl+n"]
     },
@@ -93,39 +93,39 @@
     {
       "caption":      "Date-Time To Clipboard...",
       "group":        "datetime",
-      "call":         "datetimeutil.time_to_clipboard"
+      "call":         "Suricate.lib.datetimeutil.time_to_clipboard"
     },
     "time_serie":
     {
       "caption":      "Continue Time Serie",
       "group":        "datetime",
-      "call":         "datetimeutil.continue_serie"
+      "call":         "Suricate.lib.datetimeutil.continue_serie"
     },
 
     // Text.
     "fill_current_line":
     {
       "caption":      "Expand Current Line",
-      "call":         "text.fill_current_line",
+      "call":         "Suricate.lib.text.fill_current_line",
       "keys":         ["ctrl+o", "ctrl+e"]
     },
     "split_current_line":
     {
       "caption":      "Split Current Line",
-      "call":         "text.split_current_line",
+      "call":         "Suricate.lib.text.split_current_line",
       "keys":         ["ctrl+o", "ctrl+j"]
     },
     "randomize":
     {
       "caption":      "Randomize",
-      "call":         "text.randomize"
+      "call":         "Suricate.lib.text.randomize"
     },
 
     // Dictionaries.
     "switch_language":
     {
       "caption":      "Quick Switch Dictionary",
-      "call":         "dictionaries.switch_language",
+      "call":         "Suricate.lib.dictionaries.switch_language",
       "keys":         ["shift+f6"]
     },
 
@@ -134,7 +134,7 @@
     {
       "caption":      "Switch Theme...",
       "group":        "settings",
-      "call":         "settings.set_from_resources",
+      "call":         "Suricate.lib.settings.set_from_resources",
       "args":
       {
         "key":           "theme",
@@ -147,7 +147,7 @@
     {
       "caption":      "Switch Color Scheme...",
       "group":        "settings",
-      "call":         "settings.set_from_resources",
+      "call":         "Suricate.lib.settings.set_from_resources",
       "args":
       {
         "key":           "color_scheme",

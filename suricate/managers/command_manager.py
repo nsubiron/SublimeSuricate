@@ -18,9 +18,18 @@ from .. import flags
 from . import menu_manager
 
 
+SURICATE_LIBRARY_PREFIX = 'Suricate.lib.'
+
+
+def _patch_suricate_library_path(name):
+    if name.startswith(SURICATE_LIBRARY_PREFIX):
+        actual_lib_path = suricate.get_variable('suricate_library_module_name')
+        return '.'.join([actual_lib_path, name[len(SURICATE_LIBRARY_PREFIX):]])
+    return name
+
+
 def _import_module(name):
-    library_module_name = suricate.get_variable('suricate_library_module_name')
-    module_name = '.'.join([library_module_name, name])
+    module_name = _patch_suricate_library_path(name)
     was_present = module_name in sys.modules
     suricate.debuglog('import module %r', module_name)
     module = importlib.import_module(module_name)

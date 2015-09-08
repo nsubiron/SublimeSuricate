@@ -52,10 +52,11 @@ class _SublimeData(object):
 
     def as_data(self):
         data = self.base
-        for key in sorted(self.groups.keys()):
+        for i, key in enumerate(sorted(self.groups.keys())):
             sub = self.groups[key]
             if sub:
-                data.append({'caption': '-'})
+                if i > 0:
+                    data.append({'caption': '-'})
                 data += sub
         return data
 
@@ -89,6 +90,7 @@ class _MenuManager(object):
     def __init__(self, folder, settings):
         self.smain = _SublimeData()
         self.pmain = _SublimeData()
+        self.scontext = _SublimeData()
         self.commands = _SublimeFile(folder, 'Suricate.sublime-commands')
         self.main = _SublimeFile(folder, 'Main.sublime-menu')
         self.context = _SublimeFile(folder, 'Context.sublime-menu')
@@ -98,6 +100,7 @@ class _MenuManager(object):
             sublime.platform().title())
         # Settings.
         self.dev_mode = settings.get('dev_mode', False)
+        self.nest_context_items = settings.get('single_context_menu_entry', False)
         self.override_ctrl_o = settings.get('override_ctrl_o', False)
         self.show_suricate_menu = settings.get('show_suricate_menu', False)
         ignore_list = settings.get('ignore_groups', [])
@@ -127,7 +130,7 @@ class _MenuManager(object):
                 menus['mnemonic'] = command.mnemonic
             self.commands.add(quickpanel)
             if command.context_menu:
-                self.context.add(menus, group)
+                self.scontext.add(menus, group)
             if group is not None and group.startswith('main.'):
                 if group.startswith('main.preferences'):
                     self.pmain.add(menus, group)
@@ -143,10 +146,11 @@ class _MenuManager(object):
 
     def write_out(self):
         variables = _get_menu_variables()
+        self._fill_main_menu()
+        self._fill_context_menu()
         self.commands.write_out(variables)
         self.context.write_out(variables)
         self.keymap.write_out(variables)
-        self._fill_main_menu()
         self.main.write_out(variables)
 
     def _group_is_valid(self, group):
@@ -174,6 +178,19 @@ class _MenuManager(object):
             suricate_menu = {
                 'caption': 'Suricate',
                 'mnemonic': 'u',
-                'id': 'Suricate',
+                'id': 'suricate',
                 'children': self.smain.as_data()}
             self.main.add(suricate_menu)
+
+    def _fill_context_menu(self):
+        if self.nest_context_items:
+            suricate_items = {
+                'caption': 'Suricate',
+                'mnemonic': 'u',
+                'id': 'suricate',
+                'children': self.scontext.as_data()}
+            self.context.add(suricate_items)
+        else:
+            for item in self.scontext.as_data():
+                self.context.add(item)
+

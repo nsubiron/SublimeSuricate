@@ -1,14 +1,17 @@
 {
   "dev_mode": false,
 
-  // Requires dev_mode on.
-  "show_suricate_menu": true,
-
   // Profiles are added in the order provided here.
   "profiles": ["Default", "Miscellaneous", "Search Tools"],
 
-  // Command groups matching any of this patterns are ignored.
+  // Command groups matching any of these patterns are ignored.
   "ignore_groups": [],
+
+  // Requires dev_mode on.
+  "show_suricate_menu": true,
+
+  // Nest context menu entries in a sub-menu.
+  "single_context_menu_entry": false,
 
   // Replace starting ctrl+o in key bindings by the string given here.
   "override_ctrl_o": false,
@@ -36,7 +39,7 @@
   "default_search_engine": "DuckDuckGo",
 
   // Style file to use in pop-ups; "auto" to find the best match for the active
-  // color scheme (experimental).
+  // color scheme.
   "popup_style_file": "auto",
 
   // Fall-back style file to use in pop-ups when the "auto" match fails. Only

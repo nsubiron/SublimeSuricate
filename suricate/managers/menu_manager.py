@@ -100,9 +100,10 @@ class _MenuManager(object):
             sublime.platform().title())
         # Settings.
         self.dev_mode = settings.get('dev_mode', False)
-        self.nest_context_items = settings.get('single_context_menu_entry', False)
         self.override_ctrl_o = settings.get('override_ctrl_o', False)
         self.show_suricate_menu = settings.get('show_suricate_menu', False)
+        self.show_context_menu = settings.get('add_entries_to_context_menu', True)
+        self.nest_context_items = settings.get('single_context_menu_entry', False)
         ignore_list = settings.get('ignore_groups', [])
         if not ignore_list:
             ignore_list = None
@@ -129,7 +130,7 @@ class _MenuManager(object):
             if command.mnemonic:
                 menus['mnemonic'] = command.mnemonic
             self.commands.add(quickpanel)
-            if command.context_menu:
+            if self.show_context_menu and command.context_menu:
                 self.scontext.add(menus, group)
             if group is not None and group.startswith('main.'):
                 if group.startswith('main.preferences'):
@@ -183,6 +184,8 @@ class _MenuManager(object):
             self.main.add(suricate_menu)
 
     def _fill_context_menu(self):
+        if not self.show_context_menu:
+            return
         if self.nest_context_items:
             suricate_items = {
                 'caption': 'Suricate',

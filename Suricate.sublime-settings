@@ -10,6 +10,9 @@
   // Requires dev_mode on.
   "show_suricate_menu": true,
 
+  // Allow commands to add an entry to the context menu.
+  "add_entries_to_context_menu": true,
+
   // Nest context menu entries in a sub-menu.
   "single_context_menu_entry": false,
 

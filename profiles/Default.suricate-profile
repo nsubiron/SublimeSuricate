@@ -27,9 +27,9 @@
   //       }
   //     }
   //
-  // overrides the shortcut of "window_terminal" command (see below) and changes
-  // the shell command used to launch your own terminal. See commands usage
-  // below.
+  // overrides the shortcut of "windows_terminal" command (see below) and
+  // changes the shell command used to launch your own terminal. See commands
+  // usage below.
   //
   // IMPORTANT: Use "user_commands" in your User folder, do NOT use "commands".
   // Profile files are loaded as any other Sublime Text settings file; setting
@@ -109,103 +109,158 @@
     //   * Version control systems: Git, Svn, Surround
     //   * Other: IsFile, IsDir, Never
 
-    "toggle_dev":
+    // Quick open/launch.
+    "quick_open":
     {
-      "caption":      "Toggle Dev Mode",
-      "call":         "Suricate.lib.settings.toggle_boolean",
-      "args":         { "key": "dev_mode" }
+      "caption":      "Open File Quick Panel...",
+      "group":        "quickpanel",
+      "call":         "Suricate.lib.navigator.launch",
+      "args":         {"mode": "open"},
+      "keys":         ["ctrl+o", "ctrl+p"]
     },
-    "add_profile":
+    "quick_launch":
     {
-      "caption":      "Add profile...",
-      "group":        "profiles",
-      "call":         "Suricate.lib.profiles.add"
+      "caption":      "Launch File Quick Panel...",
+      "group":        "quickpanel",
+      "call":         "Suricate.lib.navigator.launch",
+      "args":         {"mode": "launch"},
+      "keys":         ["ctrl+o", "ctrl+;"]
     },
-    "remove_profile":
+    "add_to_quick_open":
     {
-      "caption":      "Remove profile...",
-      "group":        "profiles",
-      "call":         "Suricate.lib.profiles.remove"
-    },
-    "show_profiles":
-    {
-      "caption":      "Profiles",
-      "mnemonic":     "P",
-      "group":        "main.a",
-      "call":         "Suricate.lib.profiles.to_buffer"
-    },
-
-    "documentation_modules":
-    {
-      "caption":       "Documentation (API)",
-      "mnemonic":      "m",
-      "group":         "main.preferences.documentation.dev",
-      "call":          "Suricate.lib.docs.to_buffer",
+      "caption":      "Add Current File To Quick Open",
+      "group":        "quickpanel",
+      "call":         "Suricate.lib.settings.append_value_to_array",
       "args":
       {
-        "title": "Suricate API Documentation",
-        "modules":
-        [
-          {
-            "alias": "suricate",
-            "module": "${suricate_package_name}.suricate._suricate",
-            "recursive": false
-          },
-          {
-            "alias": "lib",
-            "module": "${suricate_library_module_name}",
-            "recursive": true
-          }
-        ]
+        "key": "quick_open_path_list",
+        "value": "${file}"
       }
     },
 
-    // Suricate menu.
-    "see_on_github":
+    // File attributes.
+    "chmodx":
     {
-      "caption":      "GitHub",
-      "mnemonic":     "G",
-      "group":        "main.b.dev",
-      "call":         "sublime.open_url",
-      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate" }
+      "caption":      "Set Executable (chmod u+x)",
+      "group":        "osutil",
+      "flags":        "Linux|IsFile",
+      "call":         "Suricate.lib.chmod.executable",
+      "args":         {"path": "${file}"}
     },
-    "suricate_on_overlay":
+    "toggle_read_only":
     {
-      "caption":      "Suricate Commands",
-      "mnemonic":     "C",
-      "group":        "main.commands",
-      "call":         "sublime.show_overlay",
-      "args":         {"overlay": "command_palette", "text": "Suricate: "}
+      "caption":      "Toggle Read-Only",
+      "group":        "osutil",
+      "flags":        "Windows|Linux|IsFile",
+      "call":         "Suricate.lib.chmod.toggle_read_only",
+      "args":         {"path": "${file}"},
+      "context_menu": true
     },
 
-    // Preferences menu.
-    "pref_settings_default":
+    // Open terminal.
+    "windows_terminal":
     {
-      "caption":      "Settings – Default",
-      "group":        "main.preferences",
-      "call":         "sublime.open_file",
-      "args":         {"file": "${packages}/${suricate_package_name}/Suricate.sublime-settings"}
+      "caption":      "Open Terminal Here",
+      "group":        "launch",
+      "flags":        "Windows|IsFile",
+      "call":         "Suricate.lib.process.spawn",
+      "args":         {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
+      "context_menu": true
     },
-    "pref_settings_user":
+    "linux_terminal":
     {
-      "caption":      "Settings – User",
-      "group":        "main.preferences",
-      "call":         "sublime.open_file",
-      "args":         {"file": "${packages}/User/Suricate.sublime-settings"}
+      "caption":      "Open Terminal Here",
+      "group":        "launch",
+      "flags":        "Linux|IsFile",
+      "call":         "Suricate.lib.process.spawn",
+      "args":         {"cmd": ["gnome-terminal"], "working_dir": "${file_path}"},
+      "context_menu": true
     },
-    "pref_commands_default":
+
+    // Build variables.
+    "copy_build_variable":
     {
-      "caption":      "Default Profile – Default",
-      "group":        "main.preferences.commands",
-      "call":         "sublime.open_file",
-      "args":         {"file": "${packages}/${suricate_package_name}/profiles/Default.suricate-profile"}
+      "caption":      "Build Variable To Clipboard...",
+      "group":        "bvars",
+      "call":         "Suricate.lib.sublime_wrapper.copy_build_variable_to_clipboard"
     },
-    "pref_commands_user":
+    "paste_basename":
     {
-      "caption":      "Default Profile – User",
-      "group":        "main.preferences.commands",
-      "call":         "sublime.open_file",
-      "args":         {"file": "${packages}/User/Default.suricate-profile"}
+      "caption":      "Insert File Base Name",
+      "flags":        "IsFile",
+      "group":        "bvars",
+      "call":         "Suricate.lib.sublime_wrapper.paste_build_variable",
+      "args":         { "key": "file_base_name" },
+      "keys":         ["ctrl+o", "ctrl+n"]
+    },
+
+    // Date-time.
+    "time_to_clipboard":
+    {
+      "caption":      "Date-Time To Clipboard...",
+      "group":        "datetime",
+      "call":         "Suricate.lib.datetimeutil.time_to_clipboard"
+    },
+    "time_serie":
+    {
+      "caption":      "Continue Time Serie",
+      "group":        "datetime",
+      "call":         "Suricate.lib.datetimeutil.continue_serie"
+    },
+
+    // Text.
+    "fill_current_line":
+    {
+      "caption":      "Expand Current Line",
+      "call":         "Suricate.lib.text.fill_current_line",
+      "keys":         ["ctrl+o", "ctrl+e"]
+    },
+    "split_current_line":
+    {
+      "caption":      "Split Current Line",
+      "call":         "Suricate.lib.text.split_current_line",
+      "keys":         ["ctrl+o", "ctrl+j"]
+    },
+    "randomize":
+    {
+      "caption":      "Randomize",
+      "call":         "Suricate.lib.text.randomize"
+    },
+
+    // Dictionaries.
+    "switch_language":
+    {
+      "caption":      "Quick Switch Dictionary",
+      "call":         "Suricate.lib.dictionaries.switch_language",
+      "keys":         ["shift+f6"]
+    },
+
+    // Switchers.
+    "theme_switcher":
+    {
+      "caption":      "Switch Theme...",
+      "group":        "settings",
+      "call":         "Suricate.lib.settings.set_from_resources",
+      "args":
+      {
+        "key":           "theme",
+        "patterns":      ["*.sublime-theme"],
+        "settings_file": "Preferences.sublime-settings",
+        "set_mode":      "file_name"
+      }
+    },
+    "color_scheme_switcher":
+    {
+      "caption":      "Switch Color Scheme...",
+      "group":        "settings",
+      "call":         "Suricate.lib.settings.set_from_resources",
+      "args":
+      {
+        "key":           "color_scheme",
+        "patterns":      ["*.tmTheme"],
+        "settings_file": "Preferences.sublime-settings",
+        "set_mode":      "file"
+      }
     }
   }
 }

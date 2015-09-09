@@ -1,0 +1,119 @@
+{
+  "description": "Basic Suricate commands",
+
+  "commands":
+  {
+    // Developer mode.
+    "toggle_dev":
+    {
+      "caption":      "Toggle Dev Mode",
+      "group":        "main.ab",
+      "mnemonic":     "D",
+      "call":         "Suricate.lib.settings.toggle_boolean",
+      "args":         { "key": "dev_mode" }
+    },
+
+    // Profiles.
+    "add_profile":
+    {
+      "caption":      "Add profile...",
+      "group":        "profiles",
+      "call":         "Suricate.lib.profiles.add"
+    },
+    "remove_profile":
+    {
+      "caption":      "Remove profile...",
+      "group":        "profiles",
+      "call":         "Suricate.lib.profiles.remove"
+    },
+    "show_profiles":
+    {
+      "caption":      "View Profiles",
+      "mnemonic":     "P",
+      "group":        "main.b",
+      "call":         "Suricate.lib.profiles.to_buffer"
+    },
+
+    // Documentation.
+    "documentation_modules":
+    {
+      "caption":       "Generate API Documentation",
+      "mnemonic":      "A",
+      "group":         "main.b.dev",
+      "call":          "Suricate.lib.docs.to_buffer",
+      "args":
+      {
+        "title": "Suricate API Documentation",
+        "modules":
+        [
+          {
+            "alias": "suricate",
+            "module": "${suricate_package_name}.suricate._suricate",
+            "recursive": false
+          },
+          {
+            "alias": "lib",
+            "module": "${suricate_library_module_name}",
+            "recursive": true
+          }
+        ]
+      }
+    },
+
+    // Suricate menu.
+    "see_on_github":
+    {
+      "caption":      "Suricate On GitHub",
+      "mnemonic":     "G",
+      "group":        "main.a.dev",
+      "call":         "sublime.open_url",
+      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate" }
+    },
+    "online_documentation":
+    {
+      "caption":      "Online Documentation",
+      "mnemonic":     "O",
+      "group":        "main.a.dev",
+      "call":         "sublime.open_url",
+      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate/wiki" }
+    },
+    "suricate_on_overlay":
+    {
+      "caption":      "Suricate Commands",
+      "mnemonic":     "C",
+      "group":        "main.commands.dev",
+      "call":         "sublime.show_overlay",
+      "args":         {"overlay": "command_palette", "text": "Suricate: "}
+    },
+
+    // Preferences menu.
+    "pref_settings_default":
+    {
+      "caption":      "Settings – Default",
+      "group":        "main.preferences",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/${suricate_package_name}/Suricate.sublime-settings"}
+    },
+    "pref_settings_user":
+    {
+      "caption":      "Settings – User",
+      "group":        "main.preferences",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/User/Suricate.sublime-settings"}
+    },
+    "pref_commands_default":
+    {
+      "caption":      "Default Profile – Default",
+      "group":        "main.preferences.commands",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/${suricate_package_name}/profiles/Default.suricate-profile"}
+    },
+    "pref_commands_user":
+    {
+      "caption":      "Default Profile – User",
+      "group":        "main.preferences.commands",
+      "call":         "sublime.open_file",
+      "args":         {"file": "${packages}/User/Default.suricate-profile"}
+    }
+  }
+}

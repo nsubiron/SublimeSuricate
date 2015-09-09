@@ -2,7 +2,7 @@
   "dev_mode": false,
 
   // Profiles are added in the order provided here.
-  "profiles": ["Default", "Miscellaneous", "Search Tools"],
+  "profiles": ["Suricate", "Default", "Search Tools"],
 
   // Command groups matching any of these patterns are ignored.
   "ignore_groups": [],

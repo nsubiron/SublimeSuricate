@@ -40,6 +40,7 @@
       "caption":       "Generate API Documentation",
       "mnemonic":      "A",
       "group":         "main.b.dev",
+      "flags":         "SuricateIsNotPackaged",
       "call":          "Suricate.lib.docs.to_buffer",
       "args":
       {

@@ -7,26 +7,34 @@
 
 """Bitwise flags definitions and operations."""
 
-import os, re, fnmatch
+import fnmatch
+import os
+import re
+
 import sublime
+
+from . import _suricate as suricate
 
 from functools import reduce
 
 class Flags(object):
-    EMPTY       = 0x0000
+    EMPTY                 = 0x0000
     # Platforms.
-    Linux       = 0x0001
-    Windows     = 0x0002
-    Osx         = 0x0004
+    Linux                 = 0x0001
+    Windows               = 0x0002
+    Osx                   = 0x0004
     # Version control systems.
-    Git         = 0x0008
-    Svn         = 0x0010
-    Surround    = 0x0020
+    Git                   = 0x0010
+    Svn                   = 0x0020
+    Surround              = 0x0040
     # File types.
-    IsFile      = 0x0100
-    IsDir       = 0x0200
+    IsFile                = 0x0100
+    IsDir                 = 0x0200
+    # Other.
+    SuricateIsPackaged    = 0x1000
+    SuricateIsNotPackaged = 0x2000
     # Never active.
-    Never       = 0x8000
+    Never                 = 0x8000
 
 ExorGroups = [
   (Flags.Linux|Flags.Windows|Flags.Osx, True),
@@ -63,6 +71,8 @@ def to_string(flags):
 
 PLATFORM = from_string(sublime.platform().title())
 
+IS_PACKAGED = (Flags.SuricateIsPackaged if suricate.is_packaged() else Flags.SuricateIsNotPackaged)
+
 def check_platform(flags):
     """Return whether flags match current platform."""
     return check(flags, PLATFORM) or \
@@ -71,12 +81,12 @@ def check_platform(flags):
 def parse(path):
     """Retrieve active flags from path."""
     if path is None:
-      return PLATFORM
+      return PLATFORM|IS_PACKAGED
     if os.path.isfile(path):
       folder, name = os.path.split(path)
-      return PLATFORM|Flags.IsFile|_vcs(folder)
+      return PLATFORM|IS_PACKAGED|Flags.IsFile|_vcs(folder)
     elif os.path.isdir(path):
-      return PLATFORM|Flags.IsDir|_vcs(path)
+      return PLATFORM|IS_PACKAGED|Flags.IsDir|_vcs(path)
 
 def get_vcs(path):
     if os.path.isfile(path):

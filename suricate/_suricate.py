@@ -91,11 +91,12 @@ def reload_module(module):
     return module
 
 
-def extract_variables(window=None):
+def extract_variables(window=None, append_suricate_variables=True):
     if window is None:
         window = sublime.active_window()
     variables = _variables.extract_window_variables(window)
-    variables.update(_SuricateAPI.variables)
+    if append_suricate_variables:
+        variables.update(_SuricateAPI.variables)
     return variables
 
 

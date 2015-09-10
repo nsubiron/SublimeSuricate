@@ -86,7 +86,8 @@ def show_quick_panel(display_list, on_done, window=None):
 def copy_build_variable_to_clipboard(key=None, window=None):
     """If key is None, show a quick panel with the currently available build
     variables."""
-    variables = suricate.extract_variables(window)
+    append_suricate_variables = suricate.get_setting('dev_mode', False)
+    variables = suricate.extract_variables(window, append_suricate_variables)
     on_done = lambda picked: sublime.set_clipboard(picked[1])
     if key is None:
         show_quick_panel(sorted([[k, i] for k, i in variables.items()]), on_done)

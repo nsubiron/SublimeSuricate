@@ -18,19 +18,21 @@ suricate.reload_module(sublime_wrapper)
 
 def _datetime_formats():
     defaults = [
-        '%Y:%m:%d',
+        '%d/%m/%Y',
         '%Y/%m/%d',
         '%d/%m/%Y',
+        '%Y-%m-%d',
         '%d %B %Y',
+        '%B %d, %Y',
         '%A, %B %d, %Y',
-        '%Y%m%d',
-        '%Y%m%d%H%M%S',
-        '%a %d',
-        '%c',
+        '%B %Y',
         'Week %W, day %j',
+        '%a%d',
+        '%c',
+        '%Y%m%d%H%M%S',
+        '%Y%m%d',
         '%H:%M:%S',
-        '%H:%M',
-        '%Y']
+        '%H:%M']
     return suricate.get_setting('time_formats', defaults)
 
 

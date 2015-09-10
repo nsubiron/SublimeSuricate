@@ -78,9 +78,11 @@
     // The "call" tag:
     //
     //   Specifies the function to be called when executing the command, the
-    //   function must be located in a module inside the 'lib' folder of the
-    //   Suricate Commands package. E.g., "call": "settings.toggle_boolean"
-    //   calls the method 'toggle_boolean()' found in 'lib/settings.py'.
+    //   function must be located in a module that can be imported from Sublime
+    //   Text python environment. Packages are loaded as modules and therefore
+    //   can be imported, e.g., "call": "Suricate.lib.settings.toggle_boolean"
+    //   calls the method 'toggle_boolean()' found in
+    //   'Suricate/lib/settings.py'.
     //
     //   To send a command directly to Sublime Text use `sublime.command_name`.
     //   Note that under this case the "selector" declared here won't have any
@@ -91,17 +93,17 @@
     //   - main.preferences Goes to menu Preferences->Package Settings->Suricate,
     //   - main.*           Goes to menu Suricate,
     //   - .*               Won't appear in menus, only key binding added if any
-    //   - *.dev            Only added when dev_mode is on
+    //   - *.dev            Only added when dev_mode is active
     //
     // Key bindings:
     //
     //   By default most of the key bindings here start with ctrl+o, which
-    //   interferes with sublime text's open file action. To override this
+    //   interferes with Sublime Text's open file command. To override this
     //   behaviour tweak "override_ctrl_o" setting.
     //
-    //   Alternatively, key bindings given inside "commands" can be ignored
+    //   Alternatively, key bindings given inside "commands" key can be ignored
     //   adding `"ignore_default_keybindings": true` to the settings file. (Key
-    //   bindings given by "user_commands" are still considered).
+    //   bindings given by "user_commands" key are always used).
     //
     // Supported flags:
     //
@@ -130,6 +132,7 @@
     {
       "caption":      "Add Current File To Quick Open",
       "group":        "quickpanel",
+      "flags":        "IsFile",
       "call":         "Suricate.lib.settings.append_value_to_array",
       "args":
       {

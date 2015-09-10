@@ -8,7 +8,7 @@
     {
       "caption":      "Toggle Dev Mode",
       "group":        "main.ab",
-      "mnemonic":     "D",
+      "mnemonic":     "T",
       "call":         "Suricate.lib.settings.toggle_boolean",
       "args":         { "key": "dev_mode" }
     },
@@ -53,7 +53,7 @@
             "recursive": false
           },
           {
-            "alias": "lib",
+            "alias": "Suricate.lib",
             "module": "${suricate_library_module_name}",
             "recursive": true
           }
@@ -62,21 +62,21 @@
     },
 
     // Suricate menu.
+    "online_documentation":
+    {
+      "caption":      "Documentation",
+      "mnemonic":     "D",
+      "group":        "main.a",
+      "call":         "sublime.open_url",
+      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate/wiki" }
+    },
     "see_on_github":
     {
-      "caption":      "Suricate On GitHub",
+      "caption":      "View On GitHub",
       "mnemonic":     "G",
       "group":        "main.a.dev",
       "call":         "sublime.open_url",
       "args":         { "url": "https://github.com/nsubiron/SublimeSuricate" }
-    },
-    "online_documentation":
-    {
-      "caption":      "Online Documentation",
-      "mnemonic":     "O",
-      "group":        "main.a.dev",
-      "call":         "sublime.open_url",
-      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate/wiki" }
     },
     "suricate_on_overlay":
     {

@@ -37,14 +37,14 @@
     // Documentation.
     "documentation_modules":
     {
-      "caption":       "Generate API Documentation",
+      "caption":       "Generate API Reference",
       "mnemonic":      "A",
       "group":         "main.b.dev",
       "flags":         "SuricateIsNotPackaged",
       "call":          "Suricate.lib.docs.to_buffer",
       "args":
       {
-        "title": "Suricate API Documentation",
+        "title": "Suricate API Reference",
         "modules":
         [
           {

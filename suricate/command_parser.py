@@ -66,6 +66,14 @@ def _get_commands(profile, key):
     return dict((k, _merge_platform_specific_tags(v)) for k, v in data.items())
 
 
+def _map_keybinding(keybinding):
+    assert suricate.api_is_ready()
+    override_ctrl_o = suricate.get_setting('override_ctrl_o', False)
+    if override_ctrl_o and keybinding[0].lower() == 'ctrl+o':
+        return [override_ctrl_o] + keybinding[1:]
+    return keybinding
+
+
 def _create_commands(profile, ignore_default_keybindings):
     commands = {}
     data = _get_commands(profile, 'commands')
@@ -80,6 +88,8 @@ def _create_commands(profile, ignore_default_keybindings):
             args.update(item)
             args['flags'] = flags.from_string(str(args['flags']))
             if flags.check_platform(args['flags']):
+                if args['keys']:
+                    args['keys'] = _map_keybinding(args['keys'])
                 commands[key] = Command(**args)
         except Exception as exception:
             suricate.log('WARNING: Command %r not added: %s', key, exception)

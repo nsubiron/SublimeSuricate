@@ -97,7 +97,6 @@ class _MenuManager(object):
         self.keymap = _SublimeFile(folder, 'Default.sublime-keymap')
         # Settings.
         self.dev_mode = settings.get('dev_mode', False)
-        self.override_ctrl_o = settings.get('override_ctrl_o', False)
         self.show_suricate_menu = settings.get('show_suricate_menu', False)
         self.show_context_menu = settings.get('add_entries_to_context_menu', True)
         self.nest_context_items = settings.get('single_context_menu_entry', False)
@@ -136,7 +135,7 @@ class _MenuManager(object):
                     self.smain.add(menus, group)
         if command.keys:
             keybinding = dict(basic)
-            keybinding['keys'] = self._override_keys(command.keys)
+            keybinding['keys'] = command.keys
             if command.context:
                 keybinding['context'] = command.context
             self.keymap.add(keybinding)
@@ -155,11 +154,6 @@ class _MenuManager(object):
         if group.endswith('.dev') and not self.dev_mode:
             return False
         return not self.ignore_groups(group)
-
-    def _override_keys(self, keys):
-        if self.override_ctrl_o and keys[0].lower() == 'ctrl+o':
-            keys = [self.override_ctrl_o] + keys[1:]
-        return keys
 
     def _fill_main_menu(self):
         suricate_settings = {

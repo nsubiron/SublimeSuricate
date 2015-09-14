@@ -30,6 +30,9 @@ _DEFAULT_DEFAULTS = \
 _TAG_LIST = ['call'] + [x for x in _DEFAULT_DEFAULTS.keys()]
 
 
+_PLATFORM_EXTENSION = '.' + sublime.platform()
+
+
 Command = collections.namedtuple('Command', _TAG_LIST)
 
 
@@ -40,32 +43,46 @@ def _rupdate(lhs, rhs):
         lhs[key] = ilhs
 
 
-def _remove_key_bindings(jsoncommands):
-    for item in jsoncommands.values():
-        if 'keys' in item:
-            item.pop('keys')
+def _remove_key_bindings(data):
+    for item in data.values():
+        for key in ['keys', 'keys' + _PLATFORM_EXTENSION]:
+            if key in item:
+                item.pop(key)
+
+
+def _merge_platform_specific_tags(raw_data):
+    data = {}
+    for tag in _TAG_LIST:
+        os_tag = tag + _PLATFORM_EXTENSION
+        if os_tag in raw_data:
+            data[tag] = raw_data[os_tag]
+        elif tag in raw_data:
+            data[tag] = raw_data[tag]
+    return data
+
+
+def _get_commands(profile, key):
+    data = profile.get(key, {})
+    return dict((k, _merge_platform_specific_tags(v)) for k, v in data.items())
 
 
 def _create_commands(profile, ignore_default_keybindings):
     commands = {}
-    jsoncommands = profile.get('commands', {})
+    data = _get_commands(profile, 'commands')
     if ignore_default_keybindings:
-        _remove_key_bindings(jsoncommands)
-    _rupdate(jsoncommands, profile.get('user_commands', {}))
-    defaults = profile.get('defaults', _DEFAULT_DEFAULTS)
-    for key, item in jsoncommands.items():
+        _remove_key_bindings(data)
+    user_data = _get_commands(profile, 'user_commands')
+    _rupdate(data, user_data)
+    defaults = _merge_platform_specific_tags(profile.get('defaults', _DEFAULT_DEFAULTS))
+    for key, item in data.items():
         try:
             args = dict(defaults)
             args.update(item)
             args['flags'] = flags.from_string(str(args['flags']))
-            command = Command(**args)
-            if flags.check_platform(command.flags):
-                commands[key] = command
-        except TypeError as exception:
-            suricate.debuglog('Exception %s', exception)
-            suricate.log(
-                'WARNING: Command %r not added: mandatory field missing.',
-                key)
+            if flags.check_platform(args['flags']):
+                commands[key] = Command(**args)
+        except Exception as exception:
+            suricate.log('WARNING: Command %r not added: %s', key, exception)
     return commands
 
 

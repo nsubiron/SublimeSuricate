@@ -134,11 +134,7 @@
       "group":        "quickpanel",
       "flags":        "IsFile",
       "call":         "Suricate.lib.settings.append_value_to_array",
-      "args":
-      {
-        "key": "quick_open_path_list",
-        "value": "${file}"
-      }
+      "args":         {"key": "quick_open_path_list", "value": "${file}"}
     },
 
     // File attributes.
@@ -161,22 +157,14 @@
     },
 
     // Open terminal.
-    "windows_terminal":
+    "open_terminal_here":
     {
       "caption":      "Open Terminal Here",
       "group":        "launch",
-      "flags":        "Windows|IsFile",
+      "flags":        "Windows|Linux|IsFile",
       "call":         "Suricate.lib.process.spawn",
-      "args":         {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
-      "context_menu": true
-    },
-    "linux_terminal":
-    {
-      "caption":      "Open Terminal Here",
-      "group":        "launch",
-      "flags":        "Linux|IsFile",
-      "call":         "Suricate.lib.process.spawn",
-      "args":         {"cmd": ["gnome-terminal"], "working_dir": "${file_path}"},
+      "args.windows": {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
+      "args.linux":   {"cmd": ["gnome-terminal"], "working_dir": "${file_path}"},
       "context_menu": true
     },
 

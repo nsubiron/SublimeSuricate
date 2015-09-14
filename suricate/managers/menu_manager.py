@@ -94,10 +94,7 @@ class _MenuManager(object):
         self.commands = _SublimeFile(folder, 'Suricate.sublime-commands')
         self.main = _SublimeFile(folder, 'Main.sublime-menu')
         self.context = _SublimeFile(folder, 'Context.sublime-menu')
-        self.keymap = _SublimeFile(
-            folder,
-            'Default (%s).sublime-keymap' %
-            sublime.platform().title())
+        self.keymap = _SublimeFile(folder, 'Default.sublime-keymap')
         # Settings.
         self.dev_mode = settings.get('dev_mode', False)
         self.override_ctrl_o = settings.get('override_ctrl_o', False)

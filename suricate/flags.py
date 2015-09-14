@@ -22,7 +22,7 @@ class Flags(object):
     # Platforms.
     Linux                 = 0x0001
     Windows               = 0x0002
-    Osx                   = 0x0004
+    OSX                   = 0x0004
     # Version control systems.
     Git                   = 0x0010
     Svn                   = 0x0020
@@ -37,7 +37,7 @@ class Flags(object):
     Never                 = 0x8000
 
 ExorGroups = [
-  (Flags.Linux|Flags.Windows|Flags.Osx, True),
+  (Flags.Linux|Flags.Windows|Flags.OSX, True),
   (Flags.Svn|Flags.Surround|Flags.Git, False)
 ]
 
@@ -76,7 +76,7 @@ IS_PACKAGED = (Flags.SuricateIsPackaged if suricate.is_packaged() else Flags.Sur
 def check_platform(flags):
     """Return whether flags match current platform."""
     return check(flags, PLATFORM) or \
-           (Flags.Linux|Flags.Windows|Flags.Osx)&flags==Flags.EMPTY
+           (Flags.Linux|Flags.Windows|Flags.OSX)&flags==Flags.EMPTY
 
 def parse(path):
     """Retrieve active flags from path."""

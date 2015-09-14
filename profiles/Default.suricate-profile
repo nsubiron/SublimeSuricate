@@ -107,7 +107,7 @@
     //
     // Supported flags:
     //
-    //   * Platforms: Linux, Windows, Osx
+    //   * Platforms: Linux, Windows, OSX
     //   * Version control systems: Git, Svn, Surround
     //   * Other: IsFile, IsDir, Never
 

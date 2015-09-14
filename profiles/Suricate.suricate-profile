@@ -16,13 +16,13 @@
     // Profiles.
     "add_profile":
     {
-      "caption":      "Add profile...",
+      "caption":      "Add profile",
       "group":        "profiles",
       "call":         "Suricate.lib.profiles.add"
     },
     "remove_profile":
     {
-      "caption":      "Remove profile...",
+      "caption":      "Remove profile",
       "group":        "profiles",
       "call":         "Suricate.lib.profiles.remove"
     },

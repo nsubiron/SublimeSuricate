@@ -52,14 +52,14 @@
     },
     "vcs.quickpanel":
     {
-      "caption":      "Version Control Quick Panel...",
+      "caption":      "Version Control Quick Panel",
       "group":        "vcs",
       "call":         "Suricate.lib.vcs.show_quick_panel",
       "keys":         ["ctrl+o", "ctrl+v"]
     },
     "vcs.currentfilequickpanel":
     {
-      "caption":      "Version Control Current File Quick Panel...",
+      "caption":      "Version Control Current File Quick Panel",
       "group":        "vcs",
       "flags":        "Git|Svn|Surround",
       "call":         "Suricate.lib.vcs.show_quick_panel",

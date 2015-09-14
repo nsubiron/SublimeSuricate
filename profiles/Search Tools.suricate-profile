@@ -13,7 +13,7 @@
 
     "searchtools.search_on_google":
     {
-      "caption":      "Search On Google",
+      "caption":      "Search On Google...",
       "group":        "default.searchtools",
       "keys":         ["ctrl+o", "ctrl+g"],
       "call":         "Suricate.lib.searchbar.search_selection",

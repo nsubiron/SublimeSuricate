@@ -75,7 +75,7 @@
           "out": "buffer"
         },
         "status_list": {
-          "caption": "List Modified Files...",
+          "caption": "List Modified Files",
           "cmd": ["git", "ls-files", "--modified", "${path}"],
           "out": "modifiedfiles_list"
         }

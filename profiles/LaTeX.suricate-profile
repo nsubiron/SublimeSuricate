@@ -23,7 +23,7 @@
     },
     "latex.open_pdf":
     {
-      "caption":      "LaTeX: Launch PDF",
+      "caption":      "LaTeX: Launch PDF...",
       "flags":        "IsFile",
       "call":         "Suricate.lib.latex.launch_pdf"
     },

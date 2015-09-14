@@ -1,0 +1,5 @@
+site_name: Sublime Suricate
+pages:
+- 'Index': 'index.md'
+- 'Quick Guide': 'quick-guide.md'
+- 'API Reference': 'api-reference.md'

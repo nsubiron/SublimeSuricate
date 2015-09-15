@@ -10,7 +10,6 @@
       "flags":        "Surround",
       "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "checkout"},
-      "keys":         ["ctrl+o", "ctrl+c"],
       "context_menu": true
     },
     "vcs.undocheckout":
@@ -47,7 +46,7 @@
       "flags":        "Git|Svn|Surround",
       "call":         "Suricate.lib.vcs.call",
       "args":         {"cmd": "diff"},
-      "keys":         ["ctrl+o", "ctrl+d"],
+      "keys":         ["<c>+o", "<c>+d"],
       "context_menu": true
     },
     "vcs.quickpanel":
@@ -55,7 +54,7 @@
       "caption":      "Version Control Quick Panel",
       "group":        "vcs",
       "call":         "Suricate.lib.vcs.show_quick_panel",
-      "keys":         ["ctrl+o", "ctrl+v"]
+      "keys":         ["<c>+o", "<c>+v"]
     },
     "vcs.currentfilequickpanel":
     {

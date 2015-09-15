@@ -72,7 +72,7 @@ def is_packaged():
 
 
 def log(message, *args):
-    print('Suricate: ' + message % args)
+    print('Suricate: ' + str(message) % args)
 
 
 def debuglog(message, *args):

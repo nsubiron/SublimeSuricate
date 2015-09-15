@@ -7,7 +7,7 @@
     {
       "caption":      "Search Bar",
       "group":        "default.searchtools",
-      "keys":         ["ctrl+o", "ctrl+s"],
+      "keys":         ["<c>+o", "<c>+s"],
       "call":         "Suricate.lib.searchbar.show"
     },
 
@@ -15,7 +15,7 @@
     {
       "caption":      "Search On Google...",
       "group":        "default.searchtools",
-      "keys":         ["ctrl+o", "ctrl+g"],
+      "keys":         ["<c>+o", "<c>+g"],
       "call":         "Suricate.lib.searchbar.search_selection",
       "args":         {"engine": "Google"},
       "context_menu": true
@@ -26,6 +26,7 @@
       "caption":      "DuckDuckGo!",
       "group":        "default.searchtools",
       "keys":         ["ctrl+shift+alt+o"],
+      "keys.osx":     ["super+shift+o"],
       "call":         "Suricate.lib.duckduckgo.show_popup",
       "args":
       {

@@ -16,11 +16,14 @@
   // Nest context menu entries in a sub-menu.
   "single_context_menu_entry": false,
 
-  // Replace starting ctrl+o in key bindings by the string given here.
-  "override_ctrl_o": false,
-
   // Ignore the key bindings given by default.
   "ignore_default_keybindings": false,
+
+  // Replace starting <c>+o in key bindings by the string given here.
+  "override_default_opening_key": null,
+
+  // Platform specific remap of keys.
+  "key_map": {"*": {"<c>": "ctrl"}, "osx": {"<c>": "super"}},
 
   // Known local repositories to show on the vcs quick panel. Requires Version
   // Control profile active. { "display name": "path" }

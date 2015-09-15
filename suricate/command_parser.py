@@ -30,7 +30,7 @@ _DEFAULT_DEFAULTS = \
 _TAG_LIST = ['call'] + [x for x in _DEFAULT_DEFAULTS.keys()]
 
 
-_PLATFORM_EXTENSION = '.' + sublime.platform()
+_PLATFORM = sublime.platform()
 
 
 Command = collections.namedtuple('Command', _TAG_LIST)
@@ -45,15 +45,14 @@ def _rupdate(lhs, rhs):
 
 def _remove_key_bindings(data):
     for item in data.values():
-        for key in ['keys', 'keys' + _PLATFORM_EXTENSION]:
-            if key in item:
-                item.pop(key)
+        if 'keys' in item:
+            item.pop('keys')
 
 
 def _merge_platform_specific_tags(raw_data):
     data = {}
     for tag in _TAG_LIST:
-        os_tag = tag + _PLATFORM_EXTENSION
+        os_tag = tag + '.' + _PLATFORM
         if os_tag in raw_data:
             data[tag] = raw_data[os_tag]
         elif tag in raw_data:
@@ -68,9 +67,17 @@ def _get_commands(profile, key):
 
 def _map_keybinding(keybinding):
     assert suricate.api_is_ready()
-    override_ctrl_o = suricate.get_setting('override_ctrl_o', False)
-    if override_ctrl_o and keybinding[0].lower() == 'ctrl+o':
-        return [override_ctrl_o] + keybinding[1:]
+    settings = suricate.load_settings()
+    # Override <c>+o.
+    override_ctrl_o = settings.get('override_default_opening_key', False)
+    if override_ctrl_o and keybinding[0] == '<c>+o':
+        keybinding = [override_ctrl_o] + keybinding[1:]
+    # Map keys by platform.
+    key_map = settings.get('key_map', {})
+    os_key_map = dict(key_map.get('*', {}))
+    os_key_map.update(dict(key_map.get(_PLATFORM, {})))
+    for key, value in os_key_map.items():
+        keybinding = [x.replace(key, value) for x in keybinding]
     return keybinding
 
 

@@ -68,7 +68,7 @@
       "mnemonic":     "D",
       "group":        "main.a",
       "call":         "sublime.open_url",
-      "args":         { "url": "https://github.com/nsubiron/SublimeSuricate/wiki" }
+      "args":         { "url": "https://sublime-suricate.readthedocs.org" }
     },
     "see_on_github":
     {

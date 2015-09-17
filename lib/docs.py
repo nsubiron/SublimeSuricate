@@ -137,7 +137,7 @@ class MarkdownWriter(object):
             self.add_function(function_info)
 
     def add_function(self, function_info):
-        self.add_header('`%s`' % function_info.signature, level=3)
+        self.add_header('**`%s`**' % function_info.signature, level=3)
         if function_info.doc:
             self._write(function_info.doc.replace('\n    ', '\n'))
             self.newline()

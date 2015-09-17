@@ -18,6 +18,7 @@ def execute(window=None, **kwargs):
     similar functionality. However, a few options in build systems are taken
     care of by Sublime Text internally so they list below only contains
     parameters accepted by this command.
+
       * cmd ``[String]``
       * file_regex ``String``
       * line_regex ``String``

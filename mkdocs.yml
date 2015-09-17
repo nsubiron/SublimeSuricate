@@ -1,5 +1,10 @@
 site_name: Sublime Suricate
+repo_url: https://github.com/nsubiron/SublimeSuricate
+
 pages:
-- 'Index': 'index.md'
+- 'Home': 'index.md'
 - 'Quick Guide': 'quick-guide.md'
 - 'API Reference': 'api-reference.md'
+
+markdown_extensions:
+- admonition:

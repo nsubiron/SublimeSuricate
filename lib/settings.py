@@ -86,6 +86,7 @@ def set_from_resources(
         window=None):
     """Set the key in settings_file from a list of resources found based on
     patterns. Available values for `set_mode`:
+
       * "file": `Packages/Default/Preferences.sublime-settings`
       * "file_name": `Preferences.sublime-settings`
       * "file_base_name": `Preferences`

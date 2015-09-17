@@ -20,7 +20,7 @@ suricate.reload_module(process)
 suricate.reload_module(sublime_wrapper)
 suricate.reload_module(vcs_parser)
 
-SourceControlFileBaseName = 'SourceControlCommands.json'
+SourceControlFileBaseName = 'SuricateVCS.json'
 
 
 def _do(cmd, caption, path, out=None, ask=None, **kwargs):

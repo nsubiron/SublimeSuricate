@@ -36,76 +36,76 @@ _PLATFORM = sublime.platform()
 Command = collections.namedtuple('Command', _TAG_LIST)
 
 
-def _rupdate(lhs, rhs):
-    for key, irhs in rhs.items():
-        ilhs = lhs.get(key, {})
-        ilhs.update(irhs)
-        lhs[key] = ilhs
+class _CommandParser(object):
+    def __init__(self, settings):
+        self.ignore_default_keybindings = settings.get('ignore_default_keybindings', False)
+        self.override_ctrl_o = settings.get('override_default_opening_key', False)
+        key_map = settings.get('key_map', {})
+        self.os_key_map = dict(key_map.get('*', {}))
+        self.os_key_map.update(dict(key_map.get(_PLATFORM, {})))
+        self.commands = {}
+
+    def parse(self, profile):
+        data = self._get_commands(profile, 'commands')
+        if self.ignore_default_keybindings:
+            self._remove_key_bindings(data)
+        user_data = self._get_commands(profile, 'user_commands')
+        self._rupdate(data, user_data)
+        defaults = self._merge_platform_specific_tags(profile.get('defaults', _DEFAULT_DEFAULTS))
+        for key, item in data.items():
+            try:
+                args = dict(defaults)
+                args.update(item)
+                args['flags'] = flags.from_string(str(args['flags']))
+                if flags.check_platform(args['flags']):
+                    if args['keys']:
+                        args['keys'] = self._map_keybinding(args['keys'])
+                    self.commands[key] = Command(**args)
+            except Exception as exception:
+                suricate.log('WARNING: Command %r not added: %s', key, exception)
+
+    @staticmethod
+    def _rupdate(lhs, rhs):
+        for key, irhs in rhs.items():
+            ilhs = lhs.get(key, {})
+            ilhs.update(irhs)
+            lhs[key] = ilhs
+
+    @staticmethod
+    def _remove_key_bindings(data):
+        for item in data.values():
+            if 'keys' in item:
+                item.pop('keys')
+
+    def _get_commands(self, profile, key):
+        data = profile.get(key, {})
+        return dict((k, self._merge_platform_specific_tags(v)) for k, v in data.items())
+
+    @staticmethod
+    def _merge_platform_specific_tags(raw_data):
+        data = {}
+        for tag in _TAG_LIST:
+            os_tag = tag + '.' + _PLATFORM
+            if os_tag in raw_data:
+                data[tag] = raw_data[os_tag]
+            elif tag in raw_data:
+                data[tag] = raw_data[tag]
+        return data
+
+    def _map_keybinding(self, keybinding):
+        # Override <c>+o.
+        if self.override_ctrl_o and keybinding[0] == '<c>+o':
+            keybinding = [self.override_ctrl_o] + keybinding[1:]
+        # Map keys by platform.
+        for key, value in self.os_key_map.items():
+            keybinding = [x.replace(key, value) for x in keybinding]
+        return keybinding
 
 
-def _remove_key_bindings(data):
-    for item in data.values():
-        if 'keys' in item:
-            item.pop('keys')
-
-
-def _merge_platform_specific_tags(raw_data):
-    data = {}
-    for tag in _TAG_LIST:
-        os_tag = tag + '.' + _PLATFORM
-        if os_tag in raw_data:
-            data[tag] = raw_data[os_tag]
-        elif tag in raw_data:
-            data[tag] = raw_data[tag]
-    return data
-
-
-def _get_commands(profile, key):
-    data = profile.get(key, {})
-    return dict((k, _merge_platform_specific_tags(v)) for k, v in data.items())
-
-
-def _map_keybinding(keybinding):
+def parse_profiles(profiles):
     assert suricate.api_is_ready()
-    settings = suricate.load_settings()
-    # Override <c>+o.
-    override_ctrl_o = settings.get('override_default_opening_key', False)
-    if override_ctrl_o and keybinding[0] == '<c>+o':
-        keybinding = [override_ctrl_o] + keybinding[1:]
-    # Map keys by platform.
-    key_map = settings.get('key_map', {})
-    os_key_map = dict(key_map.get('*', {}))
-    os_key_map.update(dict(key_map.get(_PLATFORM, {})))
-    for key, value in os_key_map.items():
-        keybinding = [x.replace(key, value) for x in keybinding]
-    return keybinding
-
-
-def _create_commands(profile, ignore_default_keybindings):
-    commands = {}
-    data = _get_commands(profile, 'commands')
-    if ignore_default_keybindings:
-        _remove_key_bindings(data)
-    user_data = _get_commands(profile, 'user_commands')
-    _rupdate(data, user_data)
-    defaults = _merge_platform_specific_tags(profile.get('defaults', _DEFAULT_DEFAULTS))
-    for key, item in data.items():
-        try:
-            args = dict(defaults)
-            args.update(item)
-            args['flags'] = flags.from_string(str(args['flags']))
-            if flags.check_platform(args['flags']):
-                if args['keys']:
-                    args['keys'] = _map_keybinding(args['keys'])
-                commands[key] = Command(**args)
-        except Exception as exception:
-            suricate.log('WARNING: Command %r not added: %s', key, exception)
-    return commands
-
-
-def parse_profiles(profiles, ignore_default_keybindings):
-    commands = {}
+    parser = _CommandParser(suricate.load_settings())
     for profile_file_name in profiles:
         profile = sublime.load_settings(profile_file_name)
-        commands.update(_create_commands(profile, ignore_default_keybindings))
-    return commands
+        parser.parse(profile)
+    return parser.commands

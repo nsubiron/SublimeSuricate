@@ -71,9 +71,7 @@ class CommandManager(object):
         profile_extension = suricate.get_variable('suricate_profile_extension')
         active_profiles = self.settings.get('profiles', [])
         self.profiles = [x + profile_extension for x in active_profiles if x]
-        commands = command_parser.parse_profiles(
-            self.profiles,
-            self.settings.get('ignore_default_keybindings', False))
+        commands = command_parser.parse_profiles(self.profiles)
         # @todo
         folder = suricate.get_variable('suricate_generated_files_path')
         self.commands = menu_manager.print_menus(

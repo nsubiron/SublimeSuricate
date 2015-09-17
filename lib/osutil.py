@@ -10,7 +10,6 @@ import stat
 
 import sublime
 
-# @todo rename to os_util
 
 def _current_permisions(path):
     return os.stat(path).st_mode

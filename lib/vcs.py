@@ -10,12 +10,12 @@ import sublime
 
 import suricate
 
-from . import chmod
+from . import osutil
 from . import process
 from . import sublime_wrapper
 from . import vcs_parser
 
-suricate.reload_module(chmod)
+suricate.reload_module(osutil)
 suricate.reload_module(process)
 suricate.reload_module(sublime_wrapper)
 suricate.reload_module(vcs_parser)
@@ -64,7 +64,7 @@ def call(cmd, active_flags, view):
         if cmdi is not None and suricate.flags.special_check(
                 active_flags, suricate.flags.from_string(
                     item['flags'])) and all(
-                chmod.which(exe) is not None for exe in item['exes']):
+                osutil.which(exe) is not None for exe in item['exes']):
             suricate.debuglog('%s: %s', item['name'], cmdi['caption'])
             cmdi['path'] = view.file_name()
             return _do(**cmdi)
@@ -140,7 +140,7 @@ def get_commands(active_flags, path):
                 active_flags,
                 suricate.flags.from_string(
                     item['flags'])) and all(
-                chmod.which(exe) is not None for exe in item['exes']):
+                osutil.which(exe) is not None for exe in item['exes']):
             for name, cmdi in item.get('commands', {}).items():
                 cmdi['path'] = path
                 commandlist.append(_CmdiProxy(item['name'], cmdi))

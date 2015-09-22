@@ -8,20 +8,17 @@ of profiles come already shipped and active by default with Sublime Suricate. To
 activate a profile add it to your **profile list** via _"Suricate: Add Profile"_
 in the command palette (`ctrl+shift+p`), use _"Suricate: Remove Profile"_ to
 deactivate profiles. Alternatively, you can edit your profile list by hand in
-your `User/Suricate.sublime-settings`.
+your "User/Suricate.sublime-settings".
 
-When a profile is active all the files matching `ProfileName.suricate-profile`
+When a profile is active all the files matching "ProfileName.suricate-profile"
 within your Packages directory are loaded (just as any other Sublime Text
-settings file) and the Suricate merges their commands and adds them to you user
+settings file) and the Suricate merges their commands and adds them to your user
 profile. To take a look at your user profile use _"Suricate: View Profiles"_.
-This generates a  list of your active commands as well as lists for each
-individual profile found in your directory tree. However, the commands  active
-in your user profile are not necessarily available. Whether or not a command can
-be used depends on the set of flags given by the command itself, these flags are
-updated in a per-view basis.
-
-To write your own profile take a look first to the `Default.suricate-profile` in
-the menu Preferences>Package Settings>Suricate>Default Profile - Default.
+This generates a list of your active commands as well as lists for each
+individual profile found in your packages directory tree. Take into account that
+the commands active in your user profile are not necessarily available, whether
+or not a command can be used depends on the set of flags given by the command
+itself, these flags are updated in a per-view basis.
 
 ## Commands
 
@@ -31,8 +28,7 @@ A typical Suricate command is defined as follows
 "open_windows_terminal_here":
 {
   "caption":      "Open Terminal Here...",
-  "keys":         ["ctrl+alt+t"],
-  "group":        "launch",
+  "keys":         ["ctrl+o", "ctrl+t"],
   "flags":        "Windows|IsFile",
   "call":         "Suricate.lib.process.spawn",
   "args":         {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
@@ -41,15 +37,23 @@ A typical Suricate command is defined as follows
 ```
 
 This creates a command entry in the command palette, in the context menu and
-assignates a key-binding to it. Moreover, the flags specify that the command is
+assigns a key binding to it. Moreover, the flags specify that the command is
 only active on Windows and when the current buffer is a file existing on disk.
+
+When triggered this command calls the function `spawn()` inside the Python
+module `Suricate.lib.process` with the arguments given in "args". The "call"
+tag can be set to any python module that can be imported within Sublime Text's
+Python interpreter, in this case the module is defined in
+"Packages/Suricate/lib/process.py".
+
+### User Commands
 
 Any of the fields above can be overridden adding a suricate-profile file
 to your User folder, e.g. let's say that the previous command resides in
-`Default.suricate-profile` inside the Suricate package, and you want to assign a
-different key-binding and perhaps call your own console application. Then you
-just need to add a file called `Default.suricate-profile` to your User folder
-containing the following
+"ProfileName.suricate-profile" inside the Suricate package, and you want to
+assign a different key binding and perhaps call your own console application.
+Then you just need to add a file called "ProfileName.suricate-profile" to your
+User folder containing the following
 
 ```json
 {
@@ -64,17 +68,57 @@ containing the following
 }
 ```
 
-For more details on how this works take a look at the
-`Default.suricate-profile`.
+### Platform Specific Tags
 
-### Key bindings
+In order to make easier to implement platform specific variants of the same
+command, individual command tags can be overridden adding the platform name as
+extension. For instance to add the Linux variant of the previous command we
+could rewrite it as
 
-**IMPORTANT:** By default most of the key bindings of the commands provided
-start with `ctrl+o`, which interferes with Sublime Text's open file command. If
-that poses a problem for you, you can change this behaviour tweaking
-`"override_ctrl_o"` setting in your `User/Suricate.sublime-settings`. For
-instance, `"override_ctrl_o": "ctrl+["` changes Suricate's key bindings as
-`ctrl+o,ctrl+p` to `ctrl+[,ctrl+p`.
+```json
+"open_terminal_here":
+{
+  "caption":      "Open Terminal Here...",
+  "keys":         ["ctrl+o", "ctrl+t"],
+  "flags":        "Windows|Linux|IsFile",
+  "call":         "Suricate.lib.process.spawn",
+  "args.windows": {"cmd": ["start", "cmd.exe"], "working_dir": "${file_path}"},
+  "args.linux":   {"cmd": ["gnome-terminal"], "working_dir": "${file_path}"},
+  "context_menu": true
+}
+```
 
-Alternatively, default key bindings can be ignored altogether adding
-`"ignore_default_keybindings": true` to your Suricate settings file.
+This way all the command specifications are shared but the function call
+arguments, these are changed based on the current platform to launch a platform
+specific console application.
+
+!!! tip
+    For more details on how to write commands take a look at the
+    [Default.suricate-profile] shipped with the Suricate package. See
+    menu Preferences>Package Settings>Suricate>Default Profile - Default.
+
+## Key bindings
+
+There is still one common issue with the command above, the `ctrl` key in the
+key binding is typically replaced by `super` (command) in OSX. We could add a
+"keys.osx" overriding the default keys but for this specific case another method
+is preferred. By default, the special key `<c>` is remapped to `ctrl` in Windows
+and Linux, and to `super` in OSX. This way the key binding in the command above
+should be defined as `"keys": ["<c>+o", "<c>+t"]`. In fact, the way keys are
+remapped can be completely customized in your settings file with the "key_map"
+setting.
+
+!!! warning
+    By default most of the key bindings of the commands provided start with
+    `<c>+o`, which interferes with Sublime Text's open file command. If that
+    poses a problem for you, you can change this behaviour tweaking
+    "override_default_opening_key" setting in your
+    "User/Suricate.sublime-settings". For instance,
+    `override_default_opening_key": "<c>+["` changes
+    Suricate's key bindings as `<c>+o,<c>+p` to `<c>+[,<c>+p`.
+
+    Alternatively, default key bindings can be ignored altogether adding
+    `"ignore_default_keybindings": true` to your Suricate settings file.
+
+
+[Default.suricate-profile]: https://raw.githubusercontent.com/nsubiron/SublimeSuricate/master/profiles/Default.suricate-profile

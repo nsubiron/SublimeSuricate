@@ -77,14 +77,14 @@
     //
     //   Specifies the function to be called when executing the command, the
     //   function must be located in a module that can be imported from Sublime
-    //   Text python environment. Packages are loaded as modules and therefore
+    //   Text Python environment. Packages are loaded as modules and therefore
     //   can be imported, e.g., "call": "Suricate.lib.settings.toggle_boolean"
     //   calls the method 'toggle_boolean()' found in
     //   'Suricate/lib/settings.py'.
     //
     //   To send a command directly to Sublime Text use `sublime.command_name`.
-    //   Note that under this case the "selector" declared here won't have any
-    //   effect since the command will have its own.
+    //   Note that in this case the "selector" declared here won't have any
+    //   effect since the command may have its own.
     //
     // Groups:
     //

@@ -6,7 +6,9 @@ Sublime Text's Suricate
 Sublime Text's Suricate provides an easier way to implement simple commands to
 extend Sublime Text functionality without the need to create a new plugin. It
 unifies the concept of command, key-binding and menu entry in a single one-place
-definition. Sublime Suricate loads a single plugin parses and handles the whole
+definition.
+
+Sublime Suricate loads a single plugin that parses and handles the whole
 collection of commands, enabling and disabling commands based on a simple set of
 flags and settings. The commands are organized in _Suricate Profiles_, when a
 profile is active the commands in it are parsed and the necessary Sublime Text

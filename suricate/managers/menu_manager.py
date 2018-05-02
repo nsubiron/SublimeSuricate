@@ -100,6 +100,7 @@ class _MenuManager(object):
         self.show_suricate_menu = settings.get('show_suricate_menu', False)
         self.show_context_menu = settings.get('add_entries_to_context_menu', True)
         self.nest_context_items = settings.get('single_context_menu_entry', False)
+        self.command_palette_prefix = settings.get('command_palette_prefix', 'Suricate:')
         ignore_list = settings.get('ignore_groups', [])
         if not ignore_list:
             ignore_list = None
@@ -120,7 +121,7 @@ class _MenuManager(object):
         if not group.startswith('.'):
             caption = command.caption
             quickpanel = dict(basic)
-            quickpanel['caption'] = 'Suricate: %s' % caption
+            quickpanel['caption'] = '%s %s' % (self.command_palette_prefix, caption)
             menus = dict(basic)
             menus['caption'] = caption
             if command.mnemonic:

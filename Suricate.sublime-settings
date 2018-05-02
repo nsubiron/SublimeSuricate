@@ -22,6 +22,9 @@
   // Replace starting <c>+o in key bindings by the string given here.
   "override_default_opening_key": null,
 
+  // Prefix added to every Suricate command in the command palette.
+  "command_palette_prefix": "Suricate:",
+
   // Platform specific remap of keys.
   "key_map": {"*": {"<c>": "ctrl"}, "osx": {"<c>": "super"}},
 
